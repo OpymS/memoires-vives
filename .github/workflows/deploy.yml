@@ -29,6 +29,13 @@ jobs:
         cd /home/ubuntu/docker/memoires-vives/workspace/springboot-app
         ./gradlew build
 
+    - name: Commit JAR to repository
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add workspace/springboot-app/build/libs/memoires-vives.jar
+        git commit -m "Add built JAR file"
+        git push origin main
 
     - name: Deploy to VPS
       run: |
