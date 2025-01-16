@@ -18,14 +18,23 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Build JAR with Gradle
+      run: |
+        cd workspace/springboot-app
+        ./gradlew build
+
+
     - name: Deploy to VPS
       run: |
         ssh -o StrictHostKeyChecking=no -p 55222 ubuntu@51.77.140.10 << 'EOF'
         cd /home/ubuntu/docker/memoires-vives
         git pull origin main
-        cd workspace/springboot-app
-        ./gradlew build
-        cd ../..
         docker compose down
         docker compose up --build -d
         EOF
