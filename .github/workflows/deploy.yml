@@ -18,6 +18,9 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
     - name: Set up JDK 17
       uses: actions/setup-java@v3
       with:
@@ -29,12 +32,6 @@ jobs:
         cd workspace/springboot-app
         ./gradlew build
 
-    - name: Verify JAR file in build/libs
-      run: |
-        pwd
-        ls -al workspace/springboot-app/build
-        ls -al workspace/springboot-app/build/libs
-
     - name: Commit JAR to repository
       run: |
         git config user.name "GitHub Actions"
@@ -42,6 +39,8 @@ jobs:
         git add -f workspace/springboot-app/build/libs/memoires-vives.jar
         git commit -m "Add built JAR file"
         git push origin main
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
     - name: Deploy to VPS
       run: |
