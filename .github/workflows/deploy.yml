@@ -34,7 +34,7 @@ jobs:
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
         git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/OpymS/memoires-vives.git
-        git add workspace/springboot-app/build/libs/memoires-vives.jar
+        git add -f workspace/springboot-app/build/libs/memoires-vives.jar
         git commit -m "Add built JAR file"
         git push origin main
       env:
