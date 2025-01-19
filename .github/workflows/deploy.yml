@@ -29,6 +29,12 @@ jobs:
         cd workspace/springboot-app
         ./gradlew build
 
+    - name: Verify JAR file in build/libs
+      run: |
+        pwd
+        ls -al workspace
+        ls -al workspace/springboot-app
+
     - name: Commit JAR to repository
       run: |
         git config user.name "GitHub Actions"
