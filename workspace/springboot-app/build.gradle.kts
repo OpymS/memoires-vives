@@ -39,3 +39,11 @@ tasks.register<Jar>("buildJar") {
     archiveFileName.set("memoires-vives.jar")
     from(sourceSets["main"].output)
 }
+
+tasks.jar {
+    manifest {
+        attributes(
+            "Main-Class" to "fr.memoires-vives.SpringbootAppApplication"
+        )
+    }
+}
