@@ -35,9 +35,8 @@ tasks.withType<JavaCompile> {
     this.options.encoding = "UTF-8"
 }
 
-tasks.register<Jar>("buildJar") {
+tasks.bootJar {
     archiveFileName.set("memoires-vives.jar")
-    from(sourceSets["main"].output)
 }
 
 tasks.jar {
