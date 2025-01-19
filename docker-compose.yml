@@ -10,7 +10,7 @@ services:
       - ./index.html:/usr/share/nginx/html/index.html:ro
       - ./default.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
-      - memoires-vives_webnet
+      - webnet
 
   mysql:
     image: mysql:8.0
@@ -25,7 +25,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
-      - memoires-vives_webnet
+      - webnet
 
   springboot-app:
     build:
@@ -40,7 +40,7 @@ services:
     depends_on:
       - mysql
     networks:
-      - memoires-vives_webnet
+      - webnet
 
 volumes:
   mysql-data:
