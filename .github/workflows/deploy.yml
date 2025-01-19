@@ -32,8 +32,8 @@ jobs:
     - name: Verify JAR file in build/libs
       run: |
         pwd
-        ls -al workspace
-        ls -al workspace/springboot-app
+        ls -al workspace/springboot-app/build
+        ls -al workspace/springboot-app/build/libs
 
     - name: Commit JAR to repository
       run: |
