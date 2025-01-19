@@ -32,7 +32,7 @@ jobs:
     - name: Verify JAR file in build/libs
       run: |
         pwd
-        ls -al
+        ls -al workspace
 
     - name: Commit JAR to repository
       run: |
