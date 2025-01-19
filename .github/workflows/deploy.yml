@@ -30,8 +30,9 @@ jobs:
         ./gradlew build
 
     - name: Verify JAR file in build/libs
-      run: ls -al build/libs/
-
+      run: |
+        pwd
+        ls -al
 
     - name: Commit JAR to repository
       run: |
