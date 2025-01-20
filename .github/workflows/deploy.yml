@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Build and deploy to Production
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +41,7 @@ jobs:
 
   deploy:
     name: Deploy to Production
-    runs-on : ubuntu:latest
+    runs-on: ubuntu:latest
 
     steps:
     - name: Setup SSH
