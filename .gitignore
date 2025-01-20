@@ -1,0 +1,39 @@
+workspace/.metadata/
+
+workspace/springboot-app/HELP.md
+workspace/springboot-app/.gradle
+workspace/springboot-app/build/
+!workspace/springboot-app/gradle/wrapper/gradle-wrapper.jar
+!workspace/springboot-app/**/src/main/**/build/
+!workspace/springboot-app/**/src/test/**/build/
+
+### STS ###
+workspace/springboot-app/.apt_generated
+workspace/springboot-app/.classpath
+workspace/springboot-app/.factorypath
+workspace/springboot-app/.project
+workspace/springboot-app/.settings
+workspace/springboot-app/.springBeans
+workspace/springboot-app/.sts4-cache
+workspace/springboot-app/bin/
+!workspace/springboot-app/**/src/main/**/bin/
+!workspace/springboot-app/**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+workspace/springboot-app/.idea
+workspace/springboot-app/*.iws
+workspace/springboot-app/*.iml
+workspace/springboot-app/*.ipr
+workspace/springboot-app/out/
+!workspace/springboot-app/**/src/main/**/out/
+!workspace/springboot-app/**/src/test/**/out/
+
+### NetBeans ###
+workspace/springboot-app/nbproject/private/
+workspace/springboot-app/nbbuild/
+workspace/springboot-app/dist/
+workspace/springboot-app/nbdist/
+workspace/springboot-app/.nb-gradle/
+
+### VS Code ###
+workspace/springboot-app/.vscode/
