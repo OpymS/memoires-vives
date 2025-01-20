@@ -41,19 +41,19 @@ jobs:
 
   deploy:
     name: Deploy to Production
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
 
-    - name: Deploy to VPS
-      run: |
-        ssh -o StrictHostKeyChecking=no -p 55222 ubuntu@51.77.140.10 << 'EOF'
-        docker login -u ${{ secrets.DOCKER_USERNAME}} -p ${{ secrets.DOCKER_PASSWORD}}
-        docker pull opyms/memoires-vives:latest
-        docker compose -f /home/ubuntu/docker/memoires-vives/docker-compose.yml down
-        docker compose -f /home/ubuntu/docker/memoires-vives/docker-compose.yml up -d
-        EOF
+      - name: Deploy to VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no -p 55222 ubuntu@51.77.140.10 << 'EOF'
+          docker login -u ${{ secrets.DOCKER_USERNAME}} -p ${{ secrets.DOCKER_PASSWORD}}
+          docker pull opyms/memoires-vives:latest
+          docker compose -f /home/ubuntu/docker/memoires-vives/docker-compose.yml down
+          docker compose -f /home/ubuntu/docker/memoires-vives/docker-compose.yml up -d
+          EOF
