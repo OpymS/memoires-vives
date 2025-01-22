@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Accueil</title>
+	<meta charset="UTF-8">
+	<title>Accueil</title>
 </head>
+
 <body>
-    <h1>Bienvenue sur mémoires vives</h1>
-    <p>Ça fonctionne avec SpringBoot et Docker Hub</p>
+	<h1>Bienvenue sur mémoires vives</h1>
+	<div th:each="memory : ${memories}">
+		<h3 th:text="${memory.memoryId}+' - '+${memory.title}"></h3>
+		<h4 th:text="${memory.description}"></h4>
+
+	</div>
 </body>
+
 </html>
