@@ -1,6 +1,7 @@
 package fr.memoires_vives.bo;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Memory {
 	private int memoryId;
@@ -12,7 +13,10 @@ public class Memory {
 	private LocalDateTime modificationDate;
 	private Location location;
 	private User rememberer;
-	
+	private MemoryState state;
+	private MemoryVisibility visibility;
+	private List<Group> groups;
+
 	public Memory() {
 	}
 
@@ -80,6 +84,27 @@ public class Memory {
 	}
 
 	/**
+	 * @return the state
+	 */
+	public MemoryState getState() {
+		return state;
+	}
+
+	/**
+	 * @return the visibility
+	 */
+	public MemoryVisibility getVisibility() {
+		return visibility;
+	}
+
+	/**
+	 * @return the groups
+	 */
+	public List<Group> getGroups() {
+		return groups;
+	}
+
+	/**
 	 * @param memoryId the memoryId to set
 	 */
 	public void setMemoryId(int memoryId) {
@@ -142,6 +167,27 @@ public class Memory {
 		this.rememberer = rememberer;
 	}
 
+	/**
+	 * @param state the state to set
+	 */
+	public void setState(MemoryState state) {
+		this.state = state;
+	}
+
+	/**
+	 * @param visibility the visibility to set
+	 */
+	public void setVisibility(MemoryVisibility visibility) {
+		this.visibility = visibility;
+	}
+
+	/**
+	 * @param groups the groups to set
+	 */
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -159,8 +205,18 @@ public class Memory {
 		builder.append(creationDate);
 		builder.append(", modificationDate=");
 		builder.append(modificationDate);
+		builder.append(", location=");
+		builder.append(location);
+		builder.append(", rememberer=");
+		builder.append(rememberer);
+		builder.append(", state=");
+		builder.append(state);
+		builder.append(", visibility=");
+		builder.append(visibility);
+		builder.append(", groups=");
+		builder.append(groups);
 		builder.append("]");
 		return builder.toString();
 	}
-	
+
 }

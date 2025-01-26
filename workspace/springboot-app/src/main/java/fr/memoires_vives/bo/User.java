@@ -10,6 +10,7 @@ public class User {
 	private List<Memory> memories;
 	private boolean admin;
 	private boolean activated;
+	private List<Group> groups;
 
 	public User() {
 	}
@@ -75,6 +76,13 @@ public class User {
 	}
 
 	/**
+	 * @return the groups
+	 */
+	public List<Group> getGroups() {
+		return groups;
+	}
+
+	/**
 	 * @param userId the userId to set
 	 */
 	public void setUserId(int userId) {
@@ -123,6 +131,13 @@ public class User {
 		this.activated = activated;
 	}
 
+	/**
+	 * @param groups the groups to set
+	 */
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -140,6 +155,8 @@ public class User {
 		builder.append(admin);
 		builder.append(", activated=");
 		builder.append(activated);
+		builder.append(", groups=");
+		builder.append(groups);
 		builder.append("]");
 		return builder.toString();
 	}
