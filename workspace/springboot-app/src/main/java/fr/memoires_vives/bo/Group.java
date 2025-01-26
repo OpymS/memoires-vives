@@ -2,10 +2,32 @@ package fr.memoires_vives.bo;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "ugroups")
 public class Group {
-	private int groupId;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long groupId;
+
+	@Column(nullable = false)
 	private String name;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
 	private User owner;
+
+	@ManyToMany(mappedBy = "groups")
 	private List<User> members;
 
 	public Group() {
@@ -14,7 +36,7 @@ public class Group {
 	/**
 	 * @return the groupId
 	 */
-	public int getGroupId() {
+	public long getGroupId() {
 		return groupId;
 	}
 
@@ -42,7 +64,7 @@ public class Group {
 	/**
 	 * @param groupId the groupId to set
 	 */
-	public void setGroupId(int groupId) {
+	public void setGroupId(long groupId) {
 		this.groupId = groupId;
 	}
 

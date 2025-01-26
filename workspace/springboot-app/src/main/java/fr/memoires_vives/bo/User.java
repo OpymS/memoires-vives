@@ -2,22 +2,49 @@ package fr.memoires_vives.bo;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "users")
 public class User {
-	private int userId;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long userId;
+
+	@Column(nullable = false, unique = true)
 	private String pseudo;
+
+	@Column(nullable = false, unique = true)
 	private String email;
+
+	@Column(nullable = false)
 	private String password;
+
+	@OneToMany(mappedBy = "rememberer", cascade = CascadeType.ALL)
 	private List<Memory> memories;
+
 	private boolean admin;
 	private boolean activated;
+
+	@ManyToMany
+	@JoinTable(name = "group_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
 	private List<Group> groups;
 
 	public User() {
 	}
 
-	public User(int userId, String pseudo, String email, String password, List<Memory> memories, boolean admin,
-			boolean activated) {
-		this.userId = userId;
+	public User(String pseudo, String email, String password, List<Memory> memories, boolean admin, boolean activated) {
 		this.pseudo = pseudo;
 		this.email = email;
 		this.password = password;
@@ -29,7 +56,7 @@ public class User {
 	/**
 	 * @return the userId
 	 */
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
@@ -85,7 +112,7 @@ public class User {
 	/**
 	 * @param userId the userId to set
 	 */
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 

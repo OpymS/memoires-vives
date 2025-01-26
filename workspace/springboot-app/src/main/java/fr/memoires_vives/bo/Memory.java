@@ -1,20 +1,72 @@
 package fr.memoires_vives.bo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+
+@Entity
+@Table(name = "memories")
 public class Memory {
-	private int memoryId;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long memoryId;
+	
+	@Column(nullable = false)
 	private String title;
+	
+	@Column(nullable = false)
 	private String description;
+	
 	private String mediaUUID;
-	private LocalDateTime memoryDate;
+	
+	@Column(nullable = false)
+	private LocalDate memoryDate;
+	private int memoryYear;
+	private int memoryMonth;
+	private int memoryDay;
+	private int memoryHour;
+	private int memoryMinute;
+	
+	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime creationDate;
+
+	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime modificationDate;
+	
+	@ManyToOne
+	@JoinColumn(name = "location_id", nullable = false)
 	private Location location;
+	
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false)
 	private User rememberer;
+	
+	@Column(nullable = false)
 	private MemoryState state;
+	
+	@Column(nullable = false)
 	private MemoryVisibility visibility;
+	
+	@ManyToMany
+	@JoinTable(
+		name = "memory_group",
+		joinColumns = @JoinColumn(name = "memory_id"),
+		inverseJoinColumns = @JoinColumn(name = "group_id")
+	)
 	private List<Group> groups;
 
 	public Memory() {
@@ -23,7 +75,7 @@ public class Memory {
 	/**
 	 * @return the memoryId
 	 */
-	public int getMemoryId() {
+	public long getMemoryId() {
 		return memoryId;
 	}
 
@@ -49,10 +101,38 @@ public class Memory {
 	}
 
 	/**
-	 * @return the memoryDate
+	 * @return the memoryYear
 	 */
-	public LocalDateTime getMemoryDate() {
-		return memoryDate;
+	public int getMemoryYear() {
+		return memoryYear;
+	}
+
+	/**
+	 * @return the memoryMonth
+	 */
+	public int getMemoryMonth() {
+		return memoryMonth;
+	}
+
+	/**
+	 * @return the memoryDay
+	 */
+	public int getMemoryDay() {
+		return memoryDay;
+	}
+
+	/**
+	 * @return the memoryHour
+	 */
+	public int getMemoryHour() {
+		return memoryHour;
+	}
+
+	/**
+	 * @return the memoryMinute
+	 */
+	public int getMemoryMinute() {
+		return memoryMinute;
 	}
 
 	/**
@@ -107,7 +187,7 @@ public class Memory {
 	/**
 	 * @param memoryId the memoryId to set
 	 */
-	public void setMemoryId(int memoryId) {
+	public void setMemoryId(long memoryId) {
 		this.memoryId = memoryId;
 	}
 
@@ -133,10 +213,38 @@ public class Memory {
 	}
 
 	/**
-	 * @param memoryDate the memoryDate to set
+	 * @param memoryYear the memoryYear to set
 	 */
-	public void setMemoryDate(LocalDateTime memoryDate) {
-		this.memoryDate = memoryDate;
+	public void setMemoryYear(int memoryYear) {
+		this.memoryYear = memoryYear;
+	}
+
+	/**
+	 * @param memoryMonth the memoryMonth to set
+	 */
+	public void setMemoryMonth(int memoryMonth) {
+		this.memoryMonth = memoryMonth;
+	}
+
+	/**
+	 * @param memoryDay the memoryDay to set
+	 */
+	public void setMemoryDay(int memoryDay) {
+		this.memoryDay = memoryDay;
+	}
+
+	/**
+	 * @param memoryHour the memoryHour to set
+	 */
+	public void setMemoryHour(int memoryHour) {
+		this.memoryHour = memoryHour;
+	}
+
+	/**
+	 * @param memoryMinute the memoryMinute to set
+	 */
+	public void setMemoryMinute(int memoryMinute) {
+		this.memoryMinute = memoryMinute;
 	}
 
 	/**
@@ -199,8 +307,16 @@ public class Memory {
 		builder.append(description);
 		builder.append(", mediaUUID=");
 		builder.append(mediaUUID);
-		builder.append(", memoryDate=");
-		builder.append(memoryDate);
+		builder.append(", memoryYear=");
+		builder.append(memoryYear);
+		builder.append(", memoryMonth=");
+		builder.append(memoryMonth);
+		builder.append(", memoryDay=");
+		builder.append(memoryDay);
+		builder.append(", memoryHour=");
+		builder.append(memoryHour);
+		builder.append(", memoryMinute=");
+		builder.append(memoryMinute);
 		builder.append(", creationDate=");
 		builder.append(creationDate);
 		builder.append(", modificationDate=");
@@ -218,5 +334,4 @@ public class Memory {
 		builder.append("]");
 		return builder.toString();
 	}
-
 }

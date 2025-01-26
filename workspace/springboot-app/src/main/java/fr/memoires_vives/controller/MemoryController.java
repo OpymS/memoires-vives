@@ -11,7 +11,7 @@ import fr.memoires_vives.bo.Memory;
 @org.springframework.stereotype.Controller
 public class MemoryController {
 	
-	private MemoryService memoryService;
+	private final MemoryService memoryService;
 	
 	public MemoryController(MemoryService memoryService) {
 		this.memoryService = memoryService;
