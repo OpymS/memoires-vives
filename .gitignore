@@ -35,5 +35,8 @@ workspace/springboot-app/dist/
 workspace/springboot-app/nbdist/
 workspace/springboot-app/.nb-gradle/
 
+### Tailwind ###
+workspace/springboot-app/node_modules/
+
 ### VS Code ###
 workspace/springboot-app/.vscode/

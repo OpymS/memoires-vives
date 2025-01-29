@@ -1,0 +1,34 @@
+<html xmlns:th="http://www.thymeleaf.com"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <header data-th-fragment="header">
+        <nav class="bg-black" id="navbar">
+            <div class="logo">
+                <a th:href="@{/}">
+                    <img alt="logo mémoires vives" src="/images/logo_ENI_auctions.png" id="logo-img">
+                </a>
+            </div>
+            <div>
+				<a class="text-white" th:href="@{/signup}">Sign up</a>
+				<a class="text-white" th:href="@{/login}">Log in</a>
+			</div>
+<!--            <div class="credits-container" sec:authorize="isAuthenticated()">-->
+<!--            	<p class="credits" th:text="${userSession.credit} +'pts'"></p>-->
+<!--            </div>-->
+<!--            <div class="auth-links" sec:authorize="!isAuthenticated()">-->
+<!--				<a th:href="@{/changeLanguage(language='en')}" data-th-text="#{label.lang.en}"></a>-->
+<!--                <a th:href="@{/changeLanguage(language='fr')}" data-th-text="#{label.lang.fr}"></a>-->
+<!--                <a th:href="@{/signup}" class="link" data-th-text="#{header.register}"></a>-->
+<!--                <a th:href="@{/login}" class="link" data-th-text="#{header.login}"></a>-->
+<!--            </div>-->
+<!--            <div class="auth-links" sec:authorize="isAuthenticated()">-->
+<!--            	<a th:if="${userSession.admin}" th:href="@{/admin}" data-th-text="#{header.management}"></a>-->
+<!--            	<a th:href="@{/changeLanguage(language='en')}" data-th-text="#{label.lang.en}"></a>-->
+<!--                <a th:href="@{/changeLanguage(language='fr')}" data-th-text="#{label.lang.fr}"></a>-->
+<!--                <a th:href="@{/auctions}" class="link" data-th-text="#{header.auctions}"></a>-->
+<!--                <a th:href="@{/auctions/newArticle}" class="link" data-th-text="#{header.sell}"></a>-->
+<!--                <a th:href="@{/profil(userId=${userSession.userId})}" class="link" data-th-text="#{header.profile}"></a>-->
+<!--                <a th:href="@{/logout}" class="link" data-th-text="#{header.logout}"></a>-->
+<!--            </div>-->
+        </nav>
+    </header>
+</html>
