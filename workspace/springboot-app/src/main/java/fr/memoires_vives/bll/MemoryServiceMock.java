@@ -3,11 +3,13 @@ package fr.memoires_vives.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import fr.memoires_vives.bo.Memory;
 
 @Service
+@Primary
 public class MemoryServiceMock implements MemoryService {
 
 	@Override
@@ -28,6 +30,21 @@ public class MemoryServiceMock implements MemoryService {
 		memory3.setTitle("Souvenir 3");
 		memory3.setDescription("encore un autre");
 		memories.add(memory3);
+		Memory memory4 = new Memory();
+		memory4.setMemoryId(3);
+		memory4.setTitle("Souvenir 4");
+		memory4.setDescription("C'est un mauvais souvenir");
+		memories.add(memory4);
+		Memory memory5 = new Memory();
+		memory5.setMemoryId(4);
+		memory5.setTitle("Souvenir 5");
+		memory5.setDescription("C'est un bon souvenir");
+		memories.add(memory5);
+		Memory memory6 = new Memory();
+		memory6.setMemoryId(5);
+		memory6.setTitle("Souvenir 6");
+		memory6.setDescription("encore un bon !");
+		memories.add(memory6);
 		return memories;
 	}
 

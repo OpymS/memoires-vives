@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.repositories.MemoryRepository;
 
-@Primary
+//@Primary
 @Service
 public class MemoryServiceImpl implements MemoryService {
 	

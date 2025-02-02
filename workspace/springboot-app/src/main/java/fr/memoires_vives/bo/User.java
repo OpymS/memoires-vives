@@ -1,5 +1,6 @@
 package fr.memoires_vives.bo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -38,8 +39,21 @@ public class User {
 	private boolean activated;
 
 	@ManyToMany
-	@JoinTable(name = "group_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
+	@JoinTable(
+		name = "group_user",
+		joinColumns = @JoinColumn(name = "user_id"), 
+		inverseJoinColumns = @JoinColumn(name = "group_id")
+	)
 	private List<Group> groups;
+	
+	@ManyToMany
+    @JoinTable(
+        name = "user_friends",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+	private List<User> friends = new ArrayList<User>();
+
 
 	public User() {
 	}

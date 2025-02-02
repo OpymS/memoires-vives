@@ -2,6 +2,7 @@ package fr.memoires_vives.bo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -68,7 +69,7 @@ public class Memory {
 		inverseJoinColumns = @JoinColumn(name = "group_id")
 	)
 	private List<Group> groups;
-
+	
 	public Memory() {
 	}
 
