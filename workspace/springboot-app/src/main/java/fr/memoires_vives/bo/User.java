@@ -31,6 +31,9 @@ public class User {
 
 	@Column(nullable = false)
 	private String password;
+	
+	@Column(nullable = false)
+	private String role;
 
 	@OneToMany(mappedBy = "rememberer", cascade = CascadeType.ALL)
 	private List<Memory> memories;
@@ -96,6 +99,12 @@ public class User {
 	}
 
 	/**
+	 * @return the role
+	 */
+	public String getRole() {
+		return role;
+	}
+	/**
 	 * @return the memories
 	 */
 	public List<Memory> getMemories() {
@@ -121,6 +130,13 @@ public class User {
 	 */
 	public List<Group> getGroups() {
 		return groups;
+	}
+
+	/**
+	 * @return the friends
+	 */
+	public List<User> getFriends() {
+		return friends;
 	}
 
 	/**
@@ -152,6 +168,13 @@ public class User {
 	}
 
 	/**
+	 * @param role the role to set
+	 */
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	/**
 	 * @param memories the memories to set
 	 */
 	public void setMemories(List<Memory> memories) {
@@ -179,6 +202,13 @@ public class User {
 		this.groups = groups;
 	}
 
+	/**
+	 * @param friends the friends to set
+	 */
+	public void setFriends(List<User> friends) {
+		this.friends = friends;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -190,6 +220,8 @@ public class User {
 		builder.append(email);
 		builder.append(", password=");
 		builder.append(password);
+		builder.append(", role=");
+		builder.append(role);
 		builder.append(", memories=");
 		builder.append(memories);
 		builder.append(", admin=");
@@ -198,7 +230,10 @@ public class User {
 		builder.append(activated);
 		builder.append(", groups=");
 		builder.append(groups);
+		builder.append(", friends=");
+		builder.append(friends);
 		builder.append("]");
 		return builder.toString();
 	}
+
 }
