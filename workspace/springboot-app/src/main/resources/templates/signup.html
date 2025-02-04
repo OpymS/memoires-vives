@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Inscription</title>
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	
+	<main>
+		<h1 class="title" th:text="#{title.signup2}"></h1>
+		
+		<form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form">
+						
+			<div class="inputs-container">
+				<div class="pseudo-input">
+					<label for="inputPseudo">pseudo</label>
+<!--					<input id="inputPseudo" th:field="*{pseudo}" type="text" pattern="^\w+$" maxlength="30" required>-->
+					<input id="inputPseudo" th:field="*{pseudo}" type="text">
+				</div>
+				<div class="email-input">
+					<label for="inputEmail">email</label>
+<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
+					<input id="inputEmail" th:field="*{email}" type="email">
+				</div>
+				<div class="password-input">
+					<label for="inputPassword">mot de passe</label>
+					<input id="inputPassword" th:field="*{password}" type="password">
+				</div>
+				<div class="confirm-password-input">
+					<label for="inputPasswordConfirm">confirmez votre mot de passe</label>
+					<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password">
+				</div>
+				
+			</div>
+			
+			<div class="buttons-container">
+				<button type="submit" class="button create" th:text="#{button.create}"></button>
+				<a th:href="@{/}" class="button cancel" th:text="#{button.cancel}"></a>
+			</div>	
+		</form>
+	
+	</main>
+</body>
+
+</html>

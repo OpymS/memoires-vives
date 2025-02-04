@@ -6,6 +6,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +16,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "users")
@@ -32,14 +35,18 @@ public class User {
 	@Column(nullable = false)
 	private String password;
 	
+	@Transient
+	private String passwordConfirm;
+	
 	@Column(nullable = false)
-	private String role;
+	@Enumerated(EnumType.STRING)
+	private Role role;
 
 	@OneToMany(mappedBy = "rememberer", cascade = CascadeType.ALL)
 	private List<Memory> memories;
 
-	private boolean admin;
-	private boolean activated;
+	private boolean isAdmin;
+	private boolean isActivated;
 
 	@ManyToMany
 	@JoinTable(
@@ -59,15 +66,6 @@ public class User {
 
 
 	public User() {
-	}
-
-	public User(String pseudo, String email, String password, List<Memory> memories, boolean admin, boolean activated) {
-		this.pseudo = pseudo;
-		this.email = email;
-		this.password = password;
-		this.memories = memories;
-		this.admin = admin;
-		this.activated = activated;
 	}
 
 	/**
@@ -99,9 +97,16 @@ public class User {
 	}
 
 	/**
+	 * @return the passwordConfirm
+	 */
+	public String getPasswordConfirm() {
+		return passwordConfirm;
+	}
+
+	/**
 	 * @return the role
 	 */
-	public String getRole() {
+	public Role getRole() {
 		return role;
 	}
 	/**
@@ -112,17 +117,17 @@ public class User {
 	}
 
 	/**
-	 * @return the admin
+	 * @return the isAdmin
 	 */
 	public boolean isAdmin() {
-		return admin;
+		return isAdmin;
 	}
 
 	/**
-	 * @return the activated
+	 * @return the isActivated
 	 */
 	public boolean isActivated() {
-		return activated;
+		return isActivated;
 	}
 
 	/**
@@ -168,9 +173,16 @@ public class User {
 	}
 
 	/**
+	 * @param passwordConfirm the passwordConfirm to set
+	 */
+	public void setPasswordConfirm(String passwordConfirm) {
+		this.passwordConfirm = passwordConfirm;
+	}
+
+	/**
 	 * @param role the role to set
 	 */
-	public void setRole(String role) {
+	public void setRole(Role role) {
 		this.role = role;
 	}
 
@@ -182,17 +194,17 @@ public class User {
 	}
 
 	/**
-	 * @param admin the admin to set
+	 * @param isAdmin the isAdmin to set
 	 */
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
+	public void setAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
 	}
 
 	/**
-	 * @param activated the activated to set
+	 * @param isActivated the isActivated to set
 	 */
-	public void setActivated(boolean activated) {
-		this.activated = activated;
+	public void setActivated(boolean isActivated) {
+		this.isActivated = isActivated;
 	}
 
 	/**
@@ -225,9 +237,9 @@ public class User {
 		builder.append(", memories=");
 		builder.append(memories);
 		builder.append(", admin=");
-		builder.append(admin);
+		builder.append(isAdmin);
 		builder.append(", activated=");
-		builder.append(activated);
+		builder.append(isActivated);
 		builder.append(", groups=");
 		builder.append(groups);
 		builder.append(", friends=");

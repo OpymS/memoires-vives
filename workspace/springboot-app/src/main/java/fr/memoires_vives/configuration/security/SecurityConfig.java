@@ -13,24 +13,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import fr.memoires_vives.bll.UserDetailsServiceInterface;
+import fr.memoires_vives.bll.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 	
-	private final UserDetailsServiceInterface userDetailsServiceInterface;
-	
-	
-	public SecurityConfig(UserDetailsServiceInterface userDetailsServiceInterface) {
-		this.userDetailsServiceInterface = userDetailsServiceInterface;
+	public SecurityConfig() {
 	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/home", "/css/**", "/js/**", "/login").permitAll()
+				.requestMatchers("/", "/home", "/css/**", "/js/**", "/login", "/signup").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin(login -> login
@@ -58,9 +54,9 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-	public DaoAuthenticationProvider authenticationProvider() {
+	public DaoAuthenticationProvider authenticationProvider(UserService userService) {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(userDetailsServiceInterface);
+		authProvider.setUserDetailsService(userService);
 		authProvider.setPasswordEncoder(passwordEncoder());
 		return authProvider;
 	}
