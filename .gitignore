@@ -40,3 +40,6 @@ workspace/springboot-app/node_modules/
 
 ### VS Code ###
 workspace/springboot-app/.vscode/
+
+.env
+workspace/springboot-app/src/main/resources/application-dev.properties
