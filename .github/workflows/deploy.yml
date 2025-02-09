@@ -25,6 +25,13 @@ jobs:
         cd workspace/springboot-app
         ./gradlew build
 
+    - name: Upload test report
+      uses: actions/upload-artifact@v3
+      if: failure()
+      with:
+        name: test-report
+        path: workspace/springboot-app/build/reports/tests/test
+
     - name: Build Docker image
       run: |
         docker build -t docker.io/${{ secrets.DOCKER_USERNAME }}/memoires-vives:latest .
