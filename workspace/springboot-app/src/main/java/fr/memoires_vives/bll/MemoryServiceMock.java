@@ -43,7 +43,7 @@ public class MemoryServiceMock implements MemoryService {
 		Memory memory6 = new Memory();
 		memory6.setMemoryId(5);
 		memory6.setTitle("Souvenir 6");
-		memory6.setDescription("encore un bon !");
+		memory6.setDescription("encore un très bon !");
 		memories.add(memory6);
 		return memories;
 	}
