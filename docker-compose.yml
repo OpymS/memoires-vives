@@ -16,10 +16,10 @@ services:
     image: mysql:8.0
     container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: SecurePasswordV3rySécure
-      MYSQL_DATABASE: mv_db
-      MYSQL_USER: bdd_user
-      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
     ports:
       - "3306:3306"
     volumes:
