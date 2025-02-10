@@ -43,6 +43,8 @@ services:
       - mysql
     networks:
       - webnet
+    command: ["java", "-jar", "/app/memoires-vives.jar", "-Dspring.profiles.active=prod"]
+
 
 volumes:
   mysql-data:

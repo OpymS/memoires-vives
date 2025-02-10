@@ -64,6 +64,4 @@ jobs:
           docker pull opyms/memoires-vives:latest
           docker compose -f /home/ubuntu/docker/memoires-vives/docker-compose.yml down
           docker compose -f /home/ubuntu/docker/memoires-vives/docker-compose.yml up -d
-          sleep 10
-          docker exec -it springboot-app java -jar /app/memoires-vives.jar -Dspring.profiles.active=prod
           EOF
