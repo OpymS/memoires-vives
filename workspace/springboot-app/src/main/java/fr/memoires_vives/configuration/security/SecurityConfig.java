@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import fr.memoires_vives.bll.UserService;
 
@@ -26,31 +27,24 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/common/**", "/login", "/signup").permitAll()
+				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/login", "/signup").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin(login -> login
 				.loginPage("/login")
-				.defaultSuccessUrl("/", true)
 				.permitAll()
+				.defaultSuccessUrl("/", true)
+				.failureUrl("/login?error=true")
 			)
 			.logout(logout -> logout
-				.logoutUrl("/logout")
-				.logoutSuccessUrl("/home")
 				.permitAll()
+				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.invalidateHttpSession(true)
+				.clearAuthentication(true)
+				.deleteCookies("JSESSIONID")
+				.logoutSuccessUrl("/home")
 			);
 		return http.build();
-	}
-	
-	@Bean
-	public UserDetailsService userDetailsService() {
-		UserDetails user = User.builder()
-				.username("user")
-				.password(passwordEncoder().encode("password"))
-				.roles("USER")
-				.build();
-		
-		return new InMemoryUserDetailsManager(user);
 	}
 	
 	@Bean
