@@ -8,7 +8,7 @@ services:
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./default.conf:/etc/nginx/conf.d/default.conf:ro
-      - images-data:/usr/share/nginx/html/images/public
+      # - images-data:/usr/share/nginx/html/images/public
     networks:
       - webnet
 
@@ -32,8 +32,8 @@ services:
     container_name: springboot-app
     ports:
       - "8080:8080"
-    volumes:
-      - images-data:/app/static/images/public
+    # volumes:
+    #   - images-data:/app/static/images/public
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: ${DB_URL}
@@ -50,7 +50,7 @@ services:
 
 volumes:
   mysql-data:
-  images-data:
+  # images-data:
 
 networks:
   webnet:

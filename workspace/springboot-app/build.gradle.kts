@@ -42,29 +42,14 @@ tasks.withType<JavaCompile> {
     this.options.encoding = "UTF-8"
 }
 
-tasks.register<Copy>("copyImages") {
-    from("src/main/resources/static/images/public")
-    into("build/resources/main/static/images/public")
-}
-
 tasks.bootJar {
-	dependsOn("copyImages")
     archiveFileName.set("memoires-vives.jar")
 }
 
 tasks.jar {
-	dependsOn("copyImages")
     manifest {
         attributes(
             "Main-Class" to "fr.memoires-vives.SpringbootAppApplication"
         )
     }
-}
-
-tasks.named("resolveMainClassName") {
-    dependsOn("copyImages")
-}
-
-tasks.named("compileTestJava") {
-    dependsOn("copyImages") // Assure-toi que les images sont copiées avant de compiler les tests
 }
