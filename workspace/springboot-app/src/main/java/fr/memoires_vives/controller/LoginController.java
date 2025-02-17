@@ -34,5 +34,4 @@ public class LoginController {
 		userService.createAccount(user.getPseudo(), user.getEmail(), user.getPassword(), user.getPasswordConfirm());
 		return "redirect:/login";
 	}
-
 }

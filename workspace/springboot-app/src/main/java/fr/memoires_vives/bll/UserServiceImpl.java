@@ -4,7 +4,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import fr.memoires_vives.bo.Role;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.repositories.UserRepository;
@@ -13,8 +12,8 @@ import fr.memoires_vives.repositories.UserRepository;
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
-
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+	
+	public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -64,5 +63,15 @@ public class UserServiceImpl implements UserService {
 	
 	private boolean checkEmailAvailable(String email) {
 		return true;
+	}
+	
+	@Override
+	public User getUserByPseudo(String pseudo) {
+		User user = userRepository.findByPseudo(pseudo);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("Utilisateur non trouvé");
+        }
+		return user;
 	}
 }

@@ -1,4 +1,4 @@
-package fr.memoires_vives.configuration.security;
+package fr.memoires_vives.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/login", "/signup").permitAll()
+				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/login", "/signup", "/logout").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin(login -> login
@@ -43,7 +43,7 @@ public class SecurityConfig {
 				.invalidateHttpSession(true)
 				.clearAuthentication(true)
 				.deleteCookies("JSESSIONID")
-				.logoutSuccessUrl("/home")
+				.logoutSuccessUrl("/")
 			)
 			.httpBasic(Customizer.withDefaults())
 			.csrf(csrf -> csrf
@@ -52,9 +52,9 @@ public class SecurityConfig {
 	}
 	
 	@Bean
-	public DaoAuthenticationProvider authenticationProvider(UserService userService) {
+	public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService) {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(userService);
+		authProvider.setUserDetailsService(userDetailsService);
 		authProvider.setPasswordEncoder(passwordEncoder());
 		return authProvider;
 	}

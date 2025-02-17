@@ -33,40 +33,30 @@
 		<a th:href="@{/}" aria-label="Page d'accueil">
 			<img alt="logo mémoires vives" src="/images/public/logo.png" id="logo-img" class="w-20">
 		</a>
-<!--		<button id="menu-btn" aria-label="Toggle button" aria-expanded="false">-->
-<!--				                class="md:hidden max-sm:block">-->
-<!--			<img src="/images/menu.svg" alt="" class="h-12 w-12">-->
-<!--		</button>-->
+		<button id="menu-btn" aria-label="Toggle button" aria-expanded="false"
+				                class="md:hidden max-sm:block">
+			<img src="/images/public/menu.svg" alt="" class="h-12 w-12">
+		</button>
 		<ul id="toggled-menu"
 			class="px-3 flex gap-3 items-center transform-none z-10 max-sm:flex-col max-sm:gap-4 max-sm:absolute max-sm:top-0 max-sm:left-0  max-sm:-translate-y-full max-sm:-z-10 max-sm:text-black max-sm:justify-center max-sm:w-full max-sm:bg-[#3d1a90] max-sm:py-6 max-sm:h-[100vh]">
 			<li class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/admin}" class="lg:text-xl lg:font-bold">Admin</a>
+				<a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin}" class="lg:text-xl lg:font-bold">Admin</a>
 			</li>
 			<li class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/}" class="lg:text-xl lg:font-bold">Souvenirs</a>
 			</li>
-			<li class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+			<li sec:authorize="!isAuthenticated()" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/signup}" class="lg:text-xl lg:font-bold">S'inscrire</a>
 			</li>
-			<li class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+			<li sec:authorize="!isAuthenticated()" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/login}" class="lg:text-xl lg:font-bold">Se connecter</a>
 			</li>
-
-			<!--	            {% if is_granted('ROLE_USER') %}-->
-			<!--	                <li class="{{ app.current_route == 'app_profil' and app.user and app.user.id == user.id ? 'text-amber-300' : 'text-white' }} hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">-->
-			<!--	                    <a href="{{ path('app_profil') }}" class="lg:text-xl lg:font-bold">Mon profil</a>-->
-			<!--	                </li>-->
-			<!--	            {% endif %}-->
-
-			<!--	            {% if app.user is null %}-->
-			<!--	                <li class="{{ app.current_route == 'app_login' ? 'text-amber-300' : 'text-white' }} hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">-->
-			<!--	                    <a href="{{ path('app_login') }}" class="lg:text-xl lg:font-bold">Se connecter</a>-->
-			<!--	                </li>-->
-			<!--	            {% else %}-->
-			<!--	                <li class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">-->
-			<!--	                    <a href="{{ path('app_logout') }}" class="lg:text-xl lg:font-bold">Se déconnecter</a>-->
-			<!--	                </li>-->
-			<!--	            {% endif %}-->
+			<li sec:authorize="isAuthenticated()" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+				<a th:href="@{/profil}" class="lg:text-xl lg:font-bold" th:text="${#authentication.principal.user.pseudo}"></a>
+			</li>
+			<li sec:authorize="isAuthenticated()" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+				<a th:href="@{/logout}" class="lg:text-xl lg:font-bold">Se déconnecter</a>
+			</li>
 		</ul>
 
 	</nav>
