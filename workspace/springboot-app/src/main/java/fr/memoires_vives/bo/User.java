@@ -1,13 +1,14 @@
 package fr.memoires_vives.bo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,9 +39,12 @@ public class User {
 	@Transient
 	private String passwordConfirm;
 	
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private Role role;
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+        name = "users_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id"))
+	private Set<Role> roles = new HashSet<Role>();
 
 	@OneToMany(mappedBy = "rememberer", cascade = CascadeType.ALL)
 	private List<Memory> memories;
@@ -104,11 +108,12 @@ public class User {
 	}
 
 	/**
-	 * @return the role
+	 * @return the roles
 	 */
-	public Role getRole() {
-		return role;
+	public Set<Role> getRoles() {
+		return roles;
 	}
+
 	/**
 	 * @return the memories
 	 */
@@ -180,10 +185,10 @@ public class User {
 	}
 
 	/**
-	 * @param role the role to set
+	 * @param roles the roles to set
 	 */
-	public void setRole(Role role) {
-		this.role = role;
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 
 	/**
@@ -232,13 +237,15 @@ public class User {
 		builder.append(email);
 		builder.append(", password=");
 		builder.append(password);
-		builder.append(", role=");
-		builder.append(role);
+		builder.append(", passwordConfirm=");
+		builder.append(passwordConfirm);
+		builder.append(", roles=");
+		builder.append(roles);
 		builder.append(", memories=");
 		builder.append(memories);
-		builder.append(", admin=");
+		builder.append(", isAdmin=");
 		builder.append(isAdmin);
-		builder.append(", activated=");
+		builder.append(", isActivated=");
 		builder.append(isActivated);
 		builder.append(", groups=");
 		builder.append(groups);
@@ -247,5 +254,4 @@ public class User {
 		builder.append("]");
 		return builder.toString();
 	}
-
 }

@@ -1,0 +1,3 @@
+-- Créé le 19/02/2025
+ALTER TABLE users
+DROP COLUMN role;
