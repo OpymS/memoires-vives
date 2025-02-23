@@ -6,4 +6,5 @@ import fr.memoires_vives.bo.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	User findByPseudo(String pseudo);
+	User findByUserId(long userId);
 }

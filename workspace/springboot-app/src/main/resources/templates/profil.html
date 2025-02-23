@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Profil</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+    <link rel="icon" href="/images/public/favicon.png" />
+<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	
+	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
+		<h1 class="text-[#bddab2] text-2xl">Profil de <span th:text="${userToDisplay.pseudo}"></span></h1>
+			
+	</main>
+	
+</body>
+
+</html>

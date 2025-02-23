@@ -68,4 +68,13 @@ public class UserServiceImpl implements UserService {
         }
 		return user;
 	}
+
+	@Override
+	public User getUserById(long userId) {
+		User user = userRepository.findByUserId(userId);
+		if (user == null) {
+            throw new UsernameNotFoundException("Utilisateur non trouvé");
+        }
+		return user;
+	}
 }
