@@ -1,40 +1,10 @@
 <html xmlns:th="http://www.thymeleaf.com" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <header data-th-fragment="header">
-	<!--        <nav class="bg-black" id="navbar">-->
-	<!--            <div class="logo">-->
-	<!--                <a th:href="@{/}">-->
-	<!--                    <img alt="logo mémoires vives" src="/images/logo_ENI_auctions.png" id="logo-img">-->
-	<!--                </a>-->
-	<!--            </div>-->
-	<!--            <div>-->
-	<!--				<a class="text-white" th:href="@{/signup}">Sign up</a>-->
-	<!--				<a class="text-white" th:href="@{/login}">Log in</a>-->
-	<!--			</div>-->
-	<!--            <div class="credits-container" sec:authorize="isAuthenticated()">-->
-	<!--            	<p class="credits" th:text="${userSession.credit} +'pts'"></p>-->
-	<!--            </div>-->
-	<!--            <div class="auth-links" sec:authorize="!isAuthenticated()">-->
-	<!--				<a th:href="@{/changeLanguage(language='en')}" data-th-text="#{label.lang.en}"></a>-->
-	<!--                <a th:href="@{/changeLanguage(language='fr')}" data-th-text="#{label.lang.fr}"></a>-->
-	<!--                <a th:href="@{/signup}" class="link" data-th-text="#{header.register}"></a>-->
-	<!--                <a th:href="@{/login}" class="link" data-th-text="#{header.login}"></a>-->
-	<!--            </div>-->
-	<!--            <div class="auth-links" sec:authorize="isAuthenticated()">-->
-	<!--            	<a th:if="${userSession.admin}" th:href="@{/admin}" data-th-text="#{header.management}"></a>-->
-	<!--            	<a th:href="@{/changeLanguage(language='en')}" data-th-text="#{label.lang.en}"></a>-->
-	<!--                <a th:href="@{/changeLanguage(language='fr')}" data-th-text="#{label.lang.fr}"></a>-->
-	<!--                <a th:href="@{/auctions}" class="link" data-th-text="#{header.auctions}"></a>-->
-	<!--                <a th:href="@{/auctions/newArticle}" class="link" data-th-text="#{header.sell}"></a>-->
-	<!--                <a th:href="@{/profil(userId=${userSession.userId})}" class="link" data-th-text="#{header.profile}"></a>-->
-	<!--                <a th:href="@{/logout}" class="link" data-th-text="#{header.logout}"></a>-->
-	<!--            </div>-->
-	<!--        </nav>-->
 	<nav class="bg-[#bddab2] flex gap-3 justify-between items-center w-full z-10 h-24">
 		<a th:href="@{/}" aria-label="Page d'accueil">
 			<img alt="logo mémoires vives" src="/images/public/logo.png" id="logo-img" class="w-20">
 		</a>
-		<button id="menu-btn" aria-label="Toggle button" aria-expanded="false"
-				                class="md:hidden max-sm:block">
+		<button id="menu-btn" aria-label="Toggle button" aria-expanded="false" class="md:hidden max-sm:block">
 			<img src="/images/public/menu.svg" alt="" class="h-12 w-12">
 		</button>
 		<ul id="toggled-menu"
@@ -42,24 +12,27 @@
 			<li class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin}" class="lg:text-xl lg:font-bold">Admin</a>
 			</li>
-			<li class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/}" class="lg:text-xl lg:font-bold">Souvenirs</a>
-			</li>
-			<li sec:authorize="!isAuthenticated()" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+			<li sec:authorize="!isAuthenticated()"
+				class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/signup}" class="lg:text-xl lg:font-bold">S'inscrire</a>
 			</li>
-			<li sec:authorize="!isAuthenticated()" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+			<li sec:authorize="!isAuthenticated()"
+				class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/login}" class="lg:text-xl lg:font-bold">Se connecter</a>
 			</li>
-			<li sec:authorize="isAuthenticated()" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/profil}" class="lg:text-xl lg:font-bold" th:text="${#authentication.principal.user.pseudo}"></a>
+			<li sec:authorize="isAuthenticated()"
+				class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+				<a th:href="@{/profil}" class="lg:text-xl lg:font-bold"
+					th:text="${#authentication.principal.user.pseudo}"></a>
 			</li>
-			<li sec:authorize="isAuthenticated()" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+			<li sec:authorize="isAuthenticated()"
+				class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/logout}" class="lg:text-xl lg:font-bold">Se déconnecter</a>
 			</li>
 		</ul>
 
 	</nav>
+		
 </header>
 
 </html>

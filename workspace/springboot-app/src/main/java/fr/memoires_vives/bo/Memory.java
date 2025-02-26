@@ -2,11 +2,12 @@ package fr.memoires_vives.bo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -56,9 +57,11 @@ public class Memory {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User rememberer;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private MemoryState state;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private MemoryVisibility visibility;
 	
@@ -99,6 +102,13 @@ public class Memory {
 	 */
 	public String getMediaUUID() {
 		return mediaUUID;
+	}
+	
+	/**
+	 * @return the memoryDate
+	 */
+	public LocalDate getMemoryDate() {
+		return memoryDate;
 	}
 
 	/**
@@ -211,6 +221,13 @@ public class Memory {
 	 */
 	public void setMediaUUID(String mediaUUID) {
 		this.mediaUUID = mediaUUID;
+	}
+
+	/**
+	 * @param memoryDate the memoryDate to set
+	 */
+	public void setMemoryDate(LocalDate memoryDate) {
+		this.memoryDate = memoryDate;
 	}
 
 	/**

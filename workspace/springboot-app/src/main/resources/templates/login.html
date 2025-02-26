@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
+    <link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+    <link rel="icon" href="/images/public/favicon.png" />
 </head>
 <body>
-    <h2>Se connecter</h2>
-    <form th:action="@{/login}" method="post">
-        <label for="username">Nom d'utilisateur:</label>
-        <input type="text" id="username" name="username" placeholder="Nom d'utilisateur" required />
-        
-        <label for="password">Mot de passe:</label>
-        <input type="password" id="password" name="password" placeholder="Mot de passe" required />
-        
-        <button type="submit">Se connecter</button>
-    </form>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
+		<h1 class="text-[#bddab2] text-2xl">Se connecter</h1>
+	    <form th:action="@{/login}" method="post">
+	        <label for="username">Nom d'utilisateur:</label>
+	        <input type="text" id="username" name="username" placeholder="Nom d'utilisateur" required />
+	        
+	        <label for="password">Mot de passe:</label>
+	        <input type="password" id="password" name="password" placeholder="Mot de passe" required />
+	        
+	        <button type="submit">Se connecter</button>
+	    </form>	
+	</main>
 </body>
 </html>

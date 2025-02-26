@@ -3,6 +3,7 @@ package fr.memoires_vives.security;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,7 @@ public class CustomUserDetails implements UserDetails {
 
 	public CustomUserDetails(User user) {
 		this.user = user;
+		Hibernate.initialize(user.getFriends());
 	}
 
 	public User getUser() {

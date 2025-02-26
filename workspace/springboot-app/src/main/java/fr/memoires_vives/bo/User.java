@@ -70,6 +70,8 @@ public class User {
 
 
 	public User() {
+		this.groups = new ArrayList<>();
+		this.friends = new ArrayList<>();
 	}
 
 	/**

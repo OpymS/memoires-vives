@@ -3,17 +3,19 @@
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Inscription</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+    <link rel="icon" href="/images/public/favicon.png" />
 </head>
 
 <body>
 	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
 	
 	<main>
-		<h1 class="title" th:text="#{title.signup2}"></h1>
-		
-		<form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form">
+		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
+		<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
+	    <form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form">
 						
 			<div class="inputs-container">
 				<div class="pseudo-input">
@@ -38,10 +40,13 @@
 			</div>
 			
 			<div class="buttons-container">
-				<button type="submit" class="button create" th:text="#{button.create}"></button>
-				<a th:href="@{/}" class="button cancel" th:text="#{button.cancel}"></a>
+				<button type="submit" class="button create">Créer</button>
+				<a th:href="@{/}" class="button cancel">Annuler</a>
 			</div>	
 		</form>
+	</main>
+		
+		
 	
 	</main>
 </body>

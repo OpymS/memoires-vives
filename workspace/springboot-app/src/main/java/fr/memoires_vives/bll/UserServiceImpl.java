@@ -1,8 +1,11 @@
 package fr.memoires_vives.bll;
 
+import org.hibernate.Hibernate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import fr.memoires_vives.bo.Role;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.repositories.RoleRepository;
@@ -75,6 +78,7 @@ public class UserServiceImpl implements UserService {
 		if (user == null) {
             throw new UsernameNotFoundException("Utilisateur non trouvé");
         }
+		Hibernate.initialize(user.getFriends());
 		return user;
 	}
 }

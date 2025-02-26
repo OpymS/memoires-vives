@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription</title>
+    <link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+    <link rel="icon" href="/images/public/favicon.png" />
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	
+	<main>
+		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
+		<h1 class="text-[#bddab2] text-2xl">Partager un nouveau souvenir</h1>
+	    <form th:action="@{/new}" method="POST" th:object="${memory}">
+						
+			<div class="inputs-container">
+				<div class="title-input">
+					<label for="title">Titre</label>
+					<input id="title" th:field="*{title}" type="text" placeholder="Donnez un titre à votre souvenir">
+				</div>
+				<div class="description-input">
+					<label for="description">Description</label>
+<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
+					<textarea id="description" th:field="*{description}" placeholder="Décrivez précisément votre souvenir"></textarea>
+				</div>
+				<div class="date-input">
+					<label for="date">Date</label>
+					<input id="date" th:field="*{memoryDate}" type="date">
+				</div>
+				<div class="visibility-input">
+					<label for="visibility">Visibilité</label>
+					<select id="visibility" name="visibility">
+						<option th:each="visibility : ${visibilities}"
+						 th:value="${visibility}"
+						 th:text="${visibility}"></option>
+					</select> 
+				</div>
+			</div>
+			
+			<div class="buttons-container">
+				<button type="submit" class="button create">Créer</button>
+				<a th:href="@{/}" class="button cancel">Annuler</a>
+			</div>	
+		</form>
+	</main>
+		
+		
+	
+	</main>
+</body>
+
+</html>

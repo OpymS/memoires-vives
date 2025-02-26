@@ -15,7 +15,20 @@
 	
 	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 		<h1 class="text-[#bddab2] text-2xl">Profil de <span th:text="${userToDisplay.pseudo}"></span></h1>
-			
+		<div class="w-full md:w-4/5 gap-3 mt-6">
+			<div class="border border-black rounded-lg flex flex-col items-center w-full">
+				<div th:text="${userToDisplay.email}"></div>
+				<div th:if="${userToDisplay.friends != null}">
+					<div th:each="friend : ${userToDisplay.friends}">
+						<a th:href="@{/profil(userId=${friend.userId})}" th:text="${friend.pseudo}"></a>
+					</div>					
+				</div>
+				<div th:if="${userToDisplay.friends != null}">
+					Aucun ami à afficher
+				</div>
+			</div>
+			<div th:if="${userToDisplay.userId == #authentication.principal.user.userId}"><a th:href="@{/profil/modify}">Modifier</a></div>
+		</div>
 	</main>
 	
 </body>
