@@ -260,4 +260,30 @@ public class Memory {
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	public String toStringWithoutCollections() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Memory [memoryId=");
+		builder.append(memoryId);
+		builder.append(", title=");
+		builder.append(title);
+		builder.append(", description=");
+		builder.append(description);
+		builder.append(", mediaUUID=");
+		builder.append(mediaUUID);
+		builder.append(", creationDate=");
+		builder.append(creationDate);
+		builder.append(", modificationDate=");
+		builder.append(modificationDate);
+		builder.append(", location=");
+		builder.append(location);
+		builder.append(", rememberer=");
+		builder.append(rememberer);
+		builder.append(", state=");
+		builder.append(state);
+		builder.append(", visibility=");
+		builder.append(visibility);
+		builder.append("]");
+		return builder.toString();
+	}
 }

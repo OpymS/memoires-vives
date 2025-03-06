@@ -2,13 +2,12 @@ package fr.memoires_vives.bll;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Primary;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import fr.memoires_vives.bo.Location;
@@ -16,20 +15,21 @@ import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.repositories.MemoryRepository;
-import fr.memoires_vives.security.CustomUserDetails;
 
 @Primary
 @Service
 public class MemoryServiceImpl implements MemoryService {
-
+	
 	private final MemoryRepository memoryRepository;
 	private final FileService fileService;
 	private final LocationService locationService;
+	private final UserService userService;
 
-	public MemoryServiceImpl(MemoryRepository memoryRepository, FileService fileService, LocationService locationService) {
+	public MemoryServiceImpl(MemoryRepository memoryRepository, FileService fileService, LocationService locationService, UserService userService) {
 		this.memoryRepository = memoryRepository;
 		this.fileService = fileService;
 		this.locationService = locationService;
+		this.userService = userService;
 	}
 
 	@Override
@@ -38,30 +38,31 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
+	@Transactional
 	public void createMemory(Memory memory, MultipartFile image, Boolean published, Location location) {
 memory.setCreationDate(LocalDateTime.now());
-
+		
 		Location savedLocation = locationService.saveLocation(location);
-		
-		if (published) {
-			memory.setState(MemoryState.PUBLISHED);
-		} else {
+		if (published == null || !published) {
 			memory.setState(MemoryState.CREATED);
+		} else {
+			memory.setState(MemoryState.PUBLISHED);
 		}
+		User rememberer = userService.getCurrentUser();
 		
-//		User rememberer = new User();
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-		User rememberer = userDetails.getUser();
 		memory.setRememberer(rememberer);
-		
+		Hibernate.initialize(rememberer.getMemories());
 		memory.setLocation(savedLocation);
 		
-		try {
-			memory.setMediaUUID(fileService.saveFile(image));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(image != null && !image.isEmpty()) {
+			try {
+				memory.setMediaUUID(fileService.saveFile(image));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		} else {
+			memory.setMediaUUID(null);
 		}
 		memoryRepository.save(memory);
 	}

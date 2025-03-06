@@ -256,4 +256,26 @@ public class User {
 		builder.append("]");
 		return builder.toString();
 	}
+	
+	public String toStringWithoutCollections() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("User [userId=");
+		builder.append(userId);
+		builder.append(", pseudo=");
+		builder.append(pseudo);
+		builder.append(", email=");
+		builder.append(email);
+		builder.append(", password=");
+		builder.append(password);
+		builder.append(", passwordConfirm=");
+		builder.append(passwordConfirm);
+		builder.append(", roles=");
+		builder.append(roles);
+		builder.append(", isAdmin=");
+		builder.append(isAdmin);
+		builder.append(", isActivated=");
+		builder.append(isActivated);
+		builder.append("]");
+		return builder.toString();
+	}
 }

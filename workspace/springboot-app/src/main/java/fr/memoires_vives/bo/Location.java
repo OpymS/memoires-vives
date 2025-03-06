@@ -1,5 +1,6 @@
 package fr.memoires_vives.bo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -29,7 +30,7 @@ public class Location {
 	private float longitude;
 	
 	@OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
-	private List<Memory> memories;
+	private List<Memory> memories = new ArrayList<Memory>();
 	
 	public Location() {
 	}
@@ -68,6 +69,13 @@ public class Location {
 	public float getLongitude() {
 		return longitude;
 	}
+	
+	/**
+	 * @return the memories
+	 */
+	public List<Memory> getMemories() {
+		return memories;
+	}
 
 	/**
 	 * @param locationId the locationId to set
@@ -97,6 +105,13 @@ public class Location {
 		this.longitude = longitude;
 	}
 
+	/**
+	 * @param memories the memories to set
+	 */
+	public void setMemories(List<Memory> memories) {
+		this.memories = memories;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -108,6 +123,8 @@ public class Location {
 		builder.append(latitude);
 		builder.append(", longitude=");
 		builder.append(longitude);
+		builder.append(", memories=");
+		builder.append(memories);
 		builder.append("]");
 		return builder.toString();
 	}

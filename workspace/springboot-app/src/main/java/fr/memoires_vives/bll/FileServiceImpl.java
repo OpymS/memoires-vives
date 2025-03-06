@@ -32,7 +32,7 @@ public class FileServiceImpl implements FileService {
         Path filePath = uploadDir.resolve(uniqueFileName);
         Files.write(filePath, file.getBytes());
         
-        return filePath.toString();
+        return uniqueFileName;
 	}
 
 }

@@ -6,5 +6,6 @@ public interface UserService {
 	public void createAccount(String pseudo, String email, String password, String passwordConfirm);
 	public User getUserByPseudo(String pseudo);
 	public User getUserById(long userId);
+	public User getCurrentUser();
 
 }
