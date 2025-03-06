@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 
 @Service
-@Primary
+//@Primary
 public class MemoryServiceMock implements MemoryService {
 
 	@Override
@@ -46,6 +48,12 @@ public class MemoryServiceMock implements MemoryService {
 		memory6.setDescription("encore un très bon !");
 		memories.add(memory6);
 		return memories;
+	}
+
+	@Override
+	public void createMemory(Memory memory, MultipartFile image, Boolean publish, Location location) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

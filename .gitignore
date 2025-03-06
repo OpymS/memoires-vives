@@ -43,3 +43,4 @@ workspace/springboot-app/.vscode/
 
 .env
 workspace/springboot-app/src/main/resources/application-dev.properties
+workspace/springboot-app/src/main/resources/static/images/uploadedImages/

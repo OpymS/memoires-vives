@@ -15,29 +15,50 @@
 	<main>
 		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 		<h1 class="text-[#bddab2] text-2xl">Partager un nouveau souvenir</h1>
-	    <form th:action="@{/new}" method="POST" th:object="${memory}">
+	    <form th:action="@{/new}" method="POST" th:object="${memory}" enctype="multipart/form-data">
 						
 			<div class="inputs-container">
 				<div class="title-input">
-					<label for="title">Titre</label>
+					<label for="title">Titre </label>
 					<input id="title" th:field="*{title}" type="text" placeholder="Donnez un titre à votre souvenir">
 				</div>
 				<div class="description-input">
-					<label for="description">Description</label>
-<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
+					<label for="description">Description </label>
 					<textarea id="description" th:field="*{description}" placeholder="Décrivez précisément votre souvenir"></textarea>
 				</div>
 				<div class="date-input">
-					<label for="date">Date</label>
+					<label for="date">Date </label>
 					<input id="date" th:field="*{memoryDate}" type="date">
 				</div>
 				<div class="visibility-input">
-					<label for="visibility">Visibilité</label>
+					<label for="visibility">Visibilité </label>
 					<select id="visibility" name="visibility">
 						<option th:each="visibility : ${visibilities}"
 						 th:value="${visibility}"
 						 th:text="${visibility}"></option>
 					</select> 
+				</div>
+				<div class="image-input">
+					<label for="image">Image associée </label>
+					<input id="image" name="image" type="file" accept="image/png, image/jpeg">
+				</div>
+				<div class="publish">
+					<label for="publish">Publier</label>
+					<input id="publish" name="publish" type="checkbox" />
+				</div>
+				<div th:object="${location}">
+					<div class="name-input">
+						<label for="locationName">Lieu </label>
+						<input id="locationName" th:field="*{name}" type="text" placeholder="Donnez un nom au lieu de votre souvenir">
+					</div>
+					<div class="latitude-input">
+						<label for="latitude">Latitude </label>
+						<input id="latitude" th:field="*{latitude}" type="number" step="any" placeholder="Latitude du lieu">
+					</div>
+					<div class="longitude-input">
+						<label for="longitude">Longitude </label>
+						<input id="longitude" th:field="*{longitude}" type="number" step="any" placeholder="Longitude du lieu">
+					</div>
 				</div>
 			</div>
 			
