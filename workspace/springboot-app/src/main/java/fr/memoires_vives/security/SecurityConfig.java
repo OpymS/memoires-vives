@@ -6,21 +6,15 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import fr.memoires_vives.bll.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-	
+
 	public SecurityConfig() {
 	}
 
@@ -28,7 +22,7 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login", "/signup", "/logout").permitAll()
+				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login", "/signup", "/logout", "/error", "/error/**", "/memory").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin(login -> login
@@ -50,7 +44,7 @@ public class SecurityConfig {
 					.ignoringRequestMatchers("/images/public/**"));
 		return http.build();
 	}
-	
+
 	@Bean
 	public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService) {
 		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -58,7 +52,7 @@ public class SecurityConfig {
 		authProvider.setPasswordEncoder(passwordEncoder());
 		return authProvider;
 	}
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();

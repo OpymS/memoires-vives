@@ -10,4 +10,6 @@ import fr.memoires_vives.bo.Memory;
 public interface MemoryService {
 	List<Memory> findMemories();
 	void createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);
+	Memory getMemoryById(long memoryId);
+	boolean authorizedDisplay(Memory memory);
 }

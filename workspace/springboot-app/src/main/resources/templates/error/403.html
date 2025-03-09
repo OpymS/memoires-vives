@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>403 - Forbidden</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+    <link rel="icon" href="/images/public/favicon.png" />
+<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<main class="font-bold w-full flex flex-col items-center">
+		<a class="font-bold text-xl" th:href="@{/new}">Erreur 403</a>
+		<h1 class="mt-[80px] text-[#bddab2] text-2xl">Vous n'avez pas l'autorisation d'accéder à cette page</h1>
+		<a href="/">Retour à l'accueil</a>	
+	</main>
+	
+</body>
+
+</html>

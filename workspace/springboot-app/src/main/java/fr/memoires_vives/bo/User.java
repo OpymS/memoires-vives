@@ -37,6 +37,9 @@ public class User {
 	private String password;
 	
 	@Transient
+	private String mediaUUID;
+	
+	@Transient
 	private String passwordConfirm;
 	
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -100,6 +103,13 @@ public class User {
 	 */
 	public String getPassword() {
 		return password;
+	}
+
+	/**
+	 * @return the mediaUUID
+	 */
+	public String getMediaUUID() {
+		return mediaUUID;
 	}
 
 	/**
@@ -177,6 +187,13 @@ public class User {
 	 */
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	/**
+	 * @param mediaUUID the mediaUUID to set
+	 */
+	public void setMediaUUID(String mediaUUID) {
+		this.mediaUUID = mediaUUID;
 	}
 
 	/**

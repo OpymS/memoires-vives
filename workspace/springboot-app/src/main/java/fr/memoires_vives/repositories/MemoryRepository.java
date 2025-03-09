@@ -9,4 +9,5 @@ import fr.memoires_vives.bo.Memory;
 public interface MemoryRepository extends JpaRepository<Memory, Long> {
 
 	List<Memory> findByTitle(String title);
+	Memory findByMemoryId(long memoryId);
 }

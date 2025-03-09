@@ -50,4 +50,21 @@ public class MemoryController {
 		return "redirect:/";
 	}
 
+	@GetMapping("/memory")
+	public String showMemoryPage(@RequestParam(name = "memoryId", required = false) Long memoryId, Model model) {
+		Memory memoryToDisplay = new Memory();
+		if (memoryId != null && memoryId != 0) {
+			memoryToDisplay = memoryService.getMemoryById(memoryId);
+		}
+		else {
+			return "redirect:/";			
+		}
+		boolean isAllowed = memoryService.authorizedDisplay(memoryToDisplay);
+		if (!isAllowed) {
+			return "error/403";
+		}
+		model.addAttribute("memoryToDisplay", memoryToDisplay);
+		return "memory";			
+	}
+	
 }

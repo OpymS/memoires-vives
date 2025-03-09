@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
+import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.repositories.MemoryRepository;
 
@@ -65,6 +66,21 @@ memory.setCreationDate(LocalDateTime.now());
 			memory.setMediaUUID(null);
 		}
 		memoryRepository.save(memory);
+	}
+
+	@Override
+	public Memory getMemoryById(long memoryId) {
+		return memoryRepository.findByMemoryId(memoryId);
+	}
+
+	@Override
+	public boolean authorizedDisplay(Memory memory) {
+		if (memory.getVisibility() == MemoryVisibility.PUBLIC) return true;
+		User currentUser = userService.getCurrentUser();
+		if (currentUser != null && memory.getRememberer().getUserId() == currentUser.getUserId())return true;
+		if (memory.getVisibility() == MemoryVisibility.MEMBERS && currentUser != null) return true;
+		if (memory.getVisibility() == MemoryVisibility.PRIVATE && currentUser != null && memory.getRememberer().getUserId() == currentUser.getUserId()) return true;
+		return false;
 	}
 
 }

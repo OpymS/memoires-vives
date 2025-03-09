@@ -13,12 +13,17 @@ import fr.memoires_vives.bo.User;
 import fr.memoires_vives.repositories.RoleRepository;
 import fr.memoires_vives.repositories.UserRepository;
 import fr.memoires_vives.security.CustomUserDetails;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
+
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
 			RoleRepository roleRepository) {
@@ -83,6 +88,7 @@ public class UserServiceImpl implements UserService {
 			throw new UsernameNotFoundException("Utilisateur non trouvé");
 		}
 		Hibernate.initialize(user.getFriends());
+		Hibernate.initialize(user.getMemories());
 		return user;
 	}
 
@@ -90,9 +96,17 @@ public class UserServiceImpl implements UserService {
 	@Transactional(readOnly = true)
 	public User getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
+			return null;
+		}
 		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 		User user = userRepository.findByUserId(userDetails.getUser().getUserId());
-//		user.setPassword(null);
+		if (user == null) {
+			return null;
+		}
+		Hibernate.initialize(user.getMemories());
+		entityManager.detach(user);
+		user.setPassword(null);
 		return user;
 	}
 }
