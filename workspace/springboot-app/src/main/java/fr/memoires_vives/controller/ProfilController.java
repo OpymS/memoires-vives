@@ -42,10 +42,10 @@ public class ProfilController {
 	}
 	
 	@PostMapping("/modify")
-	public String postMethodName(@RequestBody String entity) {
+	public String postMethodName() {
 		//TODO: process POST request
 		
-		return entity;
+		return "/";
 	}
 	
 }
