@@ -36,7 +36,6 @@ public class User {
 	@Column(nullable = false)
 	private String password;
 	
-	@Transient
 	private String mediaUUID;
 	
 	@Transient
@@ -245,8 +244,7 @@ public class User {
 		this.friends = friends;
 	}
 
-	@Override
-	public String toString() {
+	public String toStringWithCollections() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("User [userId=");
 		builder.append(userId);
@@ -256,6 +254,8 @@ public class User {
 		builder.append(email);
 		builder.append(", password=");
 		builder.append(password);
+		builder.append(", mediaUUID=");
+		builder.append(mediaUUID);
 		builder.append(", passwordConfirm=");
 		builder.append(passwordConfirm);
 		builder.append(", roles=");
@@ -274,7 +274,8 @@ public class User {
 		return builder.toString();
 	}
 	
-	public String toStringWithoutCollections() {
+	@Override
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("User [userId=");
 		builder.append(userId);
@@ -284,8 +285,8 @@ public class User {
 		builder.append(email);
 		builder.append(", password=");
 		builder.append(password);
-		builder.append(", passwordConfirm=");
-		builder.append(passwordConfirm);
+		builder.append(", mediaUUID=");
+		builder.append(mediaUUID);
 		builder.append(", roles=");
 		builder.append(roles);
 		builder.append(", isAdmin=");

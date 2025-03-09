@@ -14,25 +14,42 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileServiceImpl implements FileService {
 	@Value("${upload.path}")
 	private String uploadPath;
-	
+
 	@Override
 	public String saveFile(MultipartFile file) throws IOException {
-		
+		if (file == null) {
+			return "";
+		}
+		String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
+		saveWithName(file, uniqueFileName);
+		return uniqueFileName;
+	}
+
+	@Override
+	public String saveUserFile(MultipartFile file, String pseudo) throws IOException {
+		if (file == null) {
+			return "";
+		}
+
+		String originalFilename = file.getOriginalFilename();
+		String extension = "";
+		if (originalFilename != null && originalFilename.contains(".")) {
+			extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+		}
+		String uniqueFileName = UUID.randomUUID().toString() + "_" + pseudo + extension;
+
+		saveWithName(file, uniqueFileName);
+		return uniqueFileName;
+	}
+
+	private void saveWithName(MultipartFile file, String name) throws IOException {
 		Path uploadDir = Paths.get(uploadPath);
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
-        }
-
-        if (file == null) {
-        	return "";
-        }
-        
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-
-        Path filePath = uploadDir.resolve(uniqueFileName);
-        Files.write(filePath, file.getBytes());
-        
-        return uniqueFileName;
+		if (!Files.exists(uploadDir)) {
+			Files.createDirectories(uploadDir);
+		}
+		Path filePath = uploadDir.resolve(name);
+		Files.write(filePath, file.getBytes());
 	}
 
 }

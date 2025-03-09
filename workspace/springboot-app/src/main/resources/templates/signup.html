@@ -15,7 +15,7 @@
 	<main>
 		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 		<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
-	    <form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form">
+	    <form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form" enctype="multipart/form-data">
 						
 			<div class="inputs-container">
 				<div class="pseudo-input">
@@ -36,7 +36,10 @@
 					<label for="inputPasswordConfirm">confirmez votre mot de passe</label>
 					<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password">
 				</div>
-				
+				<div class="image-input">
+					<label for="image">Photo de profil </label>
+					<input id="image" name="image" type="file" accept="image/png, image/jpeg">
+				</div>
 			</div>
 			
 			<div class="buttons-container">

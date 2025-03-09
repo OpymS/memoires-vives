@@ -232,8 +232,7 @@ public class Memory {
 		this.groups = groups;
 	}
 
-	@Override
-	public String toString() {
+	public String toStringWithCollections() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Memory [memoryId=");
 		builder.append(memoryId);
@@ -260,8 +259,9 @@ public class Memory {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	public String toStringWithoutCollections() {
+
+	@Override
+	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Memory [memoryId=");
 		builder.append(memoryId);

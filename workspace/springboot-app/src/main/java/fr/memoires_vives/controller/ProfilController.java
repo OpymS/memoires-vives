@@ -3,6 +3,7 @@ package fr.memoires_vives.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -31,6 +32,20 @@ public class ProfilController {
 		model.addAttribute("userToDisplay", userToDisplay);
 
 		return "profil";
+	}
+	
+	@GetMapping("/modify")
+	public String showModifyProfilForm(Model model) {
+		User user = userService.getCurrentUser();
+		model.addAttribute("user", user);
+		return "profil-modify";
+	}
+	
+	@PostMapping("/modify")
+	public String postMethodName(@RequestBody String entity) {
+		//TODO: process POST request
+		
+		return entity;
 	}
 	
 }

@@ -5,6 +5,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
 
@@ -30,8 +33,8 @@ public class LoginController {
 	}
 
 	@PostMapping("/signup")
-	public String processSignup(@ModelAttribute("user") User user, Model model) {
-		userService.createAccount(user.getPseudo(), user.getEmail(), user.getPassword(), user.getPasswordConfirm());
+	public String processSignup(@ModelAttribute("user") User user, Model model, @RequestParam(name = "image", required = false) MultipartFile fileImage) {
+		userService.createAccount(user.getPseudo(), user.getEmail(), user.getPassword(), user.getPasswordConfirm(), fileImage);
 		return "redirect:/login";
 	}
 }
