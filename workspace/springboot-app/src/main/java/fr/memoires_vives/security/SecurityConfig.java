@@ -19,29 +19,17 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-		http
-			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login", "/signup", "/logout", "/error", "/error/**", "/memory").permitAll()
-				.anyRequest().authenticated()
-			)
-			.formLogin(login -> login
-				.loginPage("/login")
-				.permitAll()
-				.defaultSuccessUrl("/", true)
-				.failureUrl("/login?error=true")
-			)
-			.logout(logout -> logout
-				.permitAll()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-				.invalidateHttpSession(true)
-				.clearAuthentication(true)
-				.deleteCookies("JSESSIONID")
-				.logoutSuccessUrl("/")
-			)
-			.httpBasic(Customizer.withDefaults())
-			.csrf(csrf -> csrf
-					.ignoringRequestMatchers("/images/public/**"));
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login",
+						"/signup", "/logout", "/error", "/error/**", "/memory", "/about").permitAll()
+				.anyRequest().authenticated())
+				.formLogin(login -> login.loginPage("/login").permitAll().defaultSuccessUrl("/", true)
+						.failureUrl("/login?error=true"))
+				.logout(logout -> logout.permitAll().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+						.invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID")
+						.logoutSuccessUrl("/"))
+				.httpBasic(Customizer.withDefaults()).csrf(csrf -> csrf.ignoringRequestMatchers("/images/public/**"));
 		return http.build();
 	}
 

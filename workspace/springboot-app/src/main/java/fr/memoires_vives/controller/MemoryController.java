@@ -30,6 +30,12 @@ public class MemoryController {
 		return "index";
 	}
 
+	@GetMapping("/about")
+	public String showAboutPage() {
+		return "about";
+	}
+	
+	
 	@GetMapping("/new")
 	public String newMemory(Model model) {
 		Memory memory = new Memory();
