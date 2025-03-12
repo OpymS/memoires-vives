@@ -3,6 +3,7 @@ package fr.memoires_vives.bll;
 import java.io.IOException;
 
 import org.hibernate.Hibernate;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,7 +39,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void createAccount(String pseudo, String email, String password, String passwordConfirm, MultipartFile image) {
+	public void createAccount(String pseudo, String email, String password, String passwordConfirm,
+			MultipartFile image) {
 		boolean isValid = checkPassword(password, passwordConfirm) && checkPseudoAvailable(pseudo)
 				&& checkEmailAvailable(email);
 
@@ -56,21 +58,22 @@ public class UserServiceImpl implements UserService {
 				roleRepository.save(userRole);
 			}
 			user.getRoles().add(userRole);
-			
-			if(image != null && !image.isEmpty()) {
+
+			if (image != null && !image.isEmpty()) {
 				try {
 					user.setMediaUUID(fileService.saveUserFile(image, pseudo));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}			
+				}
 			} else {
 				user.setMediaUUID(null);
 			}
 
 			userRepository.save(user);
 		} else {
-			throw new IllegalArgumentException("Les informations fournies ne sont pas valides. Soit le pseudo est déjà pris, soit c'est l'email soit y a un problème de mdp");
+			throw new IllegalArgumentException(
+					"Les informations fournies ne sont pas valides. Soit le pseudo est déjà pris, soit c'est l'email soit y a un problème de mdp");
 		}
 	}
 
@@ -135,5 +138,54 @@ public class UserServiceImpl implements UserService {
 		entityManager.detach(user);
 		user.setPassword(null);
 		return user;
+	}
+
+	@Override
+	public void updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage) {
+		boolean isValid = true;
+
+		User userToSave = userRepository.findByUserId(userWithUpdate.getUserId());
+		String updatedPseudo = userWithUpdate.getPseudo();
+		String currentPseudo = userToSave.getPseudo();
+
+		String updatedEmail = userWithUpdate.getEmail();
+		String currentEmail = userToSave.getEmail();
+
+		isValid &= passwordEncoder.matches(currentPassword, userToSave.getPassword());
+
+		if (!userWithUpdate.getPassword().isBlank() || !userWithUpdate.getPasswordConfirm().isBlank()) {
+			isValid &= checkPassword(userWithUpdate.getPassword(), userWithUpdate.getPasswordConfirm());
+			if (isValid) {
+				userToSave.setPassword(passwordEncoder.encode(userWithUpdate.getPassword()));
+			}
+		}
+
+		if (!updatedPseudo.equals(currentPseudo)) {
+			isValid &= checkPseudoAvailable(updatedPseudo);
+			userToSave.setPseudo(updatedPseudo);
+		}
+
+		if (!updatedEmail.equals(currentEmail)) {
+			isValid &= checkEmailAvailable(updatedEmail);
+			userToSave.setEmail(updatedEmail);
+		}
+
+		if (fileImage != null && !fileImage.isEmpty()) {
+			try {
+				userToSave.setMediaUUID(fileService.saveUserFile(fileImage, updatedPseudo));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		if (isValid) {
+			try {
+				userRepository.save(userToSave);
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 }

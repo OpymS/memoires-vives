@@ -9,5 +9,6 @@ public interface UserService {
 	public User getUserByPseudo(String pseudo);
 	public User getUserById(long userId);
 	public User getCurrentUser();
+	public void updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage);
 
 }

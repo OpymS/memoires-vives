@@ -15,7 +15,7 @@
 	<main>
 		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 			<h1 class="text-[#bddab2] text-2xl">Modifier son profil</h1>
-			<form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form"
+			<form th:action="@{/profil/modify}" method="POST" th:object="${user}" class="user-create-form"
 				enctype="multipart/form-data">
 
 				<div class="inputs-container">
@@ -52,10 +52,11 @@
 							th:if="${user.mediaUUID}==null" src="/images/public/user-placeholder.png"
 							th:alt="'image de profil de ' + ${user.pseudo}" />
 					</div>
+					<input id="userId" th:field="*{userId}" type="hidden"/>
 				</div>
 
 				<div class="buttons-container">
-					<button type="submit" class="button create">Créer</button>
+					<button type="submit" class="button create">Modifier</button>
 					<a th:href="@{/}" class="button cancel">Annuler</a>
 				</div>
 			</form>
