@@ -52,4 +52,14 @@ public class FileServiceImpl implements FileService {
 		Files.write(filePath, file.getBytes());
 	}
 
+	@Override
+	public boolean deleteFile(String mediaUUID) throws IOException {
+		Path filePath = Paths.get(uploadPath, mediaUUID);
+		if (Files.exists(filePath)) {
+			Files.delete(filePath);
+			return true;
+		}
+		return false;
+	}
+
 }

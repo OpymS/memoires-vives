@@ -10,4 +10,5 @@ public interface MemoryRepository extends JpaRepository<Memory, Long> {
 
 	List<Memory> findByTitle(String title);
 	Memory findByMemoryId(long memoryId);
+	Memory findByMediaUUID(String mediaUUID);
 }

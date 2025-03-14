@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void createAccount(String pseudo, String email, String password, String passwordConfirm,
+	public User createAccount(String pseudo, String email, String password, String passwordConfirm,
 			MultipartFile image) {
 		boolean isValid = checkPassword(password, passwordConfirm) && checkPseudoAvailable(pseudo)
 				&& checkEmailAvailable(email);
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 				user.setMediaUUID(null);
 			}
 
-			userRepository.save(user);
+			return userRepository.save(user);
 		} else {
 			throw new IllegalArgumentException(
 					"Les informations fournies ne sont pas valides. Soit le pseudo est déjà pris, soit c'est l'email soit y a un problème de mdp");
@@ -141,7 +141,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage) {
+	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage) {
 		boolean isValid = true;
 
 		User userToSave = userRepository.findByUserId(userWithUpdate.getUserId());
@@ -181,11 +181,11 @@ public class UserServiceImpl implements UserService {
 
 		if (isValid) {
 			try {
-				userRepository.save(userToSave);
+				return userRepository.save(userToSave);
 			} catch (DataAccessException e) {
 				e.printStackTrace();
 			}
 		}
-
+		return null;
 	}
 }

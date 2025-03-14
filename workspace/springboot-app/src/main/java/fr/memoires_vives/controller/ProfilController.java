@@ -43,14 +43,14 @@ public class ProfilController {
 	}
 
 	@PostMapping("/modify")
-	public String postMethodName(@ModelAttribute("user") User updatedUser,
+	public String modifyProfil(@ModelAttribute("user") User updatedUser,
 			@RequestParam(name = "currentPassword", required = false) String currentPassword,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		User currentUser = userService.getCurrentUser();
 		if (currentUser.getUserId() == updatedUser.getUserId()) {
 			userService.updateProfile(updatedUser, currentPassword, fileImage);
 		}
-		
+
 		return "redirect:/profil";
 	}
 

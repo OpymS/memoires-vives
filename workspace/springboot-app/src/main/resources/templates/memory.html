@@ -3,28 +3,38 @@
 
 <head>
 	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Souvenir</title>
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-    <link rel="icon" href="/images/public/favicon.png" />
-<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
 </head>
 
 <body>
 	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	
+
 	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 		<h1 class="text-[#bddab2] text-2xl" th:text="${memoryToDisplay.title}"></h1>
 		<div class="w-full md:w-4/5 gap-3 mt-6 flex flex-col items-center">
 			<div class="border border-black rounded-lg flex flex-col items-center w-full max-w-xs">
-				<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]" th:if="${memoryToDisplay.mediaUUID}!=null" th:src="@{/uploads/{filename}(filename=${memoryToDisplay.mediaUUID})}" alt="image d'illustration du souvenir" />
-				<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]" th:if="${memoryToDisplay.mediaUUID}==null" src="/images/public/memory-placeholder.png" alt="image d'illustration du souvenir" />
-				<div th:text="'Souvenir de ' + ${memoryToDisplay.rememberer.pseudo}"></div>
+				<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+					th:if="${memoryToDisplay.mediaUUID}!=null"
+					th:src="@{/uploads/{filename}(filename=${memoryToDisplay.mediaUUID})}"
+					alt="image d'illustration du souvenir" />
+				<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+					th:if="${memoryToDisplay.mediaUUID}==null" src="/images/public/memory-placeholder.png"
+					alt="image d'illustration du souvenir" />
+				<div>Souvenir de <a th:href="@{/profil(userId=${memoryToDisplay.rememberer.userId})}"
+						th:text="${memoryToDisplay.rememberer.pseudo}"></a></div>
+				<div> du <span th:text="${#temporals.format(memoryToDisplay.memoryDate, 'dd MMM yyyy')}"></span></div>
 			</div>
-			<div th:if="${#authentication.authorities.?[#this.authority == 'ROLE_ANONYMOUS'].isEmpty() and memoryToDisplay.rememberer.userId == #authentication?.principal?.user?.userId}"><a th:href="@{/memory/modify}">Modifier</a></div>
+			<div
+				th:if="${#authentication.authorities.?[#this.authority == 'ROLE_ANONYMOUS'].isEmpty() and memoryToDisplay.rememberer.userId == #authentication?.principal?.user?.userId}">
+				<a th:href="@{/memory/modify(memoryId=${memoryToDisplay.memoryId})}">Modifier</a>
+			</div>
 		</div>
 	</main>
-	
+
 </body>
 
 </html>

@@ -123,8 +123,8 @@ public class Location {
 		builder.append(latitude);
 		builder.append(", longitude=");
 		builder.append(longitude);
-		builder.append(", memories=");
-		builder.append(memories);
+//		builder.append(", memories=");
+//		builder.append(memories);
 		builder.append("]");
 		return builder.toString();
 	}

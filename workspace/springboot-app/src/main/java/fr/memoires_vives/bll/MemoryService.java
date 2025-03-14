@@ -9,7 +9,10 @@ import fr.memoires_vives.bo.Memory;
 
 public interface MemoryService {
 	List<Memory> findMemories();
-	void createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);
+	Memory createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);
+	Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish, Location locationWithUpdate);
 	Memory getMemoryById(long memoryId);
+	Memory getMemoryByImage(String mediaUUID);
 	boolean authorizedDisplay(Memory memory);
+	boolean authorizedModification(Memory memory);
 }

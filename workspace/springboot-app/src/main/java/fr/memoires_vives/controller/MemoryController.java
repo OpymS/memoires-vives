@@ -2,6 +2,7 @@ package fr.memoires_vives.controller;
 
 import java.util.List;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-@org.springframework.stereotype.Controller
+@Controller
 public class MemoryController {
 
 	private final MemoryService memoryService;
@@ -34,8 +35,7 @@ public class MemoryController {
 	public String showAboutPage() {
 		return "about";
 	}
-	
-	
+
 	@GetMapping("/new")
 	public String newMemory(Model model) {
 		Memory memory = new Memory();
@@ -47,8 +47,7 @@ public class MemoryController {
 	}
 
 	@PostMapping("/new")
-	public String createMemory(@ModelAttribute("memory") Memory memory,
-			@ModelAttribute("location") Location location,
+	public String createMemory(@ModelAttribute("memory") Memory memory, @ModelAttribute("location") Location location,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		memoryService.createMemory(memory, fileImage, published, location);
@@ -61,16 +60,41 @@ public class MemoryController {
 		Memory memoryToDisplay = new Memory();
 		if (memoryId != null && memoryId != 0) {
 			memoryToDisplay = memoryService.getMemoryById(memoryId);
-		}
-		else {
-			return "redirect:/";			
+		} else {
+			return "redirect:/";
 		}
 		boolean isAllowed = memoryService.authorizedDisplay(memoryToDisplay);
 		if (!isAllowed) {
 			return "error/403";
 		}
 		model.addAttribute("memoryToDisplay", memoryToDisplay);
-		return "memory";			
+		return "memory";
 	}
-	
+
+	@GetMapping("/memory/modify")
+	public String showModifyMemoryForm(@RequestParam(name = "memoryId", required = true) Long memoryId, Model model) {
+		Memory memory = memoryService.getMemoryById(memoryId);
+		boolean isAllowed = memoryService.authorizedModification(memory);
+		if (!isAllowed) {
+			return "error/403";
+		}
+		Location location = memory.getLocation();
+		model.addAttribute("memory", memory);
+		model.addAttribute("location", location);
+		return "memory-modify";
+	}
+
+	@PostMapping("/memory/modify")
+	public String modifyMemory(@ModelAttribute("memory") Memory memory, @ModelAttribute("location") Location location,
+			@RequestParam(name = "publish", required = false) Boolean published,
+			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
+		boolean isAllowed = memoryService.authorizedModification(memory);
+		if (!isAllowed) {
+			return "error/403";
+		}
+		memoryService.updateMemory(memory, fileImage, published, location);
+		
+		return "redirect:/memory?memoryId="+memory.getMemoryId();
+	}
+
 }

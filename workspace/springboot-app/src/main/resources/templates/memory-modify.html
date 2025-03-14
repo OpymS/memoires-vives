@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--<html lang="fr">-->
+
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modification d'un souvenir</title>
+    <link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+    <link rel="icon" href="/images/public/favicon.png" />
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	
+	<main>
+		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
+		<h1 class="text-[#bddab2] text-2xl">Modifier un souvenir</h1>
+	    <form th:action="@{/memory/modify}" method="POST" th:object="${memory}" enctype="multipart/form-data">
+						
+			<div class="inputs-container">
+				<div class="title-input">
+					<label for="title">Titre </label>
+					<input id="title" th:field="*{title}" type="text" placeholder="Donnez un titre à votre souvenir">
+				</div>
+				<div class="description-input">
+					<label for="description">Description </label>
+					<textarea id="description" th:field="*{description}" placeholder="Décrivez précisément votre souvenir"></textarea>
+				</div>
+				<div class="date-input">
+					<label for="date">Date </label>
+					<input id="date" th:field="*{memoryDate}" type="date">
+				</div>
+				<div class="visibility-input">
+					<label for="visibility">Visibilité </label>
+					<select id="visibility" name="visibility">
+						<option th:each="visibility : ${visibilities}"
+						 th:value="${visibility}"
+						 th:text="${visibility}"></option>
+					</select> 
+				</div>
+				<div class="image-input">
+					<label for="image">Image associée </label>
+					<input id="image" name="image" type="file" accept="image/png, image/jpeg">
+					<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+							th:if="${memory.mediaUUID}!=null"
+							th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
+							th:alt="'image associée au souvenir ' + ${memory.title}" />
+						<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+							th:if="${memory.mediaUUID}==null" src="/images/public/memory-placeholder.png"
+							th:alt="'image associée au souvenir ' + ${memory.title}" />
+				</div>
+				<input id="memoryId" th:field="*{memoryId}" type="hidden"/>
+				<div class="publish">
+					<label for="publish">Publier</label>
+					<input id="publish" name="publish" type="checkbox" th:checked="*{state.name() == 'PUBLISHED'}"/>
+				</div>
+				<div th:object="${location}">
+					<div class="name-input">
+						<label for="locationName">Lieu </label>
+						<input id="locationName" th:field="*{name}" type="text" placeholder="Donnez un nom au lieu de votre souvenir">
+					</div>
+					<div class="latitude-input">
+						<label for="latitude">Latitude </label>
+						<input id="latitude" th:field="*{latitude}" type="number" step="any" placeholder="Latitude du lieu">
+					</div>
+					<div class="longitude-input">
+						<label for="longitude">Longitude </label>
+						<input id="longitude" th:field="*{longitude}" type="number" step="any" placeholder="Longitude du lieu">
+					</div>
+				</div>
+			</div>
+			
+			<div class="buttons-container">
+				<button type="submit" class="button create">Modifier</button>
+				<a th:href="@{/memory(memoryId=${memory.memoryId})}" class="button cancel">Annuler</a>
+			</div>	
+		</form>
+	</main>
+		
+		
+	
+	</main>
+</body>
+
+</html>

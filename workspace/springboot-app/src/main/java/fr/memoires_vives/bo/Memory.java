@@ -278,7 +278,7 @@ public class Memory {
 		builder.append(", location=");
 		builder.append(location);
 		builder.append(", rememberer=");
-		builder.append(rememberer);
+		builder.append(rememberer.getUserId());
 		builder.append(", state=");
 		builder.append(state);
 		builder.append(", visibility=");
