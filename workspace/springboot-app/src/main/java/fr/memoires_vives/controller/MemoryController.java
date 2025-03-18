@@ -81,6 +81,7 @@ public class MemoryController {
 		Location location = memory.getLocation();
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
+		model.addAttribute("visibilities", MemoryVisibility.values());
 		return "memory-modify";
 	}
 

@@ -46,6 +46,10 @@ public class Memory {
 	private Location location;
 
 	@ManyToOne
+	@JoinColumn(name = "category_id", nullable =true)
+	private Category category;
+	
+	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private User rememberer;
 
@@ -118,6 +122,13 @@ public class Memory {
 	 */
 	public Location getLocation() {
 		return location;
+	}
+
+	/**
+	 * @return the category
+	 */
+	public Category getCategory() {
+		return category;
 	}
 
 	/**
@@ -205,6 +216,13 @@ public class Memory {
 	}
 
 	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	/**
 	 * @param rememberer the rememberer to set
 	 */
 	public void setRememberer(User rememberer) {
@@ -277,6 +295,8 @@ public class Memory {
 		builder.append(modificationDate);
 		builder.append(", location=");
 		builder.append(location);
+		builder.append(", category=");
+		builder.append(category);
 		builder.append(", rememberer=");
 		builder.append(rememberer.getUserId());
 		builder.append(", state=");

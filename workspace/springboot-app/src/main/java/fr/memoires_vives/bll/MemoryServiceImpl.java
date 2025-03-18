@@ -10,11 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.repositories.CategoryRepository;
 import fr.memoires_vives.repositories.MemoryRepository;
 
 @Primary
@@ -25,13 +27,15 @@ public class MemoryServiceImpl implements MemoryService {
 	private final FileService fileService;
 	private final LocationService locationService;
 	private final UserService userService;
+	private final CategoryRepository categoryRepository;
 
 	public MemoryServiceImpl(MemoryRepository memoryRepository, FileService fileService,
-			LocationService locationService, UserService userService) {
+			LocationService locationService, UserService userService, CategoryRepository categoryRepository) {
 		this.memoryRepository = memoryRepository;
 		this.fileService = fileService;
 		this.locationService = locationService;
 		this.userService = userService;
+		this.categoryRepository = categoryRepository;
 	}
 
 	@Override
@@ -66,6 +70,9 @@ public class MemoryServiceImpl implements MemoryService {
 		} else {
 			memory.setMediaUUID(null);
 		}
+		Category category = categoryRepository.findByName("Default category");
+		memory.setCategory(category);
+		
 		return memoryRepository.save(memory);
 	}
 

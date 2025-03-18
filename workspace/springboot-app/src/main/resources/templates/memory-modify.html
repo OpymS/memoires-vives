@@ -33,7 +33,7 @@
 				</div>
 				<div class="visibility-input">
 					<label for="visibility">Visibilité </label>
-					<select id="visibility" name="visibility">
+					<select id="visibility" name="visibility" th:field="*{visibility}">
 						<option th:each="visibility : ${visibilities}"
 						 th:value="${visibility}"
 						 th:text="${visibility}"></option>
