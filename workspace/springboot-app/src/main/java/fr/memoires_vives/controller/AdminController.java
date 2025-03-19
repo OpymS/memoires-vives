@@ -23,7 +23,7 @@ public class AdminController {
 
 	@GetMapping
 	public String showAdminPanel() {
-		return "/admin";
+		return "admin";
 	}
 	
 	@GetMapping("/users")
