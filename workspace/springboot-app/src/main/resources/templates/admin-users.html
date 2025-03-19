@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>À propos</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<div class="flex flex-row justify-between items-start h-screen">
+		<main class="font-bold w-full flex flex-col items-center">
+			<h1 class="mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration des utilisateurs</h1>
+			<table>
+				<thead>
+					<tr>
+						<th>userId</th>
+						<th>pseudo</th>
+						<th>email</th>
+						<th>image</th>
+						<th>roles</th>
+						<th>actif</th>
+						<th>actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="user:${users}">
+						<td th:text="${user.userId}"></td>
+						<td th:text="${user.pseudo}"></td>
+						<td th:text="${user.email}"></td>
+						<td>
+							<img class="rounded-[50%] w-[40px] h-[40px]" th:if="${user.mediaUUID}!=null"
+								th:src="@{/uploads/{filename}(filename=${user.mediaUUID})}"
+								alt="image de profil de l'utilisateur" />
+						</td>
+						<td><p th:each="role:${user.roles}" th:text="${role.name}"></p></td>
+						<td th:text="${user.isActivated}"></td>
+						<td> supprimer désactiver voir</td>
+					</tr>
+				</tbody>
+			</table>
+		</main>
+		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
+	</div>
+</body>
+
+</html>

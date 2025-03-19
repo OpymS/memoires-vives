@@ -1,6 +1,7 @@
 package fr.memoires_vives.bll;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.springframework.dao.DataAccessException;
@@ -187,5 +188,10 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public List<User> getAllUsers() {
+		return userRepository.findAll();
 	}
 }

@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.com" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<aside data-th-fragment="admin"
+	class="bg-[#bddab2] flex flex-col text-black gap-10 justify-start items-start h-screen w-48 pl-4 pt-4">
+
+	<div><a th:href="@{/admin/users}" class="lg:text-xl lg:font-bold">Utilisateurs</a></div>
+	<div><a th:href="@{/admin/memories}" class="lg:text-xl lg:font-bold">Souvenirs</a></div>
+	<div><a th:href="@{/admin/categories}" class="lg:text-xl lg:font-bold">Catégories</a></div>
+	<div><a th:href="@{/admin/locations}" class="lg:text-xl lg:font-bold">Lieux</a></div>
+	<div><a th:href="@{/admin/groups}" class="lg:text-xl lg:font-bold">Groupes</a></div>
+
+</aside>
+
+</html>
