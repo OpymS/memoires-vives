@@ -46,6 +46,7 @@
 							<span th:unless="${user.isActivated}"><a href="#modal-activate">activer</a></span>
 							<a href="#modal-delete">supprimer</a>
 							<a th:href="@{/profil(userId=${user.userId})}">voir</a>
+							<a th:href="@{/profil/modify(userId=${user.userId})}">modifier</a>
 							<span th:unless="${#lists.contains(user.roles.![name], 'ROLE_ADMIN')}"><a href="#modal-admin">upgrader</a></span>
 						</td>
 					</tr>

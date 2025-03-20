@@ -13,5 +13,6 @@ public interface UserService {
 	public User getCurrentUser();
 	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage);
 	public List<User> getAllUsers();
-
+	public boolean isAdmin();
+	public boolean verifyPassword(String rawPassword);
 }

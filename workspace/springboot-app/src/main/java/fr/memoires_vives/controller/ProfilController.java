@@ -36,8 +36,13 @@ public class ProfilController {
 	}
 
 	@GetMapping("/modify")
-	public String showModifyProfilForm(Model model) {
-		User user = userService.getCurrentUser();
+	public String showModifyProfilForm(@RequestParam(name = "userId", required = false) Long userId, Model model) {
+		User user;
+		if (userService.isAdmin() && userId != null) {
+			user = userService.getUserById(userId);
+		} else {
+			user = userService.getCurrentUser();
+		}
 		model.addAttribute("user", user);
 		return "profil-modify";
 	}
@@ -47,11 +52,11 @@ public class ProfilController {
 			@RequestParam(name = "currentPassword", required = false) String currentPassword,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		User currentUser = userService.getCurrentUser();
-		if (currentUser.getUserId() == updatedUser.getUserId()) {
+		if (userService.isAdmin() || currentUser.getUserId() == updatedUser.getUserId()) {
 			userService.updateProfile(updatedUser, currentPassword, fileImage);
 		}
 
-		return "redirect:/profil";
+		return "redirect:/profil?userId=" + updatedUser.getUserId();
 	}
 
 }

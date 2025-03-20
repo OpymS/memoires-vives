@@ -30,15 +30,15 @@
 						<input id="inputEmail" th:field="*{email}" type="email">
 					</div>
 					<div class="currentPassword-input">
-						<label for="inputCurrentPassword">mot de passe actuel </label>
+						<label for="inputCurrentPassword" th:text="${user.userId == #authentication.principal.user.userId ? 'mot de passe actuel' : 'mot de passe administrateur'}"> </label>
 						<input id="inputCurrentPassword" name="currentPassword" type="password">
 					</div>
 					<div class="password-input">
-						<label for="inputPassword">mot de passe </label>
+						<label for="inputPassword">nouveau mot de passe </label>
 						<input id="inputPassword" th:field="*{password}" type="password">
 					</div>
 					<div class="confirm-password-input">
-						<label for="inputPasswordConfirm">confirmez votre mot de passe </label>
+						<label for="inputPasswordConfirm">confirmez votre nouveau mot de passe </label>
 						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password">
 					</div>
 					<div class="image-input">

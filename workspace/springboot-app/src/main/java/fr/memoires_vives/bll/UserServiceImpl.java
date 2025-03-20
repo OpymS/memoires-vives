@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +20,7 @@ import fr.memoires_vives.bo.User;
 import fr.memoires_vives.repositories.RoleRepository;
 import fr.memoires_vives.repositories.UserRepository;
 import fr.memoires_vives.security.CustomUserDetails;
+import fr.memoires_vives.security.CustomUserDetailsService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -27,16 +30,18 @@ public class UserServiceImpl implements UserService {
 	private final RoleRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final FileService fileService;
+	private final CustomUserDetailsService customUserDetailsService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-			RoleRepository roleRepository, FileService fileService) {
+			RoleRepository roleRepository, FileService fileService, CustomUserDetailsService customUserDetailsService) {
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.fileService = fileService;
+		this.customUserDetailsService = customUserDetailsService;
 	}
 
 	@Override
@@ -152,8 +157,11 @@ public class UserServiceImpl implements UserService {
 		String updatedEmail = userWithUpdate.getEmail();
 		String currentEmail = userToSave.getEmail();
 
-		isValid &= passwordEncoder.matches(currentPassword, userToSave.getPassword());
+		isValid &= (isAdmin() && verifyPassword(currentPassword))
+				|| passwordEncoder.matches(currentPassword, userToSave.getPassword());
 
+		// si les 2 mots de passe renseignés sont blancs, il n'y a pas de changement de
+		// mot de passe et on conserve le mdp de userToSave
 		if (!userWithUpdate.getPassword().isBlank() || !userWithUpdate.getPasswordConfirm().isBlank()) {
 			isValid &= checkPassword(userWithUpdate.getPassword(), userWithUpdate.getPasswordConfirm());
 			if (isValid) {
@@ -182,7 +190,14 @@ public class UserServiceImpl implements UserService {
 
 		if (isValid) {
 			try {
-				return userRepository.save(userToSave);
+				userToSave = userRepository.save(userToSave);
+				CustomUserDetails updatedUserDetails = (CustomUserDetails) customUserDetailsService
+						.loadUserByUsername(userToSave.getPseudo());
+				UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+						updatedUserDetails, updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
+				SecurityContextHolder.getContext().setAuthentication(newAuth);
+				return userToSave;
+
 			} catch (DataAccessException e) {
 				e.printStackTrace();
 			}
@@ -193,5 +208,22 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
+	}
+
+	@Override
+	public boolean isAdmin() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null && authentication.getAuthorities() != null) {
+			return authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+		}
+		return false;
+	}
+
+	@Override
+	public boolean verifyPassword(String rawPassword) {
+		CustomUserDetails userDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		String storedPassword = userDetails.getPassword();
+		return passwordEncoder.matches(rawPassword, storedPassword);
 	}
 }

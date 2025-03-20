@@ -85,6 +85,8 @@ public class MemoryServiceImpl implements MemoryService {
 	public boolean authorizedDisplay(Memory memory) {
 		if (memory.getVisibility() == MemoryVisibility.PUBLIC)
 			return true;
+		if (userService.isAdmin())
+			return true;
 		User currentUser = userService.getCurrentUser();
 		if (currentUser != null && memory.getRememberer().getUserId() == currentUser.getUserId())
 			return true;
@@ -98,6 +100,8 @@ public class MemoryServiceImpl implements MemoryService {
 
 	@Override
 	public boolean authorizedModification(Memory memory) {
+		if (userService.isAdmin())
+			return true;
 		User currentUser = userService.getCurrentUser();
 		long remembererId;
 		if (memory.getRememberer() == null) {
