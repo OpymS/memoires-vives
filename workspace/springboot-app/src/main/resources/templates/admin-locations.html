@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panneau d'administration - Lieux</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<div class="flex flex-row justify-between items-start h-screen">
+		<main class="font-bold w-full flex flex-col sm:items-center overflow-auto">
+			<h1 class="mt-4 sm:mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration des lieux</h1>
+			<table class="border border-black border-collapse w-full sm:w-9/10">
+				<thead>
+					<tr class="border border-black">
+						<th class="border border-black">Id</th>
+						<th class="border border-black">nom</th>
+						<th class="border border-black">latitude</th>
+						<th class="border border-black">longitude</th>
+						<th class="border border-black">actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="border border-black h-[35px]" th:each="location:${locations}">
+						<td class="border border-black px-2" th:text="${location.locationId}"></td>
+						<td class="border border-black px-2" th:text="${location.name}"></td>
+						<td class="border border-black px-2" th:text="${#numbers.formatDecimal(location.latitude,1,8)}"></td>
+						<td class="border border-black px-2" th:text="${#numbers.formatDecimal(location.longitude,1,8)}"></td>
+						<td class="border border-black px-2 space-x-2">
+							<a href="#modal-delete">Supprimer</a>
+							<a th:href="@{/location(locationId=${location.locationId})}">Voir</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div>
+				<a th:href="@{/admin/location/new}">Nouveau lieu</a>
+			</div>
+		</main>
+		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
+	</div>
+</body>
+
+</html>

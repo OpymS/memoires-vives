@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panneau d'administration - Catégories</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<div class="flex flex-row justify-between items-start h-screen">
+		<main class="font-bold w-full flex flex-col sm:items-center overflow-auto">
+			<h1 class="mt-4 sm:mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration des catégories de souvenir
+			</h1>
+			<table class="border border-black border-collapse w-full sm:w-9/10">
+				<thead>
+					<tr class="border border-black">
+						<th class="border border-black">Id</th>
+						<th class="border border-black">Nom</th>
+						<th class="border border-black">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="border border-black h-[35px]" th:each="category:${categories}">
+						<td class="border border-black px-2" th:text="${category.categoryId}"></td>
+						<td class="border border-black px-2" th:text="${category.name}"></td>
+						<td class="border border-black px-2 space-x-2">
+							<a href="#modal-delete">Supprimer</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div>
+				<a th:href="@{/admin/category/new}">Nouvelle catégorie</a>
+			</div>
+		</main>
+		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
+	</div>
+</body>
+
+</html>

@@ -7,19 +7,29 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import fr.memoires_vives.bll.CategoryService;
+import fr.memoires_vives.bll.LocationService;
+import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bll.UserService;
+import fr.memoires_vives.bo.Category;
+import fr.memoires_vives.bo.Location;
+import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.User;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 	private final UserService userService;
+	private final MemoryService memoryService;
+	private final CategoryService categoryService;
+	private final LocationService locationService;
 	
-	public AdminController(UserService userService) {
+	public AdminController(UserService userService, MemoryService memoryService, CategoryService categoryService, LocationService locationService) {
 		this.userService = userService;
+		this.memoryService = memoryService;
+		this.categoryService = categoryService;
+		this.locationService = locationService;
 	}
-	
-	
 
 	@GetMapping
 	public String showAdminPanel() {
@@ -31,6 +41,27 @@ public class AdminController {
 		List<User> users = userService.getAllUsers();
 		model.addAttribute("users", users);
 		return "admin-users";
+	}
+	
+	@GetMapping("/memories")
+	public String showAdminMemories(Model model) {
+		List<Memory> memories = memoryService.findMemories();
+		model.addAttribute("memories", memories);
+		return "admin-memories";
+	}
+	
+	@GetMapping("/categories")
+	public String showAdminCategories(Model model) {
+		List<Category> categories = categoryService.getAllCategories();
+		model.addAttribute("categories", categories);
+		return "admin-categories";
+	}
+	
+	@GetMapping("/locations")
+	public String showAdminLocations(Model model) {
+		List<Location> locations = locationService.getAllLocations();
+		model.addAttribute("locations", locations);
+		return "admin-locations";
 	}
 	
 }

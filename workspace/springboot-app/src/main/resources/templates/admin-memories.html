@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panneau d'administration - Souvenirs</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<div class="flex flex-row justify-between items-start h-screen">
+		<main class="font-bold w-full flex flex-col sm:items-center overflow-auto">
+			<h1 class="mt-4 sm:mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration des souvenirs</h1>
+			<table class="border border-black border-collapse w-full sm:w-9/10">
+				<thead>
+					<tr class="border border-black">
+						<th class="border border-black">Id</th>
+						<th class="border border-black">titre</th>
+						<th class="border border-black">description</th>
+						<th class="border border-black">auteur</th>
+						<th class="border border-black">catégorie</th>
+						<th class="hidden sm:table-cell">image</th>
+						<th class="border border-black">date du souvenir</th>
+						<th class="border border-black">date de création</th>
+						<th class="border border-black">date de modification</th>
+						<th class="border border-black">lieu</th>
+						<th class="border border-black">latitude</th>
+						<th class="border border-black">longitude</th>
+						<th class="border border-black">état</th>
+						<th class="border border-black">visibilité</th>
+						<th class="border border-black">actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="border border-black h-[35px]" th:each="memory:${memories}">
+						<td class="border border-black px-2" th:text="${memory.memoryId}"></td>
+						<td class="border border-black px-2" th:text="${memory.title}"></td>
+						<td class="border border-black px-2" th:text="${memory.description}"></td>
+						<td class="border border-black px-2"><a th:href="@{profil(userId=${memory.rememberer.userId})}"
+								th:text="${memory.rememberer.pseudo}"></a></td>
+						<td class="border border-black px-2" th:text="${memory.category.name}"></td>
+						<td class="hidden sm:table-cell sm:border sm:border-black">
+							<img class="rounded-[50%] w-[30px] h-[30px] m-auto" th:unless="${memory.mediaUUID}==null"
+								th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
+								alt="image lié au souvenir" />
+						</td>
+						<td class="border border-black px-2"
+							th:text="${#temporals.format(memory.memoryDate, 'dd/MM/yyyy')}"></td>
+						<td class="border border-black px-2"
+							th:text="${#temporals.format(memory.creationDate,'dd/MM/yyyy hh:mm:ss')}"></td>
+						<td class="border border-black px-2"
+							th:text="${#temporals.format(memory.modificationDate,'dd/MM/yyyy hh:mm:ss')}"></td>
+						<td class="border border-black px-2" th:text="${memory.location.name}"></td>
+						<td class="border border-black px-2" th:text="${memory.location.latitude}"></td>
+						<td class="border border-black px-2" th:text="${memory.location.longitude}"></td>
+						<td class="border border-black px-2" th:text="${memory.state.name}"></td>
+						<td class="border border-black px-2" th:text="${memory.visibility.name}"></td>
+						<td class="border border-black px-2 space-x-2">
+							<a href="#modal-change-state">A</a>
+							<a href="#modal-change-visibility">B</a>
+							<a href="#modal-delete">C</a>
+							<a th:href="@{/memory(memoryId=${memory.memoryId})}">D</a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</main>
+		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
+	</div>
+</body>
+
+</html>
