@@ -27,6 +27,14 @@
 					<label for="description">Description </label>
 					<textarea id="description" th:field="*{description}" placeholder="Décrivez précisément votre souvenir"></textarea>
 				</div>
+				<div class="category-input">
+					<label for="category">Catégorie </label>
+					<select id="category" name="category" th:field="*{category}">
+						<option th:each="cat : ${categories}"
+						 th:value="${cat.categoryId}"
+						 th:text="${cat.name}"></option>
+					</select> 
+				</div>
 				<div class="date-input">
 					<label for="date">Date </label>
 					<input id="date" th:field="*{memoryDate}" type="date">

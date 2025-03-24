@@ -21,6 +21,7 @@
 					<tr class="border border-black">
 						<th class="border border-black">Id</th>
 						<th class="border border-black">Nom</th>
+						<th class="border border-black">Souvenirs associés</th>
 						<th class="border border-black">Actions</th>
 					</tr>
 				</thead>
@@ -28,7 +29,14 @@
 					<tr class="border border-black h-[35px]" th:each="category:${categories}">
 						<td class="border border-black px-2" th:text="${category.categoryId}"></td>
 						<td class="border border-black px-2" th:text="${category.name}"></td>
+						<td class="border border-black px-2">
+							<div class="hidden" th:if="${category.memories != null and !category.memories.empty}" th:each="memory : ${category.memories}">
+								<a th:href="@{/memory(memoryId=${memory.memoryId})}" th:text="${memory.title}"></a>
+							</div>
+							<p th:text="${#lists.size(category.memories)}"></p>
+						</td>
 						<td class="border border-black px-2 space-x-2">
+							<a th:href="@{/admin/category/modify(categoryId=${category.categoryId})}">Modifier</a>
 							<a href="#modal-delete">Supprimer</a>
 						</td>
 					</tr>

@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
@@ -19,9 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class MemoryController {
 
 	private final MemoryService memoryService;
+	private final CategoryService categoryService;
 
-	public MemoryController(MemoryService memoryService) {
+	public MemoryController(MemoryService memoryService, CategoryService categoryService) {
 		this.memoryService = memoryService;
+		this.categoryService = categoryService;
 	}
 
 	@GetMapping("/")
@@ -43,6 +46,7 @@ public class MemoryController {
 		model.addAttribute("visibilities", MemoryVisibility.values());
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
+		model.addAttribute("categories", categoryService.getAllCategories());
 		return "memory-create";
 	}
 
@@ -82,6 +86,7 @@ public class MemoryController {
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
 		model.addAttribute("visibilities", MemoryVisibility.values());
+		model.addAttribute("categories", categoryService.getAllCategories());
 		return "memory-modify";
 	}
 

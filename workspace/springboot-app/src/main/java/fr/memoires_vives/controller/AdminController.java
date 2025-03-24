@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.LocationService;
@@ -64,4 +67,23 @@ public class AdminController {
 		return "admin-locations";
 	}
 	
+	@GetMapping("/category/new")
+	public String showCategoryForm(Model model) {
+		Category category = new Category();
+		model.addAttribute("category", category);
+		return "category-create";
+	}
+	
+	@PostMapping("/category/new")
+	public String postMethodName(@ModelAttribute("category") Category category) {
+		categoryService.createCategory(category);		
+		return "redirect:/admin/categories";
+	}
+	
+	@GetMapping("/category/modify")
+	public String showCategoryForm(@RequestParam(name = "categoryId", required=true) long categoryId, Model model) {
+		Category category = categoryService.getCategoryById(categoryId);
+		model.addAttribute("category", category);
+		return "category-create";
+	}
 }

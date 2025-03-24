@@ -20,4 +20,15 @@ public class CategoryServiceImpl implements CategoryService {
 		return categoryRepository.findAll();
 	}
 
+	@Override
+	public Category createCategory(Category category) {
+		return categoryRepository.save(category);
+	}
+
+	@Override
+	public Category getCategoryById(long categoryId) {
+		return categoryRepository.findByCategoryId(categoryId);
+	}
+
+		
 }

@@ -70,8 +70,6 @@ public class MemoryServiceImpl implements MemoryService {
 		} else {
 			memory.setMediaUUID(null);
 		}
-		Category category = categoryRepository.findByName("Default category");
-		memory.setCategory(category);
 		
 		return memoryRepository.save(memory);
 	}
@@ -133,6 +131,11 @@ public class MemoryServiceImpl implements MemoryService {
 		if (memoryWithUpdate.getMemoryDate() != null
 				&& existingMemoryToUpdate.getMemoryDate() != memoryWithUpdate.getMemoryDate()) {
 			existingMemoryToUpdate.setMemoryDate(memoryWithUpdate.getMemoryDate());			
+		}
+		
+		if (memoryWithUpdate.getCategory() != null
+				&& existingMemoryToUpdate.getCategory() != memoryWithUpdate.getCategory()) {
+			existingMemoryToUpdate.setCategory(memoryWithUpdate.getCategory());			
 		}
 		
 		existingMemoryToUpdate.setModificationDate(LocalDateTime.now());
