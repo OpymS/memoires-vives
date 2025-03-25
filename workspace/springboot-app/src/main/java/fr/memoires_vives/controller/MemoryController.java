@@ -47,7 +47,7 @@ public class MemoryController {
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
 		model.addAttribute("categories", categoryService.getAllCategories());
-		return "memory-create";
+		return "memory-form";
 	}
 
 	@PostMapping("/new")
@@ -87,7 +87,7 @@ public class MemoryController {
 		model.addAttribute("location", location);
 		model.addAttribute("visibilities", MemoryVisibility.values());
 		model.addAttribute("categories", categoryService.getAllCategories());
-		return "memory-modify";
+		return "memory-form";
 	}
 
 	@PostMapping("/memory/modify")

@@ -10,13 +10,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
-import fr.memoires_vives.repositories.CategoryRepository;
 import fr.memoires_vives.repositories.MemoryRepository;
 
 @Primary
@@ -27,15 +25,13 @@ public class MemoryServiceImpl implements MemoryService {
 	private final FileService fileService;
 	private final LocationService locationService;
 	private final UserService userService;
-	private final CategoryRepository categoryRepository;
 
 	public MemoryServiceImpl(MemoryRepository memoryRepository, FileService fileService,
-			LocationService locationService, UserService userService, CategoryRepository categoryRepository) {
+			LocationService locationService, UserService userService) {
 		this.memoryRepository = memoryRepository;
 		this.fileService = fileService;
 		this.locationService = locationService;
 		this.userService = userService;
-		this.categoryRepository = categoryRepository;
 	}
 
 	@Override
@@ -70,7 +66,7 @@ public class MemoryServiceImpl implements MemoryService {
 		} else {
 			memory.setMediaUUID(null);
 		}
-		
+
 		return memoryRepository.save(memory);
 	}
 
@@ -115,36 +111,36 @@ public class MemoryServiceImpl implements MemoryService {
 	@Override
 	public Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish,
 			Location locationWithUpdate) {
-		
+
 		Memory existingMemoryToUpdate = memoryRepository.findByMemoryId(memoryWithUpdate.getMemoryId());
 		Location existingLocation = locationService.getById(existingMemoryToUpdate.getLocation().getLocationId());
-		
+
 		if (memoryWithUpdate.getTitle() != "" && existingMemoryToUpdate.getTitle() != memoryWithUpdate.getTitle()) {
-			existingMemoryToUpdate.setTitle(memoryWithUpdate.getTitle());			
+			existingMemoryToUpdate.setTitle(memoryWithUpdate.getTitle());
 		}
-		
+
 		if (memoryWithUpdate.getDescription() != ""
 				&& existingMemoryToUpdate.getDescription() != memoryWithUpdate.getDescription()) {
-			existingMemoryToUpdate.setDescription(memoryWithUpdate.getDescription());			
+			existingMemoryToUpdate.setDescription(memoryWithUpdate.getDescription());
 		}
-		
+
 		if (memoryWithUpdate.getMemoryDate() != null
 				&& existingMemoryToUpdate.getMemoryDate() != memoryWithUpdate.getMemoryDate()) {
-			existingMemoryToUpdate.setMemoryDate(memoryWithUpdate.getMemoryDate());			
+			existingMemoryToUpdate.setMemoryDate(memoryWithUpdate.getMemoryDate());
 		}
-		
+
 		if (memoryWithUpdate.getCategory() != null
 				&& existingMemoryToUpdate.getCategory() != memoryWithUpdate.getCategory()) {
-			existingMemoryToUpdate.setCategory(memoryWithUpdate.getCategory());			
+			existingMemoryToUpdate.setCategory(memoryWithUpdate.getCategory());
 		}
-		
+
 		existingMemoryToUpdate.setModificationDate(LocalDateTime.now());
-		
+
 		if (memoryWithUpdate.getVisibility() != null
 				&& existingMemoryToUpdate.getVisibility() != memoryWithUpdate.getVisibility()) {
-			existingMemoryToUpdate.setVisibility(memoryWithUpdate.getVisibility());			
+			existingMemoryToUpdate.setVisibility(memoryWithUpdate.getVisibility());
 		}
-		
+
 		if (publish == null || !publish) {
 			existingMemoryToUpdate.setState(MemoryState.CREATED);
 		} else {
@@ -160,7 +156,7 @@ public class MemoryServiceImpl implements MemoryService {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (existingLocation.getMemories().size() <= 1) {
 			locationWithUpdate.setLocationId(existingLocation.getLocationId());
 			locationService.saveLocation(locationWithUpdate);

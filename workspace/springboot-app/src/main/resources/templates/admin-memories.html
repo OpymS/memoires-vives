@@ -60,10 +60,10 @@
 						<td class="border border-black px-2" th:text="${memory.state.name}"></td>
 						<td class="border border-black px-2" th:text="${memory.visibility.name}"></td>
 						<td class="border border-black px-2 space-x-2">
-							<a href="#modal-change-state">A</a>
-							<a href="#modal-change-visibility">B</a>
-							<a href="#modal-delete">C</a>
-							<a th:href="@{/memory(memoryId=${memory.memoryId})}">D</a>
+							<a href="#modal-change-state">Changer le statut</a>
+							<a href="#modal-change-visibility">Changer la visibilité</a>
+							<a href="#modal-delete">Supprimer</a>
+							<a th:href="@{/memory(memoryId=${memory.memoryId})}">Voir</a>
 						</td>
 					</tr>
 				</tbody>
