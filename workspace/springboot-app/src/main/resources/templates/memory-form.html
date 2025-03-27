@@ -4,20 +4,21 @@
 
 <head>
 	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modification d'un souvenir</title>
-    <link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-    <link rel="icon" href="/images/public/favicon.png" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Modification d'un souvenir</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
 </head>
 
 <body>
 	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	
-	<main>
-		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
-		<h1 class="text-[#bddab2] text-2xl" th:text="${memory.memoryId == 0 ? 'Partager un nouveau souvenir' : 'Modifier un souvenir'}"></h1>
-	    <form th:action="${memory.memoryId == 0} ? @{/new} : @{/memory/modify}" method="POST" th:object="${memory}" enctype="multipart/form-data">
-						
+
+	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
+		<h1 class="text-[#bddab2] text-2xl"
+			th:text="${memory.memoryId == 0 ? 'Partager un nouveau souvenir' : 'Modifier un souvenir'}"></h1>
+		<form th:action="${memory.memoryId == 0} ? @{/new} : @{/memory/modify}" method="POST" th:object="${memory}"
+			enctype="multipart/form-data">
+
 			<div class="inputs-container">
 				<div class="title-input">
 					<label for="title">Titre </label>
@@ -25,15 +26,15 @@
 				</div>
 				<div class="description-input">
 					<label for="description">Description </label>
-					<textarea id="description" th:field="*{description}" placeholder="Décrivez précisément votre souvenir"></textarea>
+					<textarea id="description" th:field="*{description}"
+						placeholder="Décrivez précisément votre souvenir"></textarea>
 				</div>
 				<div class="category-input">
 					<label for="category">Catégorie </label>
 					<select id="category" name="category" th:field="*{category}">
-						<option th:each="cat : ${categories}"
-						 th:value="${cat.categoryId}"
-						 th:text="${cat.name}"></option>
-					</select> 
+						<option th:each="cat : ${categories}" th:value="${cat.categoryId}" th:text="${cat.name}">
+						</option>
+					</select>
 				</div>
 				<div class="date-input">
 					<label for="date">Date </label>
@@ -42,53 +43,65 @@
 				<div class="visibility-input">
 					<label for="visibility">Visibilité </label>
 					<select id="visibility" name="visibility" th:field="*{visibility}">
-						<option th:each="visibility : ${visibilities}"
-						 th:value="${visibility}"
-						 th:text="${visibility}"></option>
-					</select> 
+						<option th:each="visibility : ${visibilities}" th:value="${visibility}" th:text="${visibility}">
+						</option>
+					</select>
 				</div>
 				<div class="image-input">
 					<label for="image">Image associée </label>
 					<input id="image" name="image" type="file" accept="image/png, image/jpeg">
 					<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							th:if="${memory.mediaUUID}!=null"
-							th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
-							th:alt="'image associée au souvenir ' + ${memory.title}" />
-						<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							th:if="${memory.mediaUUID}==null" src="/images/public/memory-placeholder.png"
-							th:alt="'image associée au souvenir ' + ${memory.title}" />
+						th:if="${memory.mediaUUID}!=null" th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
+						th:alt="'image associée au souvenir ' + ${memory.title}" />
+					<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+						th:if="${memory.mediaUUID}==null" src="/images/public/memory-placeholder.png"
+						th:alt="'image associée au souvenir ' + ${memory.title}" />
 				</div>
-				<input id="memoryId" th:field="*{memoryId}" type="hidden"/>
+				<input id="memoryId" th:field="*{memoryId}" type="hidden" />
 				<div class="publish">
 					<label for="publish">Publier</label>
-					<input id="publish" name="publish" type="checkbox" th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}"/>
+					<input id="publish" name="publish" type="checkbox"
+						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" />
 				</div>
 				<div th:object="${location}">
+					<button id="openModalBtn" class="px-4 py-2 bg-[#bddab2] text-black rounded">Choisir un lieu</button>
 					<div class="name-input">
 						<label for="locationName">Lieu </label>
-						<input id="locationName" th:field="*{name}" type="text" placeholder="Donnez un nom au lieu de votre souvenir">
+						<input id="locationName" th:field="*{name}" type="text"
+							placeholder="Donnez un nom au lieu de votre souvenir">
 					</div>
 					<div class="latitude-input">
 						<label for="latitude">Latitude </label>
-						<input id="latitude" th:field="*{latitude}" type="number" step="any" placeholder="Latitude du lieu">
+						<input id="latitude" th:field="*{latitude}" type="number" step="any"
+							placeholder="Latitude du lieu">
 					</div>
 					<div class="longitude-input">
 						<label for="longitude">Longitude </label>
-						<input id="longitude" th:field="*{longitude}" type="number" step="any" placeholder="Longitude du lieu">
+						<input id="longitude" th:field="*{longitude}" type="number" step="any"
+							placeholder="Longitude du lieu">
 					</div>
 				</div>
 			</div>
-			
+
 			<div class="buttons-container">
-				<button type="submit" class="button create" th:text="${memory.memoryId == 0 ? 'Créer' : 'Modifier'}"></button>
+				<button type="submit" class="button create"
+					th:text="${memory.memoryId == 0 ? 'Créer' : 'Modifier'}"></button>
 				<a th:href="@{/memory(memoryId=${memory.memoryId})}" class="button cancel">Annuler</a>
-			</div>	
+			</div>
 		</form>
 	</main>
-		
-		
 	
-	</main>
+	<aside id="modal"
+		class="fixed inset-0 flex items-center justify-center bg-gray-500/75 hidden">
+		<div class="overlay absolute w-full h-full bg-gray-500/75 js-close-modal"></div>
+		<div class="modal w-11/12 max-w-2xl min-w-80 p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <button class="js-close-modal modal-trigger px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-red-600 text-white">X</button>
+            <h1 id="title-modal" class="mb-2.5 text-2xl font-medium">Choisissez un lieu pour votre activité</h1>
+            <div id="map" class="h-96 w-100 mb-2"></div>
+            <a th:href="@{/location/new}" class="bg-amber-400 rounded-md py-1 px-2 max-w-fit mx-auto hover:opacity-80 js-place-btn" title="Créer un nouveau lieu d'activité">Nouveau lieu</a>
+        </div>
+	</aside>
+	<script src="/js/map-modal.js"></script>
 </body>
 
 </html>

@@ -2,6 +2,8 @@ package fr.memoires_vives.bo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,6 +25,7 @@ public class Category {
 	private String name;
 	
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private List<Memory> memories;
 
 	/**

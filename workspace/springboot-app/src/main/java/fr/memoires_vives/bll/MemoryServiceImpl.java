@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
@@ -173,6 +174,11 @@ public class MemoryServiceImpl implements MemoryService {
 	@Override
 	public Memory getMemoryByImage(String mediaUUID) {
 		return memoryRepository.findByMediaUUID(mediaUUID);
+	}
+
+	@Override
+	public List<Memory> getMemoriesByCategory(Category category) {
+		return memoryRepository.findByCategoryId(category.getCategoryId());
 	}
 
 }

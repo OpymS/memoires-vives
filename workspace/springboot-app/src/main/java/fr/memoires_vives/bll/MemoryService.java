@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 
@@ -15,4 +16,5 @@ public interface MemoryService {
 	Memory getMemoryByImage(String mediaUUID);
 	boolean authorizedDisplay(Memory memory);
 	boolean authorizedModification(Memory memory);
+	List<Memory> getMemoriesByCategory(Category category);
 }

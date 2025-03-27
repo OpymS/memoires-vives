@@ -19,10 +19,10 @@
 			<table class="border border-black border-collapse w-full sm:w-9/10">
 				<thead>
 					<tr class="border border-black">
-						<th class="border border-black">Id</th>
-						<th class="border border-black">Nom</th>
-						<th class="border border-black">Souvenirs associés</th>
-						<th class="border border-black">Actions</th>
+						<th class="border border-black w-1/12">Id</th>
+						<th class="border border-black w-1/4">Nom</th>
+						<th class="border border-black w-5/12">Souvenirs associés</th>
+						<th class="border border-black w-1/4">Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -30,10 +30,11 @@
 						<td class="border border-black px-2" th:text="${category.categoryId}"></td>
 						<td class="border border-black px-2" th:text="${category.name}"></td>
 						<td class="border border-black px-2">
-							<div class="hidden" th:if="${category.memories != null and !category.memories.empty}" th:each="memory : ${category.memories}">
-								<a th:href="@{/memory(memoryId=${memory.memoryId})}" th:text="${memory.title}"></a>
-							</div>
-							<p th:text="${#lists.size(category.memories)}"></p>
+<!--							<div class="hidden" th:if="${category.memories != null and !category.memories.empty}" th:each="memory : ${category.memories}">-->
+<!--								<a th:href="@{/memory(memoryId=${memory.memoryId})}" th:text="${memory.title}"></a>-->
+<!--							</div>-->
+							<p class="" th:text="${#lists.size(category.memories)}"></p>
+							<button th:id="'showBtn-' + ${category.categoryId}" class="px-4 py-2 bg-[#bddab2] text-black rounded">Voir</button>
 						</td>
 						<td class="border border-black px-2 space-x-2">
 							<a th:href="@{/admin/category/modify(categoryId=${category.categoryId})}">Modifier</a>
@@ -48,6 +49,7 @@
 		</main>
 		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
 	</div>
+	<script src="/js/admin-category.js"></script>
 </body>
 
 </html>
