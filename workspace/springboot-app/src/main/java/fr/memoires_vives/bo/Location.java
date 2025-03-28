@@ -26,10 +26,10 @@ public class Location {
 	private String name;
 	
 	@Column(nullable = false)
-	private float latitude;
+	private double latitude;
 	
 	@Column(nullable = false)
-	private float longitude;
+	private double longitude;
 	
 	@OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
 	@JsonIgnore
@@ -38,7 +38,7 @@ public class Location {
 	public Location() {
 	}
 
-	public Location(int locationId, String name, float latitude, float longitude) {
+	public Location(int locationId, String name, double latitude, double longitude) {
 		this.locationId = locationId;
 		this.name = name;
 		this.latitude = latitude;
@@ -62,14 +62,14 @@ public class Location {
 	/**
 	 * @return the latitude
 	 */
-	public float getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
 	/**
 	 * @return the longitude
 	 */
-	public float getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 	
@@ -97,14 +97,14 @@ public class Location {
 	/**
 	 * @param latitude the latitude to set
 	 */
-	public void setLatitude(float latitude) {
+	public void setLatitude(double latitude) {
 		this.latitude = latitude;
 	}
 
 	/**
 	 * @param longitude the longitude to set
 	 */
-	public void setLongitude(float longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 

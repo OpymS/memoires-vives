@@ -8,6 +8,9 @@
 	<title>Modification d'un souvenir</title>
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
 	<link rel="icon" href="/images/public/favicon.png" />
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
 </head>
 
 <body>
@@ -64,7 +67,8 @@
 						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" />
 				</div>
 				<div th:object="${location}">
-					<button id="openModalBtn" class="px-4 py-2 bg-[#bddab2] text-black rounded">Choisir un lieu</button>
+					<button id="openModalBtn" class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80">Choisir
+						un lieu</button>
 					<div class="name-input">
 						<label for="locationName">Lieu </label>
 						<input id="locationName" th:field="*{name}" type="text"
@@ -90,17 +94,24 @@
 			</div>
 		</form>
 	</main>
-	
-	<aside id="modal"
-		class="fixed inset-0 flex items-center justify-center bg-gray-500/75 hidden">
-		<div class="overlay absolute w-full h-full bg-gray-500/75 js-close-modal"></div>
-		<div class="modal w-11/12 max-w-2xl min-w-80 p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <button class="js-close-modal modal-trigger px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-red-600 text-white">X</button>
-            <h1 id="title-modal" class="mb-2.5 text-2xl font-medium">Choisissez un lieu pour votre activité</h1>
-            <div id="map" class="h-96 w-100 mb-2"></div>
-            <a th:href="@{/location/new}" class="bg-amber-400 rounded-md py-1 px-2 max-w-fit mx-auto hover:opacity-80 js-place-btn" title="Créer un nouveau lieu d'activité">Nouveau lieu</a>
-        </div>
+
+	<aside id="modal" class="fixed inset-0 flex items-center justify-center hidden z-40">
+		<div class="overlay absolute w-full h-full bg-gray-500/25 js-close-modal"></div>
+		<div
+			class="modal w-11/12 min-w-xs h-9/10 min-h-[300px] p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+			<button
+				class="js-close-modal modal-trigger px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
+			<h1 id="title-modal" class="mb-2.5 text-2xl font-medium">Choisissez un lieu pour votre souvenir</h1>
+			<div id="map" class="h-9/10 w-9/10 mb-4 mx-auto border border-black"></div>
+			<p id="southWest"></p>
+			<p id="northEast"></p>
+			<a th:href="@{/location/new}"
+				class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80 js-place-btn"
+				title="Créer un nouveau lieu de souvenir">Nouveau lieu</a>
+		</div>
 	</aside>
+	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	<script src="/js/map-modal.js"></script>
 </body>
 

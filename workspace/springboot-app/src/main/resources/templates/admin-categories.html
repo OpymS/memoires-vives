@@ -30,11 +30,9 @@
 						<td class="border border-black px-2" th:text="${category.categoryId}"></td>
 						<td class="border border-black px-2" th:text="${category.name}"></td>
 						<td class="border border-black px-2">
-<!--							<div class="hidden" th:if="${category.memories != null and !category.memories.empty}" th:each="memory : ${category.memories}">-->
-<!--								<a th:href="@{/memory(memoryId=${memory.memoryId})}" th:text="${memory.title}"></a>-->
-<!--							</div>-->
 							<p class="" th:text="${#lists.size(category.memories)}"></p>
-							<button th:id="'showBtn-' + ${category.categoryId}" class="px-4 py-2 bg-[#bddab2] text-black rounded">Voir</button>
+							<button th:id="'showBtn-' + ${category.categoryId}"
+								class="px-4 py-2 bg-[#bddab2] text-black rounded">Voir</button>
 						</td>
 						<td class="border border-black px-2 space-x-2">
 							<a th:href="@{/admin/category/modify(categoryId=${category.categoryId})}">Modifier</a>
