@@ -33,4 +33,20 @@ public class LocationServiceImpl implements LocationService {
 		return locationRepository.findAll();
 	}
 
+	@Override
+	public List<Location> getLocationsInSquare(double north, double south, double east, double west) {
+		if (east - west >= 300) {
+			east = 180;
+			west = -180;
+		}
+		
+		while (west < -180) {
+			west += 180;
+		}
+		while (east > 180) {
+			east -= 180;
+		}
+		return locationRepository.findInSquare(north, south, east, west);
+	}
+
 }

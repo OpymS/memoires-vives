@@ -8,4 +8,5 @@ public interface LocationService {
 	Location saveLocation(Location location);
 	Location getById(long locationId);
 	List<Location> getAllLocations();
+	List<Location> getLocationsInSquare(double north, double south, double east, double west);
 }

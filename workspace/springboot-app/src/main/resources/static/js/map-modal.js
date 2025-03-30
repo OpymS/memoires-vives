@@ -15,12 +15,21 @@ document.addEventListener('DOMContentLoaded', () => {
 	let latitude = document.getElementById('latitude').value;
 	let longitude = document.getElementById('longitude').value;
 	let placeName = document.getElementById('locationName').value;
+//	console.log(placeName);
+	if (placeName === '' && "geolocation" in navigator){
+		console.log('plop');
+		navigator.geolocation.getCurrentPosition((userPosition) => {
+			latitude = userPosition.coords.latitude;
+			longitude = userPosition.coords.longitude;
+		})
+		console.log(" latitude : " + latitude);
+		console.log("longitude : " + longitude);
+	}
 
 	async function openModal(e) {
 		e.preventDefault();
 		document.getElementById('modal').classList.remove('hidden');
-		latitude = document.getElementById('latitude').value;
-		longitude = document.getElementById('longitude').value;
+		map.panTo(new L.LatLng(latitude, longitude));
 		setTimeout(() => map.invalidateSize(), 200);
 	}
 
@@ -30,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	let map = L.map("map", {
-		zoom: 10,
+		worldCopyJump: true,
+		zoom: 5,
 		center: [latitude, longitude]
 	});
 
@@ -46,17 +56,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	map.on('moveend', fetchPointsInView)
 
+	map.on('click', addLocation)
+
 	async function fetchPointsInView() {
+
 		let bounds = map.getBounds();
-		let south = bounds.getSouth();
 		let north = bounds.getNorth();
+		let south = bounds.getSouth();
 		let east = bounds.getEast();
 		let west = bounds.getWest();
 		document.getElementById('southWest').textContent = `South : ${south} - West : ${west}`;
 		document.getElementById('northEast').textContent = `North : ${north} - East : ${east}`;
-
+		//		north = 90;
+		//		south = -90;
+		//		east = -160;
+		//		west = 160;
 		const response = await fetch(`/api/location/visible-points?north=${north}&south=${south}&east=${east}&west=${west}`)
 		const locations = await response.json();
 		console.log(locations);
+		locations.forEach(location => {
+			if (location.name != placeName) {
+				var marker = L.marker([location.latitude, location.longitude]).addTo(map);
+				marker.bindPopup(`${location.name} - ${location.latitude} - ${location.longitude}`);
+			}
+		})
+	}
+
+	function addLocation(e) {
+		console.log(" latitude : " + e.latlng.lat);
+		console.log("longitude : " + e.latlng.lng);
 	}
 });
