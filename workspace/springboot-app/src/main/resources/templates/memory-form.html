@@ -67,20 +67,18 @@
 						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" />
 				</div>
 				<div th:object="${location}">
-					<button id="openModalBtn" class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80">Choisir
-						un lieu</button>
+					<button id="openModalBtn" class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80"
+						th:text="${memory.memoryId == 0 ?'Choisir un lieu':'Modifier le lieu'}"></button>
 					<div class="name-input">
 						<label for="locationName">Lieu </label>
 						<input id="locationName" th:field="*{name}" type="text"
 							placeholder="Donnez un nom au lieu de votre souvenir">
 					</div>
 					<div class="latitude-input">
-						<label for="latitude">Latitude </label>
 						<input id="latitude" th:field="*{latitude}" type="number" step="any"
 							placeholder="Latitude du lieu">
 					</div>
 					<div class="longitude-input">
-						<label for="longitude">Longitude </label>
 						<input id="longitude" th:field="*{longitude}" type="number" step="any"
 							placeholder="Longitude du lieu">
 					</div>
@@ -105,9 +103,7 @@
 			<div id="map" class="h-9/10 w-9/10 mb-4 mx-auto border border-black"></div>
 			<p id="southWest"></p>
 			<p id="northEast"></p>
-			<a th:href="@{/location/new}"
-				class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80 js-place-btn"
-				title="Créer un nouveau lieu de souvenir">Nouveau lieu</a>
+			<button id="validateLocation" class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80">Valider</button>
 		</div>
 	</aside>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

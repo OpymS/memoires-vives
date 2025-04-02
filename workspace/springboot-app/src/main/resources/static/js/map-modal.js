@@ -1,35 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-	document.getElementById('openModalBtn').addEventListener('click', openModal);
+	let latitude;
+	let longitude;
+	let newLatitude;
+	let newLongitude;
+	let userLat = 0;
+	let userLong = 0;
+	let latitudeInput;
+	let longitudeInput;
+	let placeName;
+	let map;
+	var marker;
 
-	//document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-	document.querySelectorAll('.js-close-modal').forEach(a => {
-		a.addEventListener('click', closeModal);
-	})
+	init();
 
-	document.addEventListener('keydown', function(e) {
-		if (e.key === 'Escape') {
-			closeModal(e);
-		}
-	})
-
-	let latitude = document.getElementById('latitude').value;
-	let longitude = document.getElementById('longitude').value;
-	let placeName = document.getElementById('locationName').value;
-//	console.log(placeName);
-	if (placeName === '' && "geolocation" in navigator){
-		console.log('plop');
-		navigator.geolocation.getCurrentPosition((userPosition) => {
-			latitude = userPosition.coords.latitude;
-			longitude = userPosition.coords.longitude;
-		})
-		console.log(" latitude : " + latitude);
-		console.log("longitude : " + longitude);
-	}
-
-	async function openModal(e) {
+	function openModal(e) {
 		e.preventDefault();
 		document.getElementById('modal').classList.remove('hidden');
-		map.panTo(new L.LatLng(latitude, longitude));
+		if (placeName === '') {
+			map.panTo(new L.LatLng(userLat, userLong));
+		}
 		setTimeout(() => map.invalidateSize(), 200);
 	}
 
@@ -38,52 +27,113 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.getElementById('modal').classList.add('hidden');
 	}
 
-	let map = L.map("map", {
-		worldCopyJump: true,
-		zoom: 5,
-		center: [latitude, longitude]
-	});
 
-	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-		minZoom: 1,
-		maxZoom: 20,
-		attribution: 'données © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-	}).addTo(map);
+	function init() {
+		latitudeInput = document.getElementById('latitude');
+		longitudeInput = document.getElementById('longitude');
+		latitude = latitudeInput.value;
+		longitude = longitudeInput.value;
+		placeName = document.getElementById('locationName').value;
 
-	var marker = L.marker([latitude, longitude]).addTo(map);
-	marker._icon.classList.add("hue-rotate-180");
-	marker.bindPopup(`${placeName} - ${latitude} - ${longitude}`);
+		initModal();
+		initMap();
 
-	map.on('moveend', fetchPointsInView)
+	}
 
-	map.on('click', addLocation)
+	function initModal() {
+		document.getElementById('openModalBtn').addEventListener('click', openModal);
 
-	async function fetchPointsInView() {
+		document.querySelectorAll('.js-close-modal').forEach(a => {
+			a.addEventListener('click', closeModal);
+		})
 
-		let bounds = map.getBounds();
-		let north = bounds.getNorth();
-		let south = bounds.getSouth();
-		let east = bounds.getEast();
-		let west = bounds.getWest();
-		document.getElementById('southWest').textContent = `South : ${south} - West : ${west}`;
-		document.getElementById('northEast').textContent = `North : ${north} - East : ${east}`;
-		//		north = 90;
-		//		south = -90;
-		//		east = -160;
-		//		west = 160;
-		const response = await fetch(`/api/location/visible-points?north=${north}&south=${south}&east=${east}&west=${west}`)
-		const locations = await response.json();
-		console.log(locations);
-		locations.forEach(location => {
-			if (location.name != placeName) {
-				var marker = L.marker([location.latitude, location.longitude]).addTo(map);
-				marker.bindPopup(`${location.name} - ${location.latitude} - ${location.longitude}`);
+		document.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape') {
+				closeModal(e);
 			}
 		})
+		
+		document.getElementById('validateLocation').addEventListener('click', validateLocation);
+	}
+
+	function initMap() {
+
+		if ("geolocation" in navigator) {
+			navigator.geolocation.getCurrentPosition((userPosition) => {
+				userLat = userPosition.coords.latitude;
+				userLong = userPosition.coords.longitude;
+			});
+		}
+
+		map = L.map("map", {
+			worldCopyJump: true,
+			zoom: 5,
+			center: [latitude, longitude]
+		});
+
+		L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+			minZoom: 1,
+			maxZoom: 20,
+			attribution: 'données © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+		}).addTo(map);
+
+		if (placeName !== '') {
+			marker = L.marker([latitude, longitude], { draggable: 'true', autoPan: 'true' }).addTo(map);
+			marker.bindPopup(`${placeName} - ${formatLatitude(latitude)} - ${formatLongitude(longitude)}`);
+			map.on('click', moveLocation);
+			marker.on('dragend', newLocation);
+		} else {
+			map.on('click', addLocation);
+		}
 	}
 
 	function addLocation(e) {
-		console.log(" latitude : " + e.latlng.lat);
-		console.log("longitude : " + e.latlng.lng);
+		newLatitude = e.latlng.lat;
+		newLongitude = e.latlng.lng;
+		marker = L.marker(e.latlng, { draggable: 'true', autoPan: 'true' }).addTo(map);
+		marker.bindPopup(`${formatLatitude(newLatitude)} - ${formatLongitude(newLongitude)}`);
+		map.off('click', addLocation);
+		map.on('click', moveLocation);
+		marker.on('dragend', newLocation);
+	}
+
+	function moveLocation(e) {
+		marker.setLatLng(e.latlng);
+		newLocation();
+	}
+
+	function newLocation() {
+		newLatitude = marker.getLatLng().lat;
+		newLongitude = marker.getLatLng().lng;
+		marker.bindPopup(`${formatLatitude(newLatitude)} - ${formatLongitude(newLongitude)}`);
+	}
+
+	function formatLatitude(latitude) {
+		const direction = latitude >= 0 ? 'N' : 'S';
+		latitude = Math.abs(latitude);
+		const degrees = Math.floor(latitude);
+		latitude = (latitude - degrees) * 60;
+		const minutes = Math.floor(latitude);
+		latitude = (latitude - minutes) * 60;
+		const seconds = latitude.toFixed(4);
+		return `${degrees}°${minutes}'${seconds}" ${direction}`;
+	}
+	
+	function formatLongitude(longitude){
+		const direction = longitude >= 0 ? 'E' : 'W';
+		longitude = Math.abs(longitude);
+		const degrees = Math.floor(longitude);
+		longitude = (longitude - degrees) * 60;
+		const minutes = Math.floor(longitude);
+		longitude = (longitude - minutes) * 60;
+		const seconds = longitude.toFixed(4);
+		return `${degrees}°${minutes}'${seconds}" ${direction}`;
+	}
+	
+	function validateLocation(e){
+		e.preventDefault();
+		latitudeInput.value = newLatitude;
+		longitudeInput.value = newLongitude;
+		closeModal(e);
 	}
 });
