@@ -51,6 +51,8 @@ public class MemoryServiceImpl implements MemoryService {
 		} else {
 			memory.setState(MemoryState.PUBLISHED);
 		}
+		memory.setVisibility(MemoryVisibility.PUBLIC);
+		
 		User rememberer = userService.getCurrentUser();
 
 		memory.setRememberer(rememberer);

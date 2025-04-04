@@ -83,6 +83,7 @@ public class MemoryController {
 			return "error/403";
 		}
 		Location location = memory.getLocation();
+		System.out.println(location);
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
 		model.addAttribute("visibilities", MemoryVisibility.values());
@@ -98,6 +99,7 @@ public class MemoryController {
 		if (!isAllowed) {
 			return "error/403";
 		}
+		System.out.println(location);
 		memoryService.updateMemory(memory, fileImage, published, location);
 		
 		return "redirect:/memory?memoryId="+memory.getMemoryId();

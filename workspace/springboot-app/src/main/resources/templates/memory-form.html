@@ -25,7 +25,7 @@
 			<div class="inputs-container">
 				<div class="title-input">
 					<label for="title">Titre </label>
-					<input id="title" th:field="*{title}" type="text" placeholder="Donnez un titre à votre souvenir">
+					<input id="title" th:field="*{title}" type="text" placeholder="Donnez un titre à votre souvenir" />
 				</div>
 				<div class="description-input">
 					<label for="description">Description </label>
@@ -41,24 +41,25 @@
 				</div>
 				<div class="date-input">
 					<label for="date">Date </label>
-					<input id="date" th:field="*{memoryDate}" type="date">
+					<input id="date" th:field="*{memoryDate}" type="date" />
 				</div>
-				<div class="visibility-input">
-					<label for="visibility">Visibilité </label>
-					<select id="visibility" name="visibility" th:field="*{visibility}">
-						<option th:each="visibility : ${visibilities}" th:value="${visibility}" th:text="${visibility}">
-						</option>
-					</select>
-				</div>
+				<!--				<div class="visibility-input">-->
+				<!--					<label for="visibility">Visibilité </label>-->
+				<!--					<select id="visibility" name="visibility" th:field="*{visibility}">-->
+				<!--						<option th:each="visibility : ${visibilities}" th:value="${visibility}" th:text="${visibility}">-->
+				<!--						</option>-->
+				<!--					</select>-->
+				<!--				</div>-->
 				<div class="image-input">
-					<label for="image">Image associée </label>
-					<input id="image" name="image" type="file" accept="image/png, image/jpeg">
-					<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-						th:if="${memory.mediaUUID}!=null" th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
-						th:alt="'image associée au souvenir ' + ${memory.title}" />
-					<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-						th:if="${memory.mediaUUID}==null" src="/images/public/memory-placeholder.png"
-						th:alt="'image associée au souvenir ' + ${memory.title}" />
+					<label for="image">Choisir l'image associée 
+						<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+							th:if="${memory.mediaUUID}!=null" th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
+							th:alt="'image associée au souvenir ' + ${memory.title}" />
+						<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+							th:if="${memory.mediaUUID}==null" src="/images/public/memory-placeholder.png"
+							th:alt="'image associée au souvenir ' + ${memory.title}" />						
+					</label>
+					<input id="image" name="image" type="file" accept="image/png, image/jpeg" class="h-[0] w-[0] overflow-hidden" />
 				</div>
 				<input id="memoryId" th:field="*{memoryId}" type="hidden" />
 				<div class="publish">
@@ -67,20 +68,18 @@
 						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" />
 				</div>
 				<div th:object="${location}">
-					<button id="openModalBtn" class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80"
-						th:text="${memory.memoryId == 0 ?'Choisir un lieu':'Modifier le lieu'}"></button>
 					<div class="name-input">
 						<label for="locationName">Lieu </label>
 						<input id="locationName" th:field="*{name}" type="text"
-							placeholder="Donnez un nom au lieu de votre souvenir">
+							placeholder="Donnez un nom au lieu de votre souvenir" readonly />
+						<button id="openModalBtn" class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80"
+							th:text="${memory.memoryId == 0 ?'Choisir un lieu':'Modifier le lieu'}"></button>
 					</div>
 					<div class="latitude-input">
-						<input id="latitude" th:field="*{latitude}" type="number" step="any"
-							placeholder="Latitude du lieu">
+						<input id="latitude" th:field="*{latitude}" type="text" readonly />
 					</div>
 					<div class="longitude-input">
-						<input id="longitude" th:field="*{longitude}" type="number" step="any"
-							placeholder="Longitude du lieu">
+						<input id="longitude" th:field="*{longitude}" type="text" readonly />
 					</div>
 				</div>
 			</div>
@@ -96,14 +95,30 @@
 	<aside id="modal" class="fixed inset-0 flex items-center justify-center hidden z-40">
 		<div class="overlay absolute w-full h-full bg-gray-500/25 js-close-modal"></div>
 		<div
-			class="modal w-11/12 min-w-xs h-9/10 min-h-[300px] p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+			class="w-11/12 min-w-xs h-9/10 min-h-[300px] p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 			<button
-				class="js-close-modal modal-trigger px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
-			<h1 id="title-modal" class="mb-2.5 text-2xl font-medium">Choisissez un lieu pour votre souvenir</h1>
+				class="js-close-modal px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
+			<h1 id="title-modal" class="mb-2.5 text-2xl font-medium"
+				th:text="${memory.memoryId == 0 ? 'Choisissez un lieu pour votre souvenir' : 'Modifier le lieu de votre souvenir'}">
+			</h1>
 			<div id="map" class="h-9/10 w-9/10 mb-4 mx-auto border border-black"></div>
 			<p id="southWest"></p>
 			<p id="northEast"></p>
-			<button id="validateLocation" class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80">Valider</button>
+			<button id="validateLocation"
+				class="px-4 py-2 bg-[#bddab2] text-black rounded hover:opacity-80">Valider</button>
+		</div>
+	</aside>
+	<aside id="modalName" class="fixed inset-0 flex items-center justify-center hidden z-50">
+		<div class="overlay absolute w-full h-full bg-gray-500/25 js-close-modalName"></div>
+		<div
+			class="w-3/5 min-w-xs h-1/4 min-h-[300px] p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+			<button
+				class="js-close-modalName px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
+			<h1 id="title-modalName" class="mt-5 mb-2.5 text-2xl font-medium">Donnez un nom au lieu de votre souvenir
+			</h1>
+			<input id="modalNameInput" type="text" placeholder="Un nom pour votre lieu…" />
+			<button id="validateLocationName" class="px-4 py-2 bg-[#e9e9ed] text-black rounded"
+				disabled>Valider</button>
 		</div>
 	</aside>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
