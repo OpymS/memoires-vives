@@ -150,6 +150,7 @@ public class UserServiceImpl implements UserService {
 	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage) {
 		boolean isValid = true;
 
+		
 		User userToSave = userRepository.findByUserId(userWithUpdate.getUserId());
 		String updatedPseudo = userWithUpdate.getPseudo();
 		String currentPseudo = userToSave.getPseudo();

@@ -3,55 +3,59 @@
 
 <head>
 	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscription</title>
-    <link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-    <link rel="icon" href="/images/public/favicon.png" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Inscription</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
 </head>
 
 <body>
 	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	
+
 	<main>
 		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
-		<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
-	    <form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form" enctype="multipart/form-data">
-						
-			<div class="inputs-container">
-				<div class="pseudo-input">
-					<label for="inputPseudo">pseudo</label>
-<!--					<input id="inputPseudo" th:field="*{pseudo}" type="text" pattern="^\w+$" maxlength="30" required>-->
-					<input id="inputPseudo" th:field="*{pseudo}" type="text">
+			<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
+			<form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form"
+				enctype="multipart/form-data">
+
+				<div class="inputs-container">
+					<div class="pseudo-input">
+						<label for="inputPseudo">pseudo</label>
+						<!--					<input id="inputPseudo" th:field="*{pseudo}" type="text" pattern="^\w+$" maxlength="30" required>-->
+						<input id="inputPseudo" th:field="*{pseudo}" type="text">
+					</div>
+					<div class="email-input">
+						<label for="inputEmail">email</label>
+						<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
+						<input id="inputEmail" th:field="*{email}" type="email">
+					</div>
+					<div class="password-input">
+						<label for="inputPassword">mot de passe</label>
+						<input id="inputPassword" th:field="*{password}" type="password">
+					</div>
+					<div class="confirm-password-input">
+						<label for="inputPasswordConfirm">confirmez votre mot de passe</label>
+						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password">
+					</div>
+					<div class="image-input">
+						<label for="imageInput">Photo de profil
+							<img id="image"
+								class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+								src="" alt="Votre photo de profil" />
+						</label>
+						<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg"
+							class="h-[0] w-[0] overflow-hidden">
+					</div>
 				</div>
-				<div class="email-input">
-					<label for="inputEmail">email</label>
-<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
-					<input id="inputEmail" th:field="*{email}" type="email">
+
+				<div class="buttons-container">
+					<button type="submit" class="button create">Créer</button>
+					<a th:href="@{/}" class="button cancel">Annuler</a>
 				</div>
-				<div class="password-input">
-					<label for="inputPassword">mot de passe</label>
-					<input id="inputPassword" th:field="*{password}" type="password">
-				</div>
-				<div class="confirm-password-input">
-					<label for="inputPasswordConfirm">confirmez votre mot de passe</label>
-					<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password">
-				</div>
-				<div class="image-input">
-					<label for="image">Photo de profil </label>
-					<input id="image" name="image" type="file" accept="image/png, image/jpeg">
-				</div>
-			</div>
-			
-			<div class="buttons-container">
-				<button type="submit" class="button create">Créer</button>
-				<a th:href="@{/}" class="button cancel">Annuler</a>
-			</div>	
-		</form>
+			</form>
+		</main>
 	</main>
-		
-		
-	
-	</main>
+	<script src="/js/images.js"></script>
 </body>
 
 </html>

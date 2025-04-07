@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		let map;
 		let marker;
-		
+
 		let mapFirstOpening = true;
 
 
@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		function openModal(e) {
 			e.preventDefault();
 			document.getElementById('modal').classList.remove('hidden');
-			
+
 			if (placeName !== '') {
-				if (mapFirstOpening){
+				if (mapFirstOpening) {
 					marker = createMarker(latitude, longitude, placeName);
 					mapFirstOpening = false;
 				}
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				map.on('click', addLocation);
 				map.panTo(new L.LatLng(userLat, userLong));
 			}
-			
+
 			setTimeout(() => map.invalidateSize(), 200);
 		}
 
@@ -84,9 +84,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				attribution: 'données © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 			}).addTo(map);
 		}
-		
-		function createMarker(lat, long, name){
-			const marker = L.marker([lat, long], {draggable: 'true', autoPan: 'true'}).addTo(map);
+
+		function createMarker(lat, long, name) {
+			const marker = L.marker([lat, long], { draggable: 'true', autoPan: 'true' }).addTo(map);
 			marker.bindPopup(`<input id="placeNameChange" type="text" value="${name}"/><div>${formatLatitude(lat)} - ${formatLongitude(long)}</div>`);
 			marker.on('dragend', newLocation);
 			marker.on('popupopen', changeName);
@@ -158,14 +158,14 @@ document.addEventListener('DOMContentLoaded', () => {
 			closeModal(e, 'modal');
 			const modalName = document.getElementById('modalName');
 			modalName.classList.remove('hidden');
-			
+
 			document.querySelectorAll('.js-close-modalName').forEach(a => {
 				a.addEventListener('click', function(e) {
 					closeModal(e, 'modalName');
 					openModal(e);
 				});
 			});
-			
+
 			const buttonValName = document.getElementById('validateLocationName');
 			const nameInput = document.getElementById('modalNameInput');
 			nameInput.addEventListener('input', function() {
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					buttonValName.disabled = true;
 				}
 			});
-			
+
 			buttonValName.addEventListener('click', validate)
 		}
 

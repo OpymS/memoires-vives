@@ -30,7 +30,9 @@
 						<input id="inputEmail" th:field="*{email}" type="email">
 					</div>
 					<div class="currentPassword-input">
-						<label for="inputCurrentPassword" th:text="${user.userId == #authentication.principal.user.userId ? 'mot de passe actuel' : 'mot de passe administrateur'}"> </label>
+						<label for="inputCurrentPassword"
+							th:text="${user.userId == #authentication.principal.user.userId ? 'mot de passe actuel' : 'mot de passe administrateur'}">
+						</label>
 						<input id="inputCurrentPassword" name="currentPassword" type="password">
 					</div>
 					<div class="password-input">
@@ -42,17 +44,19 @@
 						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password">
 					</div>
 					<div class="image-input">
-						<label for="image">Photo de profil </label>
-						<input id="image" name="image" type="file" accept="image/png, image/jpeg">
-						<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							th:if="${user.mediaUUID}!=null"
-							th:src="@{/uploads/{filename}(filename=${user.mediaUUID})}"
-							th:alt="'image de profil de ' + ${user.pseudo}" />
-						<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							th:if="${user.mediaUUID}==null" src="/images/public/user-placeholder.png"
-							th:alt="'image de profil de ' + ${user.pseudo}" />
+						<label for="imageInput">Photo de profil
+							<img th:if="${user.mediaUUID}!=null" id="image"
+								class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+								th:src="@{/uploads/{filename}(filename=${user.mediaUUID})}"
+								th:alt="'image de profil de ' + ${user.pseudo}" />
+							<img th:if="${user.mediaUUID}==null" id="image"
+								class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+								src="/images/public/user-placeholder.png"
+								th:alt="'image de profil de ' + ${user.pseudo}" />
+						</label>
+						<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="h-[0] w-[0] overflow-hidden">
 					</div>
-					<input id="userId" th:field="*{userId}" type="hidden"/>
+					<input id="userId" th:field="*{userId}" type="hidden" />
 				</div>
 
 				<div class="buttons-container">
@@ -62,6 +66,7 @@
 			</form>
 		</main>
 	</main>
+	<script src="/js/images.js"></script>
 </body>
 
 </html>
