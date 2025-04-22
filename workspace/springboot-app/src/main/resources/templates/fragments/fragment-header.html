@@ -1,42 +1,42 @@
 <html xmlns:th="http://www.thymeleaf.com" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <header data-th-fragment="header">
-	<nav class="bg-[#bddab2] flex gap-3 justify-between items-center w-full z-10 h-24">
-		<a th:href="@{/}" aria-label="Page d'accueil">
+<!--	<nav class="bg-[#bddab2] border-[#5e6d59] flex gap-3 justify-between items-center w-full z-10 h-24">-->
+	<nav id="nav" class="bg-[#bddab2] border-b border-b-[#7e9076] flex gap-3 justify-between items-center w-full z-10 h-24">
+		<a class="sm:hover:bg-[#7e9076]" th:href="@{/}" aria-label="Page d'accueil">
 			<img alt="logo mémoires vives" src="/images/public/logo.png" id="logo-img" class="w-20">
 		</a>
-		<button id="menu-btn" aria-label="Toggle button" aria-expanded="false" class="md:hidden max-sm:block">
+		<button id="menu-btn" aria-label="Toggle button" aria-expanded="false" class="sm:hidden block">
 			<img src="/images/public/menu.svg" alt="" class="h-12 w-12">
 		</button>
 		<ul id="toggled-menu"
-			class="px-3 flex gap-3 items-center transform-none z-10 max-sm:flex-col max-sm:gap-4 max-sm:absolute max-sm:top-0 max-sm:left-0  max-sm:-translate-y-full max-sm:-z-10 max-sm:text-black max-sm:justify-center max-sm:w-full max-sm:bg-[#3d1a90] max-sm:py-6 max-sm:h-[100vh]">
-			<li sec:authorize="hasRole('ROLE_ADMIN')" class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+			class="text-[#bddab2] sm:text-white sm:px-3 flex flex-col sm:flex-row gap-2 sm:gap-3 items-center transform-none z-10 max-sm:absolute max-sm:top-0 max-sm:left-0 max-sm:-translate-y-full max-sm:pt-3 max-sm:w-full max-sm:bg-white max-sm:font-bold max-sm:h-[100vh] max-sm:justify-start">
+			<li sec:authorize="hasRole('ROLE_ADMIN')" class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/admin}" class="lg:text-xl lg:font-bold">Admin</a>
 			</li>
 			<li sec:authorize="!isAuthenticated()"
-				class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/signup}" class="lg:text-xl lg:font-bold">S'inscrire</a>
+				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+				<a th:href="@{/signup}" class="sm:text-xl sm:font-bold">S'inscrire</a>
 			</li>
 			<li sec:authorize="!isAuthenticated()"
-				class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/login}" class="lg:text-xl lg:font-bold">Se connecter</a>
 			</li>
 			<li sec:authorize="isAuthenticated()"
-				class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/profil}" class="lg:text-xl lg:font-bold"
 					th:text="${#authentication.principal.user.pseudo}"></a>
 			</li>
 			<li sec:authorize="isAuthenticated()"
-				class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/logout}" class="lg:text-xl lg:font-bold">Se déconnecter</a>
 			</li>
-			<li class="text-white hover:opacity-80 max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
+			<li class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
 				<a th:href="@{/about}" class="lg:text-xl lg:font-bold">À propos</a>
 			</li>
-			
 		</ul>
 
 	</nav>
-		
+	<script src="/js/navbar.js"></script>
 </header>
 
 </html>
