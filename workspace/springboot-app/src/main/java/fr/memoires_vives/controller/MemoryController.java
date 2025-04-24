@@ -31,6 +31,7 @@ public class MemoryController {
 	public String home(Model model) {
 		List<Memory> memories = memoryService.findMemories();
 		model.addAttribute("memories", memories);
+		model.addAttribute("categories", categoryService.getAllCategories());
 		return "index";
 	}
 
@@ -101,8 +102,8 @@ public class MemoryController {
 		}
 		System.out.println(location);
 		memoryService.updateMemory(memory, fileImage, published, location);
-		
-		return "redirect:/memory?memoryId="+memory.getMemoryId();
+
+		return "redirect:/memory?memoryId=" + memory.getMemoryId();
 	}
 
 }
