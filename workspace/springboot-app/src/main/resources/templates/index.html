@@ -4,6 +4,9 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--	ajout CRSF token pour méthode POST dans l'appel à l'API-->
+	<meta name="_csrf" th:content="${_csrf.token}">
+	<meta name="_csrf_header" th:content="${_csrf.headerName}">
 	<title>Accueil</title>
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
 	<!--	<link rel="stylesheet" th:href="@{/css/date-input.css}">-->
@@ -86,7 +89,7 @@
 				<h3 th:text="${memory.title}" class="text-xl"></h3>
 				<h4 th:text="${memory.description}"></h4>
 			</a>
-
+			<a id="page-2" href="#">2</a>
 		</div>
 	</main>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

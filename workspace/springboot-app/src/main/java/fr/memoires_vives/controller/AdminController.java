@@ -2,6 +2,8 @@ package fr.memoires_vives.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,8 @@ import fr.memoires_vives.bo.User;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+	private static final int PAGE_SIZE = 500;
+	
 	private final UserService userService;
 	private final MemoryService memoryService;
 	private final CategoryService categoryService;
@@ -47,8 +51,8 @@ public class AdminController {
 	}
 	
 	@GetMapping("/memories")
-	public String showAdminMemories(Model model) {
-		List<Memory> memories = memoryService.findMemories();
+	public String showAdminMemories(Model model, @RequestParam(name = "currentPage", defaultValue = "1") int currentPage) {
+		Page<Memory> memories = memoryService.findMemories(PageRequest.of(currentPage-1, PAGE_SIZE));
 		model.addAttribute("memories", memories);
 		return "admin-memories";
 	}

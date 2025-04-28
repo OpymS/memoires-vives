@@ -2,10 +2,14 @@ package fr.memoires_vives.bll;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,6 +20,7 @@ import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.dto.SearchCriteria;
 import fr.memoires_vives.repositories.MemoryRepository;
 
 @Primary
@@ -36,8 +41,25 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
-	public List<Memory> findMemories() {
-		return memoryRepository.findAll();
+	public Page<Memory> findMemories(Pageable pageable) {
+		List<Memory> memoriesList = memoryRepository.findAll();
+		
+		int pageSize = pageable.getPageSize();
+		int currentPage = pageable.getPageNumber();
+		int firstMemory = currentPage * pageSize;
+		
+		List<Memory> shortMemoriesList;
+		
+		if (memoriesList.size()< firstMemory) {
+			shortMemoriesList = Collections.emptyList();
+		}else {
+			int endIndex = Math.min(firstMemory+pageSize, memoriesList.size());
+			shortMemoriesList = memoriesList.subList(firstMemory, endIndex);
+		}
+		
+		Page<Memory> memoriesPage = new PageImpl<Memory>(shortMemoriesList, pageable, memoriesList.size());
+		
+		return memoriesPage;
 	}
 
 	@Override
@@ -181,6 +203,12 @@ public class MemoryServiceImpl implements MemoryService {
 	@Override
 	public List<Memory> getMemoriesByCategory(Category category) {
 		return memoryRepository.findByCategoryId(category.getCategoryId());
+	}
+
+	@Override
+	public Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
