@@ -10,7 +10,7 @@ public class SearchCriteria {
 	private boolean titleOnly;
 	private LocalDate after;
 	private LocalDate before;
-	private List<Category> categories;
+	private List<Long> categoriesId;
 	private boolean onlyMine;
 	private int status;
 	
@@ -48,8 +48,8 @@ public class SearchCriteria {
 	/**
 	 * @return the categories
 	 */
-	public List<Category> getCategories() {
-		return categories;
+	public List<Long> getCategoriesId() {
+		return categoriesId;
 	}
 
 	/**
@@ -97,8 +97,8 @@ public class SearchCriteria {
 	/**
 	 * @param categories the categories to set
 	 */
-	public void setCategories(List<Category> categories) {
-		this.categories = categories;
+	public void setCategoriesId(List<Long> categoriesId) {
+		this.categoriesId = categoriesId;
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class SearchCriteria {
 		builder.append(", before=");
 		builder.append(before);
 		builder.append(", categories=");
-		builder.append(categories);
+		builder.append(categoriesId);
 		builder.append(", onlyMine=");
 		builder.append(onlyMine);
 		builder.append(", status=");

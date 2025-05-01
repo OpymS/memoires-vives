@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class MemoryController {
 	
-	private static final int PAGE_SIZE = 6;
+	private static final int PAGE_SIZE = 12;
 
 	private final MemoryService memoryService;
 	private final CategoryService categoryService;

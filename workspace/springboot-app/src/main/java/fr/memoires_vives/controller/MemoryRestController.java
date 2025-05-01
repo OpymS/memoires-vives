@@ -1,9 +1,9 @@
 package fr.memoires_vives.controller;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +30,8 @@ public class MemoryRestController {
 	public ResponseEntity<?> sendPageOfMemories(@RequestBody SearchCriteria searchCriteria,
 			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber) {
 		System.out.println(searchCriteria.toString());
-		Page<Memory> memories = memoryService.findMemories(PageRequest.of(pageNumber - 1, PAGE_SIZE));
+		List<Memory> memories = memoryService.findMemoriesWithCriteria(null, searchCriteria);
+//		Page<Memory> memories = memoryService.findMemories(PageRequest.of(pageNumber - 1, PAGE_SIZE));
 		return ResponseEntity.ok(memories);
 	}
 	

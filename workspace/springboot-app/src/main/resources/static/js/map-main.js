@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		titleOnly: false,
 		after: null,
 		before: null,
-		categories: null,
+		categoriesId: null,
 		onlyMine: false,
 		status: 1
 	};
@@ -60,35 +60,41 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	function myMemoriesOnly() {
+	async function myMemoriesOnly() {
 		if (this.checked) {
 			statusContainer.classList.remove('hidden');
 			criterias.onlyMine = true;
+			await updateMemories();
 		} else {
 			statusContainer.classList.add('hidden');
 			criterias.onlyMine = false;
+			criterias.status = 1;
+			await updateMemories();
 		}
 	}
 
 	async function keyWordsProcess() {
 		const wordsToFind = this.value.split(',');
 		criterias.words = wordsToFind.map(word => word.trim());
-		await fetchMemories();
+		await updateMemories();
 	}
 
-	function titleOnlyProcess() {
-		console.log(`la case a été cliquée. Elle est maintenant ${this.checked ? 'cochée' : 'décochée'}`);
+	async function titleOnlyProcess() {
+		criterias.titleOnly=this.checked;
+		await updateMemories();
 	}
 
-	function minDateProcess() {
-		console.log(this.value);
+	async function minDateProcess() {
+		criterias.after = this.value;
+		await updateMemories();
 	}
 
-	function maxDateProcess() {
-		console.log(this.value);
+	async function maxDateProcess() {
+		criterias.before = this.value;
+		await updateMemories();
 	}
 
-	function categoriesProcess() {
+	async function categoriesProcess() {
 		const selectedCategories = [];
 		for (i = 0; i < this.options.length; i++) {
 			if (this.options[i].selected) {
@@ -96,19 +102,28 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 		console.log(selectedCategories);
+		criterias.categoriesId = selectedCategories;
+		await updateMemories();
 	}
 
-	function statusProcess() {
-		console.log(this.value);
+	async function statusProcess() {
+		criterias.status = this.value;
+		await updateMemories();
 	}
 
 	async function getNextPage() {
+		const memories = await updateMemories();
+		console.log(memories);
+	}
+
+	async function updateMemories() {
 		const memories = await fetchMemories();
 		console.log(memories);
 	}
 
 	async function fetchMemories() {
-		const url = `/api/memory/grid?pageNumber=${encodeURIComponent(2)}`;
+//		const url = `/api/memory/grid?pageNumber=${encodeURIComponent(2)}`;
+		const url = `/api/memory/grid`;
 		
 		try {
 			const response = await fetch(url, {
@@ -120,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				body: JSON.stringify(criterias),
 				credentials: "include"
 			});
-			console.log(response);
 			if (!response.ok) {
 				throw new Error(response.status === 403 ? 'Problème.' : 'An error occurred.');
 			}
