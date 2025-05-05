@@ -30,7 +30,7 @@ public class MemoryRestController {
 	public ResponseEntity<?> sendPageOfMemories(@RequestBody SearchCriteria searchCriteria,
 			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber) {
 		System.out.println(searchCriteria.toString());
-		List<Memory> memories = memoryService.findMemoriesWithCriteria(null, searchCriteria);
+		Page<Memory> memories = memoryService.findMemoriesWithCriteria(PageRequest.of(pageNumber - 1, PAGE_SIZE), searchCriteria);
 //		Page<Memory> memories = memoryService.findMemories(PageRequest.of(pageNumber - 1, PAGE_SIZE));
 		return ResponseEntity.ok(memories);
 	}

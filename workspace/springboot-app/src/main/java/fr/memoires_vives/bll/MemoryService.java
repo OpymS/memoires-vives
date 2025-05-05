@@ -13,7 +13,7 @@ import fr.memoires_vives.dto.SearchCriteria;
 
 public interface MemoryService {
 	Page<Memory> findMemories(Pageable pageable);
-	List<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria);
+	Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria);
 	Memory createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);
 	Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish, Location locationWithUpdate);
 	Memory getMemoryById(long memoryId);

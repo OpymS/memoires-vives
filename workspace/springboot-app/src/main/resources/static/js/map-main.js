@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const mapButton = document.getElementById('map');
 	const mapContainer = document.getElementById('map-container');
 	const gridContainer = document.getElementById('grid-container');
+	const cardsContainer = document.getElementById('cards-container');
 	const keyWordsInput = document.getElementById('key-word-input');
 	const titleOnlyCheck = document.getElementById('only-title');
 	const minDateInput = document.getElementById('after-input');
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const statusContainer = document.getElementById('status-container');
 	const statusInput = document.getElementById('status');
 
-	const nextPage = document.getElementById('page-2');
+	const pageControl = document.getElementById('pagination-control');
 
 	const criterias = {
 		words: null,
@@ -27,9 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		status: 1
 	};
 
-	nextPage.addEventListener('click', getNextPage);
+//	nextPage.addEventListener('click', getNextPage);
 
 	let selectedMode = 'grid';
+	let currentPage = 1;
 
 	gridButton.addEventListener('click', (e) => { toggleMode('grid') });
 	mapButton.addEventListener('click', (e) => { toggleMode('map') });
@@ -80,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	async function titleOnlyProcess() {
-		criterias.titleOnly=this.checked;
+		criterias.titleOnly = this.checked;
 		await updateMemories();
 	}
 
@@ -101,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
 				selectedCategories.push(this.options[i].value);
 			}
 		}
-		console.log(selectedCategories);
 		criterias.categoriesId = selectedCategories;
 		await updateMemories();
 	}
@@ -117,14 +118,22 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	async function updateMemories() {
-		const memories = await fetchMemories();
-		console.log(memories);
+		const serverResponse = await fetchMemories();
+		const memories = serverResponse.content;
+		const lastPageNumber = serverResponse.totalPages;
+		updateGrid(memories);
+		updatePaginationControl(lastPageNumber);
 	}
 
-	async function fetchMemories() {
-//		const url = `/api/memory/grid?pageNumber=${encodeURIComponent(2)}`;
-		const url = `/api/memory/grid`;
-		
+	async function fetchMemories(page) {
+		//		const url = `/api/memory/grid?pageNumber=${encodeURIComponent(2)}`;
+		let url;
+		if (page){
+			url = `/api/memory/grid?pageNumber=${page}`;
+		} else {
+			 url = `/api/memory/grid`;			
+		}
+
 		try {
 			const response = await fetch(url, {
 				method: "POST",
@@ -146,20 +155,55 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	//	async function fetchMemories() {
-	//		const url = `/api/memory/grid?pageNumber=${encodeURIComponent(2)}`;
-	//		
-	//		try {
-	//			const response = await fetch(url);
-	//			console.log(response);
-	//			if (!response.ok) {
-	//				throw new Error(response.status === 403 ? 'Problème.' : 'An error occurred.');
-	//			}
-	//			const memories = await response.json();
-	//			return memories;
-	//		} catch (error) {
-	//			console.error('Error:', error);
-	//			return [];
-	//		}
-	//	}
+	function updateGrid(memories) {
+		cardsContainer.innerHTML = '';
+		memories.forEach((memory) => {
+			const memoryDiv = document.createElement('a');
+			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
+			memoryDiv.className = 'border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw] overflow-hidden';
+			if (memory.mediaUUID) {
+				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
+							<img class="absolute rounded-t-lg w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
+						</div>
+						<h3 class="text-xl mx-2 text-center">${memory.title}</h3>
+						<h4 class="w-full px-1 font-light text-justify">${memory.description}</h4>
+				`;
+			} else {
+				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
+						<img class="absolute rounded-t-lg w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="illustration de ${memory.title}" />
+					</div>
+					<h3 class="text-xl mx-2 text-center">${memory.title}</h3>
+					<h4 class="w-full px-1 font-light text-justify">${memory.description}</h4>
+			`;
+			}
+			cardsContainer.appendChild(memoryDiv);
+		});
+	}
+
+	function updatePaginationControl(lastPageNumber) {
+		pageControl.innerHTML = '';
+		for (let page = 1; page <= lastPageNumber; page++) {
+			const pageLink = document.createElement('span');
+			pageLink.textContent = page;
+			if (page === currentPage) {
+				pageLink.className = 'font-bold text[#7e9076]';
+			} else {
+				pageLink.className = 'font-light text-[#bddab2] hover:text-white hover:bg-[#bddab2] hover:font-bold';
+				pageLink.addEventListener('click', () => {
+					goToPage(page);
+				});
+			}
+			pageControl.appendChild(pageLink);
+
+		}
+	}
+	
+	async function goToPage(pageNumber){
+		currentPage = pageNumber;
+		const serverResponse = await fetchMemories(pageNumber);
+		const memories = serverResponse.content;
+		const lastPageNumber = serverResponse.totalPages;
+		updateGrid(memories);
+		updatePaginationControl(lastPageNumber);
+	}
 });

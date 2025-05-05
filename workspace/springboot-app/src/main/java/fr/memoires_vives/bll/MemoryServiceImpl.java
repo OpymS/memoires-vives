@@ -10,6 +10,7 @@ import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -212,12 +213,27 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
-	public List<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria) {
-		List<Memory> memories = memoryRepository.findAll(createSpecification(searchCriteria));
+	public Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria) {
+		List<Memory> memoriesList = memoryRepository.findAll(createSpecification(searchCriteria));
+		
+		int pageSize = pageable.getPageSize();
+		int currentPage = pageable.getPageNumber();
+		int startItem = currentPage * pageSize;
+		List<Memory> shortMemoriesList;
+		
+		if (memoriesList.size()< startItem) {
+			shortMemoriesList = Collections.emptyList();
+		}else {
+			int endIndex = Math.min(startItem+pageSize, memoriesList.size());
+			shortMemoriesList = memoriesList.subList(startItem, endIndex);
+		}
+		
+		Page<Memory> memoriesPage = new PageImpl<Memory>(shortMemoriesList, PageRequest.of(currentPage, pageSize), memoriesList.size());
+		
 
 		// TODO Passer en Page pour gérer la pagination
 		// TODO Gérer les cas des souvenirs privés
-		return memories;
+		return memoriesPage;
 	}
 
 	private Specification<Memory> createSpecification(SearchCriteria criteria) {
