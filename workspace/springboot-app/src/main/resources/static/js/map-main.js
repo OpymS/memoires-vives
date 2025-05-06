@@ -28,25 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		status: 1
 	};
 
-//	nextPage.addEventListener('click', getNextPage);
+	//	nextPage.addEventListener('click', getNextPage);
 
 	let selectedMode = 'grid';
 	let currentPage = 1;
 
-	gridButton.addEventListener('click', (e) => { toggleMode('grid') });
-	mapButton.addEventListener('click', (e) => { toggleMode('map') });
-
-	keyWordsInput.addEventListener('blur', keyWordsProcess);
-	titleOnlyCheck.addEventListener('change', titleOnlyProcess);
-
-	minDateInput.addEventListener('blur', minDateProcess);
-	maxDateInput.addEventListener('blur', maxDateProcess);
-
-	statusInput.addEventListener('change', statusProcess);
-
-	categoriesInput.addEventListener('change', categoriesProcess);
-
-	myMemoriesCheck.addEventListener('change', myMemoriesOnly);
+	init();
 
 	function toggleMode(clicked) {
 		if (clicked != selectedMode) {
@@ -98,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	async function categoriesProcess() {
 		const selectedCategories = [];
-		for (i = 0; i < this.options.length; i++) {
+		for (i = 1; i < this.options.length; i++) {
 			if (this.options[i].selected) {
 				selectedCategories.push(this.options[i].value);
 			}
@@ -112,12 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		await updateMemories();
 	}
 
-	async function getNextPage() {
-		const memories = await updateMemories();
-		console.log(memories);
-	}
-
 	async function updateMemories() {
+		stockCriterias();
+		currentPage = 1;
 		const serverResponse = await fetchMemories();
 		const memories = serverResponse.content;
 		const lastPageNumber = serverResponse.totalPages;
@@ -128,10 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	async function fetchMemories(page) {
 		//		const url = `/api/memory/grid?pageNumber=${encodeURIComponent(2)}`;
 		let url;
-		if (page){
+		if (page) {
 			url = `/api/memory/grid?pageNumber=${page}`;
 		} else {
-			 url = `/api/memory/grid`;			
+			url = `/api/memory/grid`;
 		}
 
 		try {
@@ -197,13 +181,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		}
 	}
-	
-	async function goToPage(pageNumber){
+
+	async function goToPage(pageNumber) {
 		currentPage = pageNumber;
 		const serverResponse = await fetchMemories(pageNumber);
 		const memories = serverResponse.content;
 		const lastPageNumber = serverResponse.totalPages;
 		updateGrid(memories);
 		updatePaginationControl(lastPageNumber);
+	}
+
+	function stockCriterias() {
+		sessionStorage.setItem('criterias', JSON.stringify(criterias));
+	}
+
+	function destockCriterias() {
+		const storedCriterias = sessionStorage.getItem('criterias');
+		if (storedCriterias) {
+			const parsedCriterias = JSON.parse(storedCriterias);
+			criterias.words = parsedCriterias.words;
+			criterias.titleOnly = parsedCriterias.titleOnly;
+			criterias.after = parsedCriterias.after;
+			criterias.before = parsedCriterias.before;
+			criterias.categoriesId = parsedCriterias.categoriesId;
+			criterias.onlyMine = parsedCriterias.onlyMine;
+			criterias.status = parsedCriterias.status;
+		}
+	}
+
+	function init() {
+		gridButton.addEventListener('click', (e) => { toggleMode('grid') });
+		mapButton.addEventListener('click', (e) => { toggleMode('map') });
+
+		keyWordsInput.addEventListener('blur', keyWordsProcess);
+		titleOnlyCheck.addEventListener('change', titleOnlyProcess);
+
+		minDateInput.addEventListener('blur', minDateProcess);
+		maxDateInput.addEventListener('blur', maxDateProcess);
+
+		statusInput.addEventListener('change', statusProcess);
+
+		categoriesInput.addEventListener('change', categoriesProcess);
+
+		myMemoriesCheck.addEventListener('change', myMemoriesOnly);
+
+		destockCriterias();
+		console.log(criterias);
+
+		if (criterias.words){
+			keyWordsInput.value = criterias.words.join(', ');
+		}
+		titleOnlyCheck.checked = criterias.titleOnly;
+		minDateInput.value = criterias.after;
+		maxDateInput.value = criterias.before;
+		if (criterias.categoriesId){
+			for (let i = 1; i < categoriesInput.options.length; i++){
+				categoriesInput.options[i].selected = criterias.categoriesId.includes(categoriesInput.options[i].value);
+			}
+		}
+		
+		
+		myMemoriesCheck.checked = criterias.onlyMine;
+		if (myMemoriesCheck.checked){		
+			statusInput.value = criterias.status;
+		} else {
+			statusInput.value = 1;
+		}
+		
+		updateMemories();
 	}
 });
