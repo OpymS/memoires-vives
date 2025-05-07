@@ -19,7 +19,7 @@
 			<div class="border border-black rounded-lg flex flex-col items-center w-full max-w-xs">
 				<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]" th:if="${userToDisplay.mediaUUID}!=null" th:src="@{/uploads/{filename}(filename=${userToDisplay.mediaUUID})}" th:alt="'image de profil de ' + ${userToDisplay.pseudo}" />
 				<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]" th:if="${userToDisplay.mediaUUID}==null" src="/images/public/user-placeholder.png" th:alt="'image de profil de ' + ${userToDisplay.pseudo}" />
-				<div th:text="${userToDisplay.email}"></div>
+				<div th:if="${userToDisplay.userId == #authentication.principal.user.userId}" th:text="${userToDisplay.email}"></div>
 				<div th:if="${userToDisplay.memories != null and !userToDisplay.memories.empty}">
 					<div th:each="memory : ${userToDisplay.memories}">
 						<a th:href="@{/memory(memoryId=${memory.memoryId})}" th:text="${memory.title}"></a>
