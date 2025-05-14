@@ -9,9 +9,9 @@
 	<meta name="_csrf_header" th:content="${_csrf.headerName}">
 	<title>Accueil</title>
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<!--	<link rel="stylesheet" th:href="@{/css/date-input.css}">-->
 	<link rel="icon" href="/images/public/favicon.png" />
-	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 </head>
 
 <body>
@@ -23,10 +23,10 @@
 			<h2 class="mt-3 text-xl sm:pb-2">Filtrer les souvenirs</h2>
 			<div class="flex flex-col md:flex-row md:flex-wrap justify-between gap-6 w-full">
 				<div id="switch-container" class="w-[150px] h-[50px] flex align-center">
-					<div id="grid"
+					<div id="grid-button"
 						class="bg-white bg-white/50 border border-[#7e9076] rounded-l-xs w-1/2 h-full flex justify-center items-center border-y-2 border-l-2 hover:opacity-60">
 						grille</div>
-					<div id="map"
+					<div id="map-button"
 						class="bg-white border border-[#7e9076] rounded-r-xs w-1/2 h-full flex justify-center items-center hover:opacity-60">
 						carte</div>
 				</div>
@@ -76,8 +76,9 @@
 			</div>
 
 		</div>
-		<div id="map-container" class="w-full md:w-4/5 h-[60vh] min-h-[300px] my-6 hidden">
-			<div id="map" class="h-full w-full border border-[#7e9076] rounded-lg flex justify-center items-center">Désolé, la carte ne fonctionne pas encore. Travail en cours…</div>
+		<div id="map-container" class="w-full md:w-4/5 h-[55vh] min-h-[300px] my-6 hidden">
+			La carte est en cours de développement. Bugs probables…
+			<div id="map" class="h-full w-full border border-[#7e9076] rounded-lg flex justify-center items-center"></div>
 		</div>
 		<div id="grid-container" class="w-full md:w-4/5">
 			<div id="cards-container" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3 my-6 w-full">

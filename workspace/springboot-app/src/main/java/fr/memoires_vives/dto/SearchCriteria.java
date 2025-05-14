@@ -3,8 +3,6 @@ package fr.memoires_vives.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import fr.memoires_vives.bo.Category;
-
 public class SearchCriteria {
 	private List<String> words;
 	private boolean titleOnly;
@@ -13,6 +11,11 @@ public class SearchCriteria {
 	private List<Long> categoriesId;
 	private boolean onlyMine;
 	private int status;
+	private double north;
+	private double south;
+	private double east;
+	private double west;
+	
 	
 	public SearchCriteria() {
 	}
@@ -67,6 +70,34 @@ public class SearchCriteria {
 	}
 
 	/**
+	 * @return the north
+	 */
+	public double getNorth() {
+		return north;
+	}
+
+	/**
+	 * @return the south
+	 */
+	public double getSouth() {
+		return south;
+	}
+
+	/**
+	 * @return the east
+	 */
+	public double getEast() {
+		return east;
+	}
+
+	/**
+	 * @return the west
+	 */
+	public double getWest() {
+		return west;
+	}
+
+	/**
 	 * @param words the words to set
 	 */
 	public void setWords(List<String> words) {
@@ -115,6 +146,34 @@ public class SearchCriteria {
 		this.status = status;
 	}
 
+	/**
+	 * @param north the north to set
+	 */
+	public void setNorth(double north) {
+		this.north = north;
+	}
+
+	/**
+	 * @param south the south to set
+	 */
+	public void setSouth(double south) {
+		this.south = south;
+	}
+
+	/**
+	 * @param east the east to set
+	 */
+	public void setEast(double east) {
+		this.east = east;
+	}
+
+	/**
+	 * @param west the west to set
+	 */
+	public void setWest(double west) {
+		this.west = west;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -126,16 +185,21 @@ public class SearchCriteria {
 		builder.append(after);
 		builder.append(", before=");
 		builder.append(before);
-		builder.append(", categories=");
+		builder.append(", categoriesId=");
 		builder.append(categoriesId);
 		builder.append(", onlyMine=");
 		builder.append(onlyMine);
 		builder.append(", status=");
 		builder.append(status);
+		builder.append(", north=");
+		builder.append(north);
+		builder.append(", south=");
+		builder.append(south);
+		builder.append(", east=");
+		builder.append(east);
+		builder.append(", west=");
+		builder.append(west);
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
-	
 }

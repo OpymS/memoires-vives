@@ -230,8 +230,6 @@ public class MemoryServiceImpl implements MemoryService {
 		
 		Page<Memory> memoriesPage = new PageImpl<Memory>(shortMemoriesList, PageRequest.of(currentPage, pageSize), memoriesList.size());
 		
-
-		// TODO Passer en Page pour gérer la pagination
 		// TODO Gérer les cas des souvenirs privés
 		return memoriesPage;
 	}
@@ -275,18 +273,26 @@ public class MemoryServiceImpl implements MemoryService {
 				User user = userService.getCurrentUser();
 				if (user != null) {
 					predicates.add(cb.equal(root.get("rememberer").get("userId"), user.getUserId()));					
+					if (criteria.getStatus() == 2) {
+						predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
+					}
+					
+					if (criteria.getStatus() == 3) {
+						predicates.add(cb.equal(root.get("state"), MemoryState.CREATED));
+					}
 				}
-			}
-
-			if (criteria.getStatus() == 2) {
+			} else {
 				predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
 			}
 
-			if (criteria.getStatus() == 3) {
-				predicates.add(cb.equal(root.get("state"), MemoryState.CREATED));
-			}
 
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
+	}
+
+	@Override
+	public List<Memory> findMemoriesOnMapWithCriteria(SearchCriteria searchCriteria) {
+		// TODO Auto-generated method stub
+		return memoryRepository.findAll();
 	}
 }

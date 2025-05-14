@@ -1,6 +1,7 @@
 package fr.memoires_vives.controller;
 
 import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +30,13 @@ public class MemoryRestController {
 	@PostMapping("/grid")
 	public ResponseEntity<?> sendPageOfMemories(@RequestBody SearchCriteria searchCriteria,
 			@RequestParam(name = "pageNumber", defaultValue = "1") int pageNumber) {
-		System.out.println(searchCriteria.toString());
 		Page<Memory> memories = memoryService.findMemoriesWithCriteria(PageRequest.of(pageNumber - 1, PAGE_SIZE), searchCriteria);
-//		Page<Memory> memories = memoryService.findMemories(PageRequest.of(pageNumber - 1, PAGE_SIZE));
 		return ResponseEntity.ok(memories);
 	}
 	
+	@PostMapping("/map")
+	public ResponseEntity<?> sendMapOfMemories(@RequestBody SearchCriteria searchCriteria) {
+		List<Memory> memories = memoryService.findMemoriesOnMapWithCriteria(searchCriteria);
+		return ResponseEntity.ok(memories);
+	}
 }
