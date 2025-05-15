@@ -32,12 +32,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		west: -1
 	};
 
-	let userLatitude = 32.324;
-	let userLongitude = 0.754;
+	let userLatitude = Math.random() * 180 - 90;
+	let userLongitude = Math.random() * 360 - 180;
+
 
 	let selectedMode = 'grid';
 	let currentPage = 1;
 	let map;
+	let markers;
 
 	init();
 
@@ -74,8 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		myMemoriesCheck.checked = criterias.onlyMine;
 		if (myMemoriesCheck.checked) {
+			statusContainer.classList.remove('hidden');
 			statusInput.value = criterias.status;
 		} else {
+			statusContainer.classList.add('hidden');
 			statusInput.value = 1;
 		}
 
@@ -83,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		map = L.map("map", {
 			worldCopyJump: true,
-			zoom: 6,
+			zoom: 4,
 			center: [userLatitude, userLongitude]
 		});
 
@@ -92,10 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			maxZoom: 20,
 			attribution: 'données © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 		}).addTo(map);
+		
+		markers = L.layerGroup().addTo(map);
 
-		map.on('load', function() {
-			console.log("Carte chargée");
-		});
+		map.on('moveend',updateMemories);
 	}
 
 	function toggleMode(clicked) {
@@ -236,9 +240,28 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	function updateMap(memories) {
+		markers.clearLayers();
 		memories.forEach(memory => {
-			const marker = L.marker([memory.location.latitude, memory.location.longitude]).addTo(map);
-			marker.bindPopup(`${memory.title}`);
+			const marker = L.marker([memory.location.latitude, memory.location.longitude]).addTo(markers);
+			const memoryDiv = document.createElement('a');
+			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
+			memoryDiv.className = 'flex flex-col items-center overflow-hidden';
+			if (memory.mediaUUID) {
+				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
+							<img class="absolute rounded-t-lg w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
+						</div>
+						<h3 class="text-xl mx-2 text-center">${memory.title}</h3>
+						<h4 class="w-full px-1 font-light text-justify">${memory.description}</h4>
+				`;
+			} else {
+				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
+						<img class="absolute rounded-t-lg w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="illustration de ${memory.title}" />
+					</div>
+					<h3 class="text-xl mx-2 text-center">${memory.title}</h3>
+					<h4 class="w-full px-1 font-light text-justify">${memory.description}</h4>
+			`;
+			}
+			marker.bindPopup(memoryDiv);
 		})
 	}
 

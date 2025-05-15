@@ -215,21 +215,22 @@ public class MemoryServiceImpl implements MemoryService {
 	@Override
 	public Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria) {
 		List<Memory> memoriesList = memoryRepository.findAll(createSpecification(searchCriteria));
-		
+
 		int pageSize = pageable.getPageSize();
 		int currentPage = pageable.getPageNumber();
 		int startItem = currentPage * pageSize;
 		List<Memory> shortMemoriesList;
-		
-		if (memoriesList.size()< startItem) {
+
+		if (memoriesList.size() < startItem) {
 			shortMemoriesList = Collections.emptyList();
-		}else {
-			int endIndex = Math.min(startItem+pageSize, memoriesList.size());
+		} else {
+			int endIndex = Math.min(startItem + pageSize, memoriesList.size());
 			shortMemoriesList = memoriesList.subList(startItem, endIndex);
 		}
-		
-		Page<Memory> memoriesPage = new PageImpl<Memory>(shortMemoriesList, PageRequest.of(currentPage, pageSize), memoriesList.size());
-		
+
+		Page<Memory> memoriesPage = new PageImpl<Memory>(shortMemoriesList, PageRequest.of(currentPage, pageSize),
+				memoriesList.size());
+
 		// TODO Gérer les cas des souvenirs privés
 		return memoriesPage;
 	}
@@ -269,22 +270,19 @@ public class MemoryServiceImpl implements MemoryService {
 				predicates.add(cb.or(categoriesPredicates.toArray(new Predicate[0])));
 			}
 
-			if (criteria.isOnlyMine()) {
-				User user = userService.getCurrentUser();
-				if (user != null) {
-					predicates.add(cb.equal(root.get("rememberer").get("userId"), user.getUserId()));					
-					if (criteria.getStatus() == 2) {
-						predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
-					}
-					
-					if (criteria.getStatus() == 3) {
-						predicates.add(cb.equal(root.get("state"), MemoryState.CREATED));
-					}
+			User user = userService.getCurrentUser();
+			if (criteria.isOnlyMine() && user != null) {
+				predicates.add(cb.equal(root.get("rememberer").get("userId"), user.getUserId()));
+				if (criteria.getStatus() == 2) {
+					predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
+				}
+
+				if (criteria.getStatus() == 3) {
+					predicates.add(cb.equal(root.get("state"), MemoryState.CREATED));
 				}
 			} else {
 				predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
 			}
-
 
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
@@ -292,7 +290,51 @@ public class MemoryServiceImpl implements MemoryService {
 
 	@Override
 	public List<Memory> findMemoriesOnMapWithCriteria(SearchCriteria searchCriteria) {
-		// TODO Auto-generated method stub
-		return memoryRepository.findAll();
+		Specification<Memory> baseSpecification = createSpecification(searchCriteria);
+		Specification<Memory> geographicSpecification = getGeographicSpecification(searchCriteria);
+
+		Specification<Memory> globalSpecification = Specification.where(baseSpecification).and(geographicSpecification);
+
+		return memoryRepository.findAll(globalSpecification);
+	}
+
+	private Specification<Memory> getGeographicSpecification(SearchCriteria criteria) {
+		double north = criteria.getNorth();
+		double south = criteria.getSouth();
+		double east = criteria.getEast();
+		double west = criteria.getWest();
+
+		if (east - west >= 300) {
+			east = 180;
+			west = -180;
+		}
+
+		while (west < -180) {
+			west += 360;
+		}
+		while (east > 180) {
+			east -= 360;
+		}
+
+		final double innerEast = east;
+		final double innerWest = west;
+
+		return (Root<Memory> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+			List<Predicate> predicates = new ArrayList<>();
+
+			predicates.add(cb.greaterThanOrEqualTo(root.get("location").get("latitude"), south));
+			predicates.add(cb.lessThanOrEqualTo(root.get("location").get("latitude"), north));
+			if (innerWest < innerEast) {
+				predicates.add(cb.greaterThanOrEqualTo(root.get("location").get("longitude"), innerWest));
+				predicates.add(cb.lessThanOrEqualTo(root.get("location").get("longitude"), innerEast));
+			} else {
+				List<Predicate> longitudesPredicates = new ArrayList<>();
+				longitudesPredicates.add(cb.greaterThanOrEqualTo(root.get("location").get("longitude"), innerWest));
+				longitudesPredicates.add(cb.lessThanOrEqualTo(root.get("location").get("longitude"), innerEast));
+				predicates.add(cb.or(longitudesPredicates.toArray(new Predicate[0])));
+			}
+
+			return cb.and(predicates.toArray(new Predicate[0]));
+		};
 	}
 }
