@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 	const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
 	const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
 
@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const mapContainer = document.getElementById('map-container');
 	const gridContainer = document.getElementById('grid-container');
 	const cardsContainer = document.getElementById('cards-container');
+	const myMemoriesContainer = document.getElementById('my-memories-container');
 	const keyWordsInput = document.getElementById('key-word-input');
 	const titleOnlyCheck = document.getElementById('only-title');
 	const minDateInput = document.getElementById('after-input');
@@ -15,8 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	const myMemoriesCheck = document.getElementById('my-memories');
 	const statusContainer = document.getElementById('status-container');
 	const statusInput = document.getElementById('status');
+	const resetButton = document.getElementById('reset');
 
 	const pageControl = document.getElementById('pagination-control');
+
+	const isAuthenticated = JSON.parse(document.body.getAttribute('data-authenticated'));
 
 	const criterias = {
 		words: null,
@@ -32,18 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
 		west: -1
 	};
 
-	let userLatitude = Math.random() * 180 - 90;
-	let userLongitude = Math.random() * 360 - 180;
-
+	let userLatitude = 0;
+	let userLongitude = 0;
+	let center = [userLatitude, userLongitude];
+	let zoom = 6;
 
 	let selectedMode = 'grid';
 	let currentPage = 1;
 	let map;
 	let markers;
+	let mapInited = false;
+	let storedCoordinates = false;
 
-	init();
+	await init();
 
-	function init() {
+	async function init() {
 		gridButton.addEventListener('click', (e) => { toggleMode('grid') });
 		mapButton.addEventListener('click', (e) => { toggleMode('map') });
 
@@ -59,50 +66,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		myMemoriesCheck.addEventListener('change', myMemoriesOnly);
 
-		destockCriterias();
-
-		if (criterias.words) {
-			keyWordsInput.value = criterias.words.join(', ');
-		}
-		titleOnlyCheck.checked = criterias.titleOnly;
-		minDateInput.value = criterias.after;
-		maxDateInput.value = criterias.before;
-		if (criterias.categoriesId) {
-			for (let i = 1; i < categoriesInput.options.length; i++) {
-				categoriesInput.options[i].selected = criterias.categoriesId.includes(categoriesInput.options[i].value);
-			}
-		}
-
-
-		myMemoriesCheck.checked = criterias.onlyMine;
-		if (myMemoriesCheck.checked) {
-			statusContainer.classList.remove('hidden');
-			statusInput.value = criterias.status;
-		} else {
-			statusContainer.classList.add('hidden');
-			statusInput.value = 1;
-		}
-
-		updateMemories();
-
-		map = L.map("map", {
-			worldCopyJump: true,
-			zoom: 4,
-			center: [userLatitude, userLongitude]
+		resetButton.addEventListener('click', async function(e) {
+			e.preventDefault();
+			await resetCriterias();
 		});
 
-		L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-			minZoom: 1,
-			maxZoom: 20,
-			attribution: 'données © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-		}).addTo(map);
-		
-		markers = L.layerGroup().addTo(map);
+		if (isAuthenticated) {
+			myMemoriesContainer.classList.remove('hidden');
+		} else {
+			myMemoriesContainer.classList.add('hidden');
+		}
 
-		map.on('moveend',updateMemories);
+		await destockCriterias();
+		updateFilters();
+		await toggleMode(selectedMode);
+
+		updateMemories();
 	}
 
-	function toggleMode(clicked) {
+	async function toggleMode(clicked) {
 		if (clicked !== selectedMode) {
 			mapContainer.classList.toggle("hidden");
 			gridContainer.classList.toggle("hidden");
@@ -113,6 +95,10 @@ document.addEventListener('DOMContentLoaded', () => {
 			gridButton.classList.toggle("border-y-2");
 			gridButton.classList.toggle("border-l-2");
 			selectedMode = selectedMode === 'grid' ? 'map' : 'grid';
+			if (clicked === 'map' && !mapInited) {
+				await initMap();
+				mapInited = true;
+			}
 
 			updateMemories();
 		}
@@ -136,10 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
 			criterias.east = bounds.getEast();
 			criterias.west = bounds.getWest();
 			stockCriterias();
-			console.log(criterias);
 			const memories = await fetchMemoriesOnMap();
-			console.log(memories);
 			updateMap(memories);
+
 		}
 	}
 
@@ -272,14 +257,22 @@ document.addEventListener('DOMContentLoaded', () => {
 		const lastPageNumber = serverResponse.totalPages;
 		updateGrid(memories);
 		updatePaginationControl(lastPageNumber);
+		stockCriterias();
 	}
 
 	function stockCriterias() {
-		sessionStorage.setItem('criterias', JSON.stringify(criterias));
+		localStorage.setItem('criterias', JSON.stringify(criterias));
+		localStorage.setItem('mode', JSON.stringify(selectedMode));
+		if (selectedMode === 'map') {
+			localStorage.setItem('zoom', JSON.stringify(map.getZoom()));
+			localStorage.setItem('center', JSON.stringify(map.getCenter()));
+		} else {
+			localStorage.setItem('page', JSON.stringify(currentPage));
+		}
 	}
 
-	function destockCriterias() {
-		const storedCriterias = sessionStorage.getItem('criterias');
+	async function destockCriterias() {
+		const storedCriterias = localStorage.getItem('criterias');
 		if (storedCriterias) {
 			const parsedCriterias = JSON.parse(storedCriterias);
 			criterias.words = parsedCriterias.words;
@@ -290,6 +283,51 @@ document.addEventListener('DOMContentLoaded', () => {
 			criterias.onlyMine = parsedCriterias.onlyMine;
 			criterias.status = parsedCriterias.status;
 		}
+
+		const storedCenter = localStorage.getItem('center');
+		const storedZoom = localStorage.getItem('zoom');
+		const storedPage = localStorage.getItem('page');
+		if (storedCenter) {
+			center = JSON.parse(storedCenter);
+			storedCoordinates = true;
+		}
+
+		if (storedZoom) {
+			zoom = JSON.parse(storedZoom);
+		}
+		if (storedPage) {
+			currentPage = JSON.parse(storedPage);
+		}
+
+		const storedMode = localStorage.getItem('mode');
+		if (storedMode) {
+			await toggleMode(JSON.parse(storedMode));
+		}
+	}
+
+	async function initMap() {
+		if (!storedCoordinates) {
+			await getPositionByIP();
+			center = [userLatitude, userLongitude];
+		}
+		map = L.map("map", {
+			worldCopyJump: true,
+			zoom: zoom,
+			center: center
+		});
+
+		L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+			minZoom: 1,
+			maxZoom: 20,
+			attribution: 'données © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+		}).addTo(map);
+
+		markers = L.layerGroup().addTo(map);
+
+		map.on('moveend', updateMemories);
+
+		mapInited = true;
+
 	}
 
 
@@ -342,4 +380,78 @@ document.addEventListener('DOMContentLoaded', () => {
 		criterias.status = this.value;
 		await updateMemories();
 	}
+
+	function updateFilters() {
+		if (criterias.words) {
+			keyWordsInput.value = criterias.words.join(', ');
+		}
+		titleOnlyCheck.checked = criterias.titleOnly;
+		minDateInput.value = criterias.after;
+		maxDateInput.value = criterias.before;
+		if (criterias.categoriesId) {
+			for (let i = 1; i < categoriesInput.options.length; i++) {
+				categoriesInput.options[i].selected = criterias.categoriesId.includes(categoriesInput.options[i].value);
+			}
+		} else {
+			for (let i = 1; i < categoriesInput.options.length; i++) {
+				categoriesInput.options[i].selected = false;
+			}
+		}
+
+
+		myMemoriesCheck.checked = criterias.onlyMine;
+		if (myMemoriesCheck.checked) {
+			statusContainer.classList.remove('hidden');
+			statusInput.value = criterias.status;
+		} else {
+			statusContainer.classList.add('hidden');
+			statusInput.value = 1;
+		}
+	}
+
+	async function resetCriterias() {
+		criterias.words = null;
+		criterias.titleOnly = false;
+		criterias.after = null;
+		criterias.before = null;
+		criterias.categoriesId = null;
+		criterias.onlyMine = false;
+		criterias.status = 1;
+		criterias.north = 1.0;
+		criterias.south = -1.0;
+		criterias.east = 1.0;
+		criterias.west = -1.0;
+
+
+		center = [userLatitude, userLongitude];
+
+		zoom = 6;
+
+		currentPage = 1;
+		storedCoordinates = false;
+
+		stockCriterias();
+		updateFilters();
+		await toggleMode('grid');
+
+		updateMemories();
+	}
+
+	async function getPositionByIP() {
+		const response = await fetch('https://ipapi.co/json/');
+		const data = await response.json();
+		userLatitude = data.latitude;
+		userLongitude = data.longitude;
+	}
 });
+
+//if (!storedCoordinates && "geolocation" in navigator) {
+//				const position = await new Promise((resolve, reject) => {
+//					navigator.geolocation.getCurrentPosition(resolve, reject);
+//				});
+//
+//				userLatitude = position.coords.latitude;
+//				userLongitude = position.coords.longitude;
+//				center = [userLatitude, userLongitude];
+//				map.flyTo(center, zoom);
+//			}
