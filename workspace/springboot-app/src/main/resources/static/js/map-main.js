@@ -230,23 +230,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const marker = L.marker([memory.location.latitude, memory.location.longitude]).addTo(markers);
 			const memoryDiv = document.createElement('a');
 			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
-			memoryDiv.className = 'flex flex-col items-center overflow-hidden';
+			memoryDiv.className = 'flex flex-row h-[150px] w-[300px] items-center p-4 gap-6';
 			if (memory.mediaUUID) {
-				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
-							<img class="absolute rounded-t-lg w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
-						</div>
-						<h3 class="text-xl mx-2 text-center">${memory.title}</h3>
-						<h4 class="w-full px-1 font-light text-justify">${memory.description}</h4>
-				`;
+				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden">
+							<img class="w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
+						</div>`;
 			} else {
-				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
-						<img class="absolute rounded-t-lg w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="illustration de ${memory.title}" />
-					</div>
-					<h3 class="text-xl mx-2 text-center">${memory.title}</h3>
-					<h4 class="w-full px-1 font-light text-justify">${memory.description}</h4>
-			`;
+				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden">
+							<img class="w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="illustration de ${memory.title}"/>
+						</div>`;
 			}
-			marker.bindPopup(memoryDiv);
+			memoryDiv.innerHTML += `<div class="h-full flex-1 flex flex-col text-black justify-start items-start">
+							<h3 class="text-xl text-left">${memory.title}</h3>
+							<h4 class="w-full font-light text-justify">${memory.description}</h4>
+						</div>`;
+			marker.on('click', function() {
+				openPopup(marker, memoryDiv);
+			});
 		})
 	}
 
@@ -435,6 +435,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 		await toggleMode('grid');
 
 		updateMemories();
+	}
+
+	function openPopup(marker, popupContent) {
+		console.log('coucou');
+		map.off('moveend', updateMemories);
+
+		setTimeout(function() {
+			marker.bindPopup(popupContent).openPopup();
+		}, 100);
+
+		map.once('popupclose', function() {
+			map.on('moveend', updateMemories);
+		});
 	}
 
 	async function getPositionByIP() {
