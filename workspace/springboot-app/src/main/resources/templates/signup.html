@@ -17,6 +17,8 @@
 			<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
 			<form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form"
 				enctype="multipart/form-data">
+				<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
+				<div th:replace="~{fragments/errors/fragment-error :: frag-error(pseudo)}"></div>
 
 				<div class="inputs-container">
 					<div class="pseudo-input">
@@ -31,11 +33,11 @@
 					</div>
 					<div class="password-input">
 						<label for="inputPassword">mot de passe</label>
-						<input id="inputPassword" th:field="*{password}" type="password">
+						<input id="inputPassword" th:field="*{password}" type="password"> &#9215;
 					</div>
 					<div class="confirm-password-input">
 						<label for="inputPasswordConfirm">confirmez votre mot de passe</label>
-						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password">
+						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password"> &#x23FF;
 					</div>
 					<div class="image-input">
 						<label for="imageInput">Photo de profil

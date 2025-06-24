@@ -18,6 +18,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -28,9 +32,14 @@ public class User {
 	private long userId;
 
 	@Column(nullable = false, unique = true)
+	@NotBlank
+	@Pattern(regexp="^\\w+$")
+	@Size(max = 30)
 	private String pseudo;
 
 	@Column(nullable = false, unique = true)
+	@NotBlank
+	@Email
 	private String email;
 
 	@Column(nullable = false)

@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.memoires_vives.bo.Role;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.exception.BusinessException;
 import fr.memoires_vives.repositories.RoleRepository;
 import fr.memoires_vives.repositories.UserRepository;
 import fr.memoires_vives.security.CustomUserDetails;
@@ -45,66 +46,128 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = BusinessException.class)
 	public User createAccount(String pseudo, String email, String password, String passwordConfirm,
-			MultipartFile image) {
-		boolean isValid = checkPassword(password, passwordConfirm) && checkPseudoAvailable(pseudo)
-				&& checkEmailAvailable(email);
+			MultipartFile image) throws BusinessException{
+		BusinessException be = new BusinessException();
+		
+		boolean isValid = checkPassword(password, passwordConfirm, be) && checkPseudoAvailable(pseudo, be)
+				&& checkEmailAvailable(email, be);
 
 		if (isValid) {
-			User user = new User();
-			user.setPseudo(pseudo);
-			user.setEmail(email);
-			user.setPassword(passwordEncoder.encode(password));
-			user.setAdmin(false);
-			user.setActivated(true);
-			Role userRole = roleRepository.findByName("ROLE_USER");
-			if (userRole == null) {
-				userRole = new Role();
-				userRole.setName("ROLE_USER");
-				roleRepository.save(userRole);
-			}
-			user.getRoles().add(userRole);
-
-			if (image != null && !image.isEmpty()) {
-				try {
-					user.setMediaUUID(fileService.saveUserFile(image, pseudo));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			try {
+				User user = new User();
+				user.setPseudo(pseudo);
+				user.setEmail(email);
+				user.setPassword(passwordEncoder.encode(password));
+				user.setAdmin(false);
+				user.setActivated(true);
+				Role userRole = roleRepository.findByName("ROLE_USER");
+				if (userRole == null) {
+					userRole = new Role();
+					userRole.setName("ROLE_USER");
+					roleRepository.save(userRole);
 				}
-			} else {
-				user.setMediaUUID(null);
+				user.getRoles().add(userRole);
+
+				if (image != null && !image.isEmpty()) {
+					try {
+						user.setMediaUUID(fileService.saveUserFile(image, pseudo));
+					} catch (IOException e) {
+						e.printStackTrace();
+						be.add("Un problème est survenu lors de l'enregistrement de l'image.");
+						throw be;
+					}
+				} else {
+					user.setMediaUUID(null);
+				}
+
+				return userRepository.save(user);
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+				be.add("Un problème est survenu lors de l'accès à la base de données.");
+				throw be;
 			}
-
-			return userRepository.save(user);
 		} else {
-			throw new IllegalArgumentException(
-					"Les informations fournies ne sont pas valides. Soit le pseudo est déjà pris, soit c'est l'email soit y a un problème de mdp");
+			throw be;
 		}
 	}
-
-	private boolean checkPassword(String password, String passwordConfirm) {
-		boolean isValid = false;
-		if (!password.isBlank() && password.equals(passwordConfirm)) {
-			isValid = true;
+	
+	@Override
+	@Transactional(rollbackFor = BusinessException.class)
+	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage) throws BusinessException {
+		BusinessException be = new BusinessException();
+		
+		boolean isValid = true;
+		
+		
+		User userToSave = userRepository.findByUserId(userWithUpdate.getUserId());
+		String updatedPseudo = userWithUpdate.getPseudo();
+		String currentPseudo = userToSave.getPseudo();
+		
+		String updatedEmail = userWithUpdate.getEmail();
+		String currentEmail = userToSave.getEmail();
+		
+		isValid &= (isAdmin() && verifyPassword(currentPassword))
+				|| passwordEncoder.matches(currentPassword, userToSave.getPassword());
+		
+		if (currentPassword.isBlank()) {
+			be.add("Vous devez renseigner le mot de passe");
+			throw be;
 		}
-		return isValid;
-	}
-
-	private boolean checkPseudoAvailable(String pseudo) {
-		User testUser = userRepository.findByPseudo(pseudo);
-		if (testUser == null) {
-			return true;
+		
+		if (!isValid) {
+			be.add("Erreur de mot de passe");
+			throw be;
 		}
-		return false;
-	}
-
-	private boolean checkEmailAvailable(String email) {
-		User testUser = userRepository.findByEmail(email);
-		if (testUser == null) {
-			return true;
+		
+		// si les 2 mots de passe renseignés sont blancs, il n'y a pas de changement de
+		// mot de passe et on conserve le mdp de userToSave
+		if (!userWithUpdate.getPassword().isBlank() || !userWithUpdate.getPasswordConfirm().isBlank()) {
+			isValid &= checkPassword(userWithUpdate.getPassword(), userWithUpdate.getPasswordConfirm(), be);
+			if (isValid) {
+				userToSave.setPassword(passwordEncoder.encode(userWithUpdate.getPassword()));
+			}
 		}
-		return false;
+		
+		if (!updatedPseudo.equals(currentPseudo)) {
+			isValid &= checkPseudoAvailable(updatedPseudo, be);
+			userToSave.setPseudo(updatedPseudo);
+		}
+		
+		if (!updatedEmail.equals(currentEmail)) {
+			isValid &= checkEmailAvailable(updatedEmail, be);
+			userToSave.setEmail(updatedEmail);
+		}
+		
+		if (fileImage != null && !fileImage.isEmpty()) {
+			try {
+				userToSave.setMediaUUID(fileService.saveUserFile(fileImage, updatedPseudo));
+			} catch (IOException e) {
+				e.printStackTrace();
+				be.add("Un problème est survenu lors de l'enregistrement de l'image.");
+				throw be;
+			}
+		}
+		
+		if (isValid) {
+			try {
+				userToSave = userRepository.save(userToSave);
+				CustomUserDetails updatedUserDetails = (CustomUserDetails) customUserDetailsService
+						.loadUserByUsername(userToSave.getPseudo());
+				UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+						updatedUserDetails, updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
+				SecurityContextHolder.getContext().setAuthentication(newAuth);
+				return userToSave;
+				
+			} catch (DataAccessException e) {
+				e.printStackTrace();
+				be.add("Un problème est survenu lors de l'accès à la base de données.");
+				throw be;
+			}
+		} else {
+			throw be;
+		}
 	}
 
 	@Override
@@ -146,65 +209,6 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
-	@Override
-	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage) {
-		boolean isValid = true;
-
-		
-		User userToSave = userRepository.findByUserId(userWithUpdate.getUserId());
-		String updatedPseudo = userWithUpdate.getPseudo();
-		String currentPseudo = userToSave.getPseudo();
-
-		String updatedEmail = userWithUpdate.getEmail();
-		String currentEmail = userToSave.getEmail();
-
-		isValid &= (isAdmin() && verifyPassword(currentPassword))
-				|| passwordEncoder.matches(currentPassword, userToSave.getPassword());
-
-		// si les 2 mots de passe renseignés sont blancs, il n'y a pas de changement de
-		// mot de passe et on conserve le mdp de userToSave
-		if (!userWithUpdate.getPassword().isBlank() || !userWithUpdate.getPasswordConfirm().isBlank()) {
-			isValid &= checkPassword(userWithUpdate.getPassword(), userWithUpdate.getPasswordConfirm());
-			if (isValid) {
-				userToSave.setPassword(passwordEncoder.encode(userWithUpdate.getPassword()));
-			}
-		}
-
-		if (!updatedPseudo.equals(currentPseudo)) {
-			isValid &= checkPseudoAvailable(updatedPseudo);
-			userToSave.setPseudo(updatedPseudo);
-		}
-
-		if (!updatedEmail.equals(currentEmail)) {
-			isValid &= checkEmailAvailable(updatedEmail);
-			userToSave.setEmail(updatedEmail);
-		}
-
-		if (fileImage != null && !fileImage.isEmpty()) {
-			try {
-				userToSave.setMediaUUID(fileService.saveUserFile(fileImage, updatedPseudo));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		if (isValid) {
-			try {
-				userToSave = userRepository.save(userToSave);
-				CustomUserDetails updatedUserDetails = (CustomUserDetails) customUserDetailsService
-						.loadUserByUsername(userToSave.getPseudo());
-				UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
-						updatedUserDetails, updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(newAuth);
-				return userToSave;
-
-			} catch (DataAccessException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
 
 	@Override
 	public List<User> getAllUsers() {
@@ -226,5 +230,35 @@ public class UserServiceImpl implements UserService {
 				.getPrincipal();
 		String storedPassword = userDetails.getPassword();
 		return passwordEncoder.matches(rawPassword, storedPassword);
+	}
+	
+	private boolean checkPassword(String password, String passwordConfirm, BusinessException be) {
+		boolean isValid = false;
+		if (!password.isBlank() && password.equals(passwordConfirm)) {
+			isValid = true;
+		} else if (password.isBlank()) {
+			be.add("Le mot de passe ne peut pas être vide.");
+		} else {
+			be.add("Les mots de passe ne sont pas identiques.");
+		}
+		return isValid;
+	}
+	
+	private boolean checkPseudoAvailable(String pseudo, BusinessException be) {
+		User testUser = userRepository.findByPseudo(pseudo);
+		if (testUser == null) {
+			return true;
+		}
+		be.add("Ce pseudo est déjà utilisé.");
+		return false;
+	}
+	
+	private boolean checkEmailAvailable(String email, BusinessException be) {
+		User testUser = userRepository.findByEmail(email);
+		if (testUser == null) {
+			return true;
+		}
+		be.add("Un compte est déjà attaché à cet email.");
+		return false;
 	}
 }

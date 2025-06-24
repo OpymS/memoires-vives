@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>413 - Payload Too Large</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+</head>
+
+<body>
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<main class="font-bold w-full flex flex-col items-center">
+		<a class="font-bold text-xl" th:href="@{/new}">Erreur 413</a>
+		<h1 class="mt-[80px] text-[#bddab2] text-2xl">L'image que vous essayez de télécharger est trop grosse. Veuillez
+			réduire la taille de votre image à moins de 2 Mo.</h1>
+		<a href="/">Retour à l'accueil</a>
+	</main>
+
+</body>
+
+</html>

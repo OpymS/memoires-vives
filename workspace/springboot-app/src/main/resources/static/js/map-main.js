@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			}
 			memoryDiv.innerHTML += `<div class="h-full flex-1 flex flex-col text-black justify-start items-start">
 							<h3 class="text-xl text-left">${memory.title}</h3>
-							<h4 class="w-full font-light text-justify">${memory.description}</h4>
+							<h4 class="w-full font-light text-justify overflow-scroll">${memory.description}</h4>
 						</div>`;
 			marker.on('click', function() {
 				openPopup(marker, memoryDiv);
@@ -438,7 +438,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	}
 
 	function openPopup(marker, popupContent) {
-		console.log('coucou');
 		map.off('moveend', updateMemories);
 
 		setTimeout(function() {

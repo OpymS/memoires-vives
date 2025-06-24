@@ -2,14 +2,17 @@ package fr.memoires_vives.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.exception.BusinessException;
+import jakarta.validation.Valid;
 
 @Controller
 public class LoginController {
@@ -33,8 +36,22 @@ public class LoginController {
 	}
 
 	@PostMapping("/signup")
-	public String processSignup(@ModelAttribute("user") User user, Model model, @RequestParam(name = "image", required = false) MultipartFile fileImage) {
-		userService.createAccount(user.getPseudo(), user.getEmail(), user.getPassword(), user.getPasswordConfirm(), fileImage);
-		return "redirect:/login";
+	public String processSignup(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model,
+			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
+		if (bindingResult.hasErrors()) {
+			return "signup";
+		}
+		try {
+			userService.createAccount(user.getPseudo(), user.getEmail(), user.getPassword(), user.getPasswordConfirm(),
+					fileImage);
+			return "redirect:/login";
+		} catch (BusinessException e) {
+			e.getErrors().forEach(err -> {
+//				String errorMessage = messageSource.getMessage(err, null, locale);
+				ObjectError error = new ObjectError("globalError", err);
+				bindingResult.addError(error);
+			});
+			return "signup";
+		}
 	}
 }

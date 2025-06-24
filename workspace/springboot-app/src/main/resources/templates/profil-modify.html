@@ -15,9 +15,12 @@
 	<main>
 		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 			<h1 class="text-[#bddab2] text-2xl">Modifier son profil</h1>
+			<p th:text="${user}"></p>
 			<form th:action="@{/profil/modify}" method="POST" th:object="${user}" class="user-create-form"
 				enctype="multipart/form-data">
-
+				<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
+				<div th:replace="~{fragments/errors/fragment-error :: frag-error(pseudo)}"></div>
+				
 				<div class="inputs-container">
 					<div class="pseudo-input">
 						<label for="inputPseudo">pseudo </label>
