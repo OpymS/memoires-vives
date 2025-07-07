@@ -18,6 +18,9 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "memories")
@@ -28,6 +31,8 @@ public class Memory {
 	private long memoryId;
 
 	@Column(nullable = false)
+	@NotBlank
+	@Size(max = 30)
 	private String title;
 
 	@Column(nullable = false)
@@ -36,6 +41,7 @@ public class Memory {
 	private String mediaUUID;
 
 	@Column(nullable = false)
+	@PastOrPresent
 	private LocalDate memoryDate;
 
 	@Column(nullable = false, updatable = false)

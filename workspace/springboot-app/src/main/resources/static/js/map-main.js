@@ -232,17 +232,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
 			memoryDiv.className = 'flex flex-row h-[150px] w-[300px] items-center p-4 gap-6';
 			if (memory.mediaUUID) {
-				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden">
+				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">
 							<img class="w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
 						</div>`;
 			} else {
-				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden">
+				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">
 							<img class="w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="illustration de ${memory.title}"/>
 						</div>`;
 			}
-			memoryDiv.innerHTML += `<div class="h-full flex-1 flex flex-col text-black justify-start items-start">
+			memoryDiv.innerHTML += `<div class="h-full flex-1 min-w-0 flex flex-col text-black justify-start items-start">
 							<h3 class="text-xl text-left">${memory.title}</h3>
-							<h4 class="w-full font-light text-justify overflow-scroll">${memory.description}</h4>
+							<h4 class="w-full font-light text-justify overflow-y-scroll wrap-break-word">${memory.description}</h4>
 						</div>`;
 			marker.on('click', function() {
 				openPopup(marker, memoryDiv);

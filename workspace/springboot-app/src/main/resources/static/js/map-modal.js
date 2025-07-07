@@ -1,7 +1,7 @@
 import { formatLatitude, formatLongitude } from "./map-utilities.js";
 
 document.addEventListener('DOMContentLoaded', () => {
-	
+
 
 	const init = () => {
 		const latitudeInput = document.getElementById('latitude');
@@ -120,6 +120,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			if (newPlaceName === '') {
 				giveAName(e);
 			} else {
+				while (newLongitude > 180) {
+					newLongitude -= 360;
+				}
+				while (newLongitude < -180) {
+					newLongitude += 360;
+				}
 				latitudeInput.value = newLatitude;
 				longitudeInput.value = newLongitude;
 				placeNameInput.value = newPlaceName;

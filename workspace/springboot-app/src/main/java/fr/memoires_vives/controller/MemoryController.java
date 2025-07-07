@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
@@ -12,13 +14,16 @@ import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
+import fr.memoires_vives.exception.BusinessException;
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class MemoryController {
-	
+
 	private static final int PAGE_SIZE = 6;
 
 	private final MemoryService memoryService;
@@ -31,7 +36,7 @@ public class MemoryController {
 
 	@GetMapping("/")
 	public String home(Model model, @RequestParam(name = "currentPage", defaultValue = "1") int currentPage) {
-		Page<Memory> memories = memoryService.findMemories(PageRequest.of(currentPage-1, PAGE_SIZE));
+		Page<Memory> memories = memoryService.findMemories(PageRequest.of(currentPage - 1, PAGE_SIZE));
 		model.addAttribute("memories", memories);
 		model.addAttribute("categories", categoryService.getAllCategories());
 		return "index";
@@ -54,12 +59,25 @@ public class MemoryController {
 	}
 
 	@PostMapping("/new")
-	public String createMemory(@ModelAttribute("memory") Memory memory, @ModelAttribute("location") Location location,
+	public String createMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
+			@Valid @ModelAttribute("location") Location location,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
-		memoryService.createMemory(memory, fileImage, published, location);
+		if (bindingResult.hasErrors()) {
+			return "memory-form";
+		}
 
-		return "redirect:/";
+		try {
+			memoryService.createMemory(memory, fileImage, published, location);
+			return "redirect:/";
+		} catch (BusinessException e) {
+			e.getErrors().forEach(err -> {
+				ObjectError error = new ObjectError("globalError", err);
+				bindingResult.addError(error);
+			});
+			return "memory-form";
+		}
+
 	}
 
 	@GetMapping("/memory")
@@ -95,17 +113,32 @@ public class MemoryController {
 	}
 
 	@PostMapping("/memory/modify")
-	public String modifyMemory(@ModelAttribute("memory") Memory memory, @ModelAttribute("location") Location location,
+	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
+			@Valid @ModelAttribute("location") Location location,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		boolean isAllowed = memoryService.authorizedModification(memory);
 		if (!isAllowed) {
-			return "error/403";
+//			return "error/403";
+			ObjectError error = new ObjectError("globalError", "Vous n'êtes pas autorisé à modifier ce souvenir");
+			bindingResult.addError(error);
 		}
-		System.out.println(location);
-		memoryService.updateMemory(memory, fileImage, published, location);
 
-		return "redirect:/memory?memoryId=" + memory.getMemoryId();
+		if (bindingResult.hasErrors()) {
+			return "memory-form";
+		}
+
+		try {
+			memoryService.updateMemory(memory, fileImage, published, location);
+			return "redirect:/memory?memoryId=" + memory.getMemoryId();
+		} catch (BusinessException e) {
+			e.getErrors().forEach(err -> {
+				ObjectError error = new ObjectError("globalError", err);
+				bindingResult.addError(error);
+			});
+			return "memory-form";
+		}
+
 	}
 
 }

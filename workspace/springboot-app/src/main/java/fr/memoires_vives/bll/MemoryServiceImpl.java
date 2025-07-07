@@ -24,6 +24,7 @@ import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.dto.SearchCriteria;
+import fr.memoires_vives.exception.BusinessException;
 import fr.memoires_vives.repositories.MemoryRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -70,9 +71,12 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
-	@Transactional
-	public Memory createMemory(Memory memory, MultipartFile image, Boolean published, Location location) {
+	@Transactional(rollbackFor = BusinessException.class)
+	public Memory createMemory(Memory memory, MultipartFile image, Boolean published, Location location)
+			throws BusinessException {
 		memory.setCreationDate(LocalDateTime.now());
+		
+		BusinessException be = new BusinessException();
 
 		Location savedLocation = locationService.saveLocation(location);
 		if (published == null || !published) {
@@ -92,8 +96,9 @@ public class MemoryServiceImpl implements MemoryService {
 			try {
 				memory.setMediaUUID(fileService.saveFile(image));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				be.add("Un problème est survenu lors de l'enregistrement de l'image.");
+				throw be;
 			}
 		} else {
 			memory.setMediaUUID(null);
@@ -141,8 +146,11 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = BusinessException.class)
 	public Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish,
-			Location locationWithUpdate) {
+			Location locationWithUpdate) throws BusinessException {
+		
+		BusinessException be = new BusinessException();
 
 		Memory existingMemoryToUpdate = memoryRepository.findByMemoryId(memoryWithUpdate.getMemoryId());
 		Location existingLocation = locationService.getById(existingMemoryToUpdate.getLocation().getLocationId());
@@ -184,8 +192,9 @@ public class MemoryServiceImpl implements MemoryService {
 				fileService.deleteFile(existingMemoryToUpdate.getMediaUUID());
 				existingMemoryToUpdate.setMediaUUID(fileService.saveFile(newImage));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				be.add("Un problème est survenu lors de l'enregistrement de l'image.");
+				throw be;
 			}
 		}
 

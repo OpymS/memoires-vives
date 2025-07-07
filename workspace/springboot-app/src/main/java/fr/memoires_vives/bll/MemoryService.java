@@ -10,13 +10,14 @@ import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.dto.SearchCriteria;
+import fr.memoires_vives.exception.BusinessException;
 
 public interface MemoryService {
 	Page<Memory> findMemories(Pageable pageable);
 	Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria);
 	List<Memory> findMemoriesOnMapWithCriteria(SearchCriteria searchCriteria);
-	Memory createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);
-	Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish, Location locationWithUpdate);
+	Memory createMemory(Memory memory, MultipartFile image, Boolean publish, Location location) throws BusinessException;
+	Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish, Location locationWithUpdate) throws BusinessException;
 	Memory getMemoryById(long memoryId);
 	Memory getMemoryByImage(String mediaUUID);
 	boolean authorizedDisplay(Memory memory);
