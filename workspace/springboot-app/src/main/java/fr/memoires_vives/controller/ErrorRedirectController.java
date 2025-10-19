@@ -20,7 +20,7 @@ public class ErrorRedirectController {
 		
 		model.addAttribute("backUrl", referer);
 		
-		return "/error/413";
+		return "error/413";
 	}
 	
 }
