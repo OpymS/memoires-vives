@@ -12,13 +12,13 @@
 	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 		<h1 class="text-[#bddab2] text-2xl">Se connecter</h1>
 	    <form th:action="@{/login}" method="post">
-	        <label for="username">Nom d'utilisateur:</label>
-	        <input type="text" id="username" name="username" placeholder="Nom d'utilisateur" required />
+	        <label for="username" class="form-label">Nom d'utilisateur:</label>
+	        <input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input" required />
 	        
-	        <label for="password">Mot de passe:</label>
-	        <input type="password" id="password" name="password" placeholder="Mot de passe" required />
+	        <label for="password" class="form-label">Mot de passe:</label>
+	        <input type="password" id="password" name="password" placeholder="Mot de passe" class="form-input" required />
 	        
-	        <button type="submit">Se connecter</button>
+	        <button type="submit" class="form-button">Se connecter</button>
 	    </form>	
 	</main>
 </body>

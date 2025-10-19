@@ -1,1 +1,26 @@
 @import "tailwindcss";
+
+@utility form-label {
+	@apply mb-1;
+}
+
+@utility form-input {
+	@apply w-full bg-white rounded-md font-light border border-gray-300 shadow-sm focus:border-[#bddab2] focus:outline-none focus:ring focus:ring-[#bddab2];
+}
+
+@utility form-button {
+	@apply inline-flex items-center justify-center my-2 px-4 py-2 bg-[#bddab2]
+	text-black rounded hover:bg-[#7e9076] focus:border-[#7e9076] focus:outline-none focus:ring focus:ring-[#7e9076];
+}
+
+@utility disabled-button {
+	@apply inline-flex items-center justify-center my-2 px-4 py-2 bg-[#e9e9ed] text-black;
+}
+
+@utility filter-input {
+	@apply w-full bg-white rounded-md font-light border border-gray-300 shadow-sm focus:border-[#7e9076] focus:outline-none focus:ring focus:ring-[#7e9076];
+}
+
+@utility filter-option {
+	@apply hover:bg-[#bddab2];
+}

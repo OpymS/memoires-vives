@@ -11,30 +11,30 @@
 		<ul id="toggled-menu"
 			class="text-[#bddab2] sm:text-white sm:px-3 flex flex-col sm:flex-row gap-2 sm:gap-3 items-center transform-none z-10 max-sm:absolute max-sm:top-0 max-sm:left-0 max-sm:-translate-y-full max-sm:pt-3 max-sm:w-full max-sm:bg-white font-bold max-sm:h-[100vh] max-sm:justify-start">
 			<li class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/new}" class="text-black sm:text-xl">Je me souviens</a>
+				<a th:href="@{/new}" class="head-button text-black sm:text-xl">Je me souviens</a>
 			</li>
 			<li sec:authorize="hasRole('ROLE_ADMIN')"
 				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/admin}" class="sm:text-xl">Admin</a>
+				<a th:href="@{/admin}" class="head-button sm:text-xl">Admin</a>
 			</li>
 			<li sec:authorize="!isAuthenticated()"
 				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/signup}" class="sm:text-xl">S'inscrire</a>
+				<a th:href="@{/signup}" class="head-button sm:text-xl">S'inscrire</a>
 			</li>
 			<li sec:authorize="!isAuthenticated()"
 				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/login}" class="sm:text-xl">Se connecter</a>
+				<a th:href="@{/login}" class="head-button sm:text-xl">Se connecter</a>
 			</li>
 			<li sec:authorize="isAuthenticated()"
 				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/profil}" class="sm:text-xl" th:text="${#authentication.principal.user.pseudo}"></a>
+				<a th:href="@{/profil}" class="head-button sm:text-xl" th:text="${#authentication.principal.user.pseudo}"></a>
 			</li>
 			<li sec:authorize="isAuthenticated()"
 				class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/logout}" class="sm:text-xl">Se déconnecter</a>
+				<a th:href="@{/logout}" class="head-button sm:text-xl">Se déconnecter</a>
 			</li>
 			<li class="sm:hover:bg-[#7e9076] max-sm:text-2xl max-sm:uppercase max-sm:w-full max-sm:text-center">
-				<a th:href="@{/about}" class="sm:text-xl">À propos</a>
+				<a th:href="@{/about}" class="head-button sm:text-xl">À propos</a>
 			</li>
 		</ul>
 

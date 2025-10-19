@@ -157,12 +157,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			const nameInput = document.getElementById('modalNameInput');
 			nameInput.addEventListener('input', function() {
 				if (nameInput.value !== '') {
-					buttonValName.classList.remove('bg-[#e9e9ed]');
-					buttonValName.classList.add('bg-[#bddab2]', 'hover:opacity-80');
+					buttonValName.classList.remove('disabled-button');
+					buttonValName.classList.add('form-button');
 					buttonValName.disabled = false;
 				} else {
-					buttonValName.classList.remove('bg-[#bddab2]', 'hover:opacity-80');
-					buttonValName.classList.add('bg-[#e9e9ed]');
+					buttonValName.classList.remove('form-button');
+					buttonValName.classList.add('disabled-button');
 					buttonValName.disabled = true;
 				}
 			});
