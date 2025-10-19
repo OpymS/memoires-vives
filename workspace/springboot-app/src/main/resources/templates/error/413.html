@@ -15,7 +15,7 @@
 		<a class="font-bold text-xl" th:href="@{/new}">Erreur 413</a>
 		<h1 class="mt-[80px] text-[#bddab2] text-2xl">L'image que vous essayez de télécharger est trop grosse. Veuillez
 			réduire la taille de votre image à moins de 2 Mo.</h1>
-		<a href="/">Retour à l'accueil</a>
+		<a th:href="${backUrl}" class="form-button">Retour à l'accueil</a>
 	</main>
 
 </body>
