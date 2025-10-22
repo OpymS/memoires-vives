@@ -12,62 +12,67 @@
 <body>
 	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
 
-	<main>
-		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
-			<h1 class="text-[#bddab2] text-2xl">Modifier son profil</h1>
-			<form th:action="@{/profil/modify}" method="POST" th:object="${user}" class="user-create-form"
-				enctype="multipart/form-data">
-				<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
-				<div th:replace="~{fragments/errors/fragment-error :: frag-error(pseudo)}"></div>
-				
-				<div class="inputs-container">
-					<div class="pseudo-input">
-						<label for="inputPseudo" class="form-label">pseudo </label>
-						<!--					<input id="inputPseudo" th:field="*{pseudo}" type="text" pattern="^\w+$" maxlength="30" required>-->
-						<input id="inputPseudo" th:field="*{pseudo}" type="text" class="form-input">
-					</div>
-					<div class="email-input">
-						<label for="inputEmail" class="form-label">email </label>
-						<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
-						<input id="inputEmail" th:field="*{email}" type="email" class="form-input">
-					</div>
-					<div class="currentPassword-input">
-						<label for="inputCurrentPassword"
-							th:text="${user.userId == #authentication.principal.user.userId ? 'mot de passe actuel' : 'mot de passe administrateur'}" class="form-label">
-						</label>
-						<input id="inputCurrentPassword" name="currentPassword" type="password" class="form-input">
-					</div>
-					<div class="password-input">
-						<label for="inputPassword" class="form-label">nouveau mot de passe </label>
-						<input id="inputPassword" th:field="*{password}" type="password" class="form-input">
-					</div>
-					<div class="confirm-password-input">
-						<label for="inputPasswordConfirm" class="form-label">confirmez votre nouveau mot de passe </label>
-						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password" class="form-input">
-					</div>
-					<div class="image-input">
-						<label for="imageInput" class="form-label">Photo de profil
-							<img th:if="${user.mediaUUID}!=null" id="image"
-								class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-								th:src="@{/uploads/{filename}(filename=${user.mediaUUID})}"
-								th:alt="'image de profil de ' + ${user.pseudo}" />
-							<img th:if="${user.mediaUUID}==null" id="image"
-								class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-								src="/images/public/user-placeholder.png"
-								th:alt="'image de profil de ' + ${user.pseudo}" />
-						</label>
-						<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="h-[0] w-[0] overflow-hidden">
-					</div>
-					<input id="userId" th:field="*{userId}" type="hidden" />
-				</div>
+	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
+		<h1 class="text-[#bddab2] text-2xl">Modifier son profil</h1>
+		<form th:action="@{/profil/modify}" method="POST" th:object="${user}" class="user-create-form"
+			enctype="multipart/form-data" id="formWithImage">
+			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
+			<div th:replace="~{fragments/errors/fragment-error :: frag-error(pseudo)}"></div>
 
-				<div class="buttons-container">
-					<button type="submit" class="button create form-button">Modifier</button>
-					<a th:href="@{/}" class="button cancel form-button">Annuler</a>
+			<div class="inputs-container">
+				<div class="pseudo-input">
+					<label for="inputPseudo" class="form-label">pseudo </label>
+					<!--					<input id="inputPseudo" th:field="*{pseudo}" type="text" pattern="^\w+$" maxlength="30" required>-->
+					<input id="inputPseudo" th:field="*{pseudo}" type="text" class="form-input">
 				</div>
-			</form>
-		</main>
+				<div class="email-input">
+					<label for="inputEmail" class="form-label">email </label>
+					<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
+					<input id="inputEmail" th:field="*{email}" type="email" class="form-input">
+				</div>
+				<div class="currentPassword-input">
+					<label for="inputCurrentPassword"
+						th:text="${user.userId == #authentication.principal.user.userId ? 'mot de passe actuel' : 'mot de passe administrateur'}"
+						class="form-label">
+					</label>
+					<input id="inputCurrentPassword" name="currentPassword" type="password" class="form-input">
+				</div>
+				<div class="password-input">
+					<label for="inputPassword" class="form-label">nouveau mot de passe </label>
+					<input id="inputPassword" th:field="*{password}" type="password" class="form-input">
+				</div>
+				<div class="confirm-password-input">
+					<label for="inputPasswordConfirm" class="form-label">confirmez votre nouveau mot de passe </label>
+					<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password" class="form-input">
+				</div>
+				<div class="image-input">
+					<label for="imageInput" class="form-label">Photo de profil
+						<img th:if="${user.mediaUUID}!=null" id="image"
+							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+							th:src="@{/uploads/{filename}(filename=${user.mediaUUID})}"
+							th:alt="'image de profil de ' + ${user.pseudo}" />
+						<img th:if="${user.mediaUUID}==null" id="image"
+							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
+							src="/images/public/user-placeholder.png" th:alt="'image de profil de ' + ${user.pseudo}" />
+					</label>
+					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg"
+						class="h-[0] w-[0] overflow-hidden">
+				</div>
+				<input id="userId" th:field="*{userId}" type="hidden" />
+			</div>
+
+			<div class="buttons-container">
+				<button type="submit" class="button create form-button">Modifier</button>
+				<a th:href="@{/}" class="button cancel form-button">Annuler</a>
+			</div>
+		</form>
+		
+		<div id="upload-status" class="hidden mt-4 p-3 bg-[#7e9076] text-white rounded flex items-center space-x-2">
+			<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+			<span>Redimensionnement de l'image en cours...</span>
+		</div>
 	</main>
+	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>
 	<script src="/js/images.js"></script>
 </body>
 

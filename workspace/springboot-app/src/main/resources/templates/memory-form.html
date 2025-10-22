@@ -20,7 +20,7 @@
 		<h1 class="text-[#bddab2] text-2xl"
 			th:text="${memory.memoryId == 0 ? 'Partager un nouveau souvenir' : 'Modifier un souvenir'}"></h1>
 		<form th:action="${memory.memoryId == 0} ? @{/new} : @{/memory/modify}" method="POST" th:object="${memory}"
-			enctype="multipart/form-data">
+			enctype="multipart/form-data" id="formWithImage">
 			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
 			<div th:replace="~{fragments/errors/fragment-error :: frag-error(title)}"></div>
 			<div th:replace="~{fragments/errors/fragment-error :: frag-error(memoryDate)}"></div>
@@ -95,6 +95,11 @@
 				<a th:href="@{/memory(memoryId=${memory.memoryId})}" class="button cancel form-button">Annuler</a>
 			</div>
 		</form>
+		
+		<div id="upload-status" class="hidden mt-4 p-3 bg-[#7e9076] text-white rounded flex items-center space-x-2">
+			<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+			<span>Redimensionnement de l'image en cours...</span>
+		</div>
 	</main>
 
 	<aside id="modal" class="fixed inset-0 flex items-center justify-center hidden z-40">
@@ -128,6 +133,7 @@
 	</aside>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>
 	<script src="/js/map-modal.js" type="module"></script>
 	<script src="/js/images.js"></script>
 </body>

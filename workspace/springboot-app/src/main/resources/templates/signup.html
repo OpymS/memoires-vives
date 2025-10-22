@@ -12,56 +12,65 @@
 <body>
 	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
 
-		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
-			<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
-			<form th:action="@{/signup}" method="POST" th:object="${user}" class="user-create-form w-full max-w-md flex flex-col"
-				enctype="multipart/form-data">
-				<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
-				<div th:replace="~{fragments/errors/fragment-error :: frag-error(pseudo)}"></div>
-				<div th:replace="~{fragments/errors/fragment-error :: frag-error(email)}"></div>
+	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
+		<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
+		<form th:action="@{/signup}" method="POST" th:object="${user}"
+			class="user-create-form w-full max-w-md flex flex-col" enctype="multipart/form-data" id="formWithImage">
+			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
+			<div th:replace="~{fragments/errors/fragment-error :: frag-error(pseudo)}"></div>
+			<div th:replace="~{fragments/errors/fragment-error :: frag-error(email)}"></div>
 
-				<div class="inputs-container">
-					<div class="pseudo-input">
-						<label for="inputPseudo" class="form-label">pseudo</label>
-						<!--					<input id="inputPseudo" th:field="*{pseudo}" type="text" pattern="^\w+$" maxlength="30" required>-->
-						<input id="inputPseudo" th:field="*{pseudo}" type="text" class="form-input">
-					</div>
-					<div class="email-input">
-						<label for="inputEmail" class="form-label">email</label>
-						<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
-						<input id="inputEmail" th:field="*{email}" type="email" class="form-input">
-					</div>
-					<div class="password-input">
-						<label for="inputPassword" class="form-label">mot de passe</label>
-						<div class="relative w-full block">
-							<input id="inputPassword" th:field="*{password}" type="password" class="form-input">
-							<button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700" >&#9215;</button>
-						</div>
-					</div>
-					<div class="confirm-password-input">
-						<label for="inputPasswordConfirm" class="form-label">confirmez votre mot de passe</label>
-						<div class="relative w-full block">
-							<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password" class="form-input">
-							<button type="button" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700" >&#x23FF;</button>							
-						</div>
-					</div>
-					<div class="image-input">
-						<label for="imageInput" class="form-label">Photo de profil
-							<img id="image"
-								class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] border border-[#bddab2] hover:border-[#7e9076]"
-								src="" alt="Votre photo de profil" />
-						</label>
-						<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg"
-							class="h-[0] w-[0] overflow-hidden">
+			<div class="inputs-container">
+				<div class="pseudo-input">
+					<label for="inputPseudo" class="form-label">pseudo</label>
+					<!--					<input id="inputPseudo" th:field="*{pseudo}" type="text" pattern="^\w+$" maxlength="30" required>-->
+					<input id="inputPseudo" th:field="*{pseudo}" type="text" class="form-input">
+				</div>
+				<div class="email-input">
+					<label for="inputEmail" class="form-label">email</label>
+					<!--					<input id="inputEmail" th:field="*{email}" type="email" required>-->
+					<input id="inputEmail" th:field="*{email}" type="email" class="form-input">
+				</div>
+				<div class="password-input">
+					<label for="inputPassword" class="form-label">mot de passe</label>
+					<div class="relative w-full block">
+						<input id="inputPassword" th:field="*{password}" type="password" class="form-input">
+						<button type="button"
+							class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
 					</div>
 				</div>
-
-				<div class="buttons-container">
-					<button type="submit" class="form-button button create">Créer</button>
-					<a th:href="@{/}" class="form-button button cancel">Annuler</a>
+				<div class="confirm-password-input">
+					<label for="inputPasswordConfirm" class="form-label">confirmez votre mot de passe</label>
+					<div class="relative w-full block">
+						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password"
+							class="form-input">
+						<button type="button"
+							class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#x23FF;</button>
+					</div>
 				</div>
-			</form>
-		</main>
+				<div class="image-input">
+					<label for="imageInput" class="form-label">Photo de profil
+						<img id="image"
+							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] border border-[#bddab2] hover:border-[#7e9076]"
+							src="" alt="Votre photo de profil" />
+					</label>
+					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg"
+						class="h-[0] w-[0] overflow-hidden">
+				</div>
+			</div>
+
+			<div class="buttons-container">
+				<button type="submit" class="form-button button create">Créer</button>
+				<a th:href="@{/}" class="form-button button cancel">Annuler</a>
+			</div>
+		</form>
+
+		<div id="upload-status" class="hidden mt-4 p-3 bg-[#7e9076] text-white rounded flex items-center space-x-2">
+			<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+			<span>Redimensionnement de l'image en cours...</span>
+		</div>
+	</main>
+	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>
 	<script src="/js/images.js"></script>
 </body>
 
