@@ -59,11 +59,11 @@ public class MemoryController {
 	}
 
 	@PostMapping("/new")
-	public String createMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
-			@Valid @ModelAttribute("location") Location location,
+	public String createMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult memoryBindingResult,
+			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
-		if (bindingResult.hasErrors()) {
+		if (memoryBindingResult.hasErrors() || locationBindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
@@ -73,7 +73,7 @@ public class MemoryController {
 		} catch (BusinessException e) {
 			e.getErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
-				bindingResult.addError(error);
+				memoryBindingResult.addError(error);
 			});
 			return "memory-form";
 		}
@@ -113,18 +113,17 @@ public class MemoryController {
 	}
 
 	@PostMapping("/memory/modify")
-	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
-			@Valid @ModelAttribute("location") Location location,
+	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult memoryBindingResult,
+			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		boolean isAllowed = memoryService.authorizedModification(memory);
 		if (!isAllowed) {
-//			return "error/403";
 			ObjectError error = new ObjectError("globalError", "Vous n'êtes pas autorisé à modifier ce souvenir");
-			bindingResult.addError(error);
+			memoryBindingResult.addError(error);
 		}
 
-		if (bindingResult.hasErrors()) {
+		if (memoryBindingResult.hasErrors() || locationBindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
@@ -134,7 +133,7 @@ public class MemoryController {
 		} catch (BusinessException e) {
 			e.getErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
-				bindingResult.addError(error);
+				memoryBindingResult.addError(error);
 			});
 			return "memory-form";
 		}

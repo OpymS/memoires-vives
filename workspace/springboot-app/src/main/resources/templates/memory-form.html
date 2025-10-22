@@ -27,7 +27,8 @@
 			<div class="inputs-container">
 				<div class="title-input">
 					<label for="title" class="form-label">Titre </label>
-					<input id="title" th:field="*{title}" type="text" placeholder="Donnez un titre à votre souvenir" class="form-input"/>
+					<input id="title" th:field="*{title}" type="text" placeholder="Donnez un titre à votre souvenir"
+						class="form-input" />
 				</div>
 				<div class="description-input">
 					<label for="description" class="form-label">Description </label>
@@ -43,7 +44,7 @@
 				</div>
 				<div class="date-input">
 					<label for="date" class="form-label">Date </label>
-					<input id="date" th:field="*{memoryDate}" type="date" class="form-input"/>
+					<input id="date" th:field="*{memoryDate}" type="date" class="form-input" />
 				</div>
 				<!--				<div class="visibility-input">-->
 				<!--					<label for="visibility">Visibilité </label>-->
@@ -70,13 +71,13 @@
 				<div class="publish">
 					<label for="publish" class="form-label">Publier</label>
 					<input id="publish" name="publish" type="checkbox"
-						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" class="form-input"/>
+						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" class="form-input" />
 				</div>
 				<div th:object="${location}">
 					<div class="name-input">
-						<label for="locationName" class="form-label">Lieu </label>
-						<input id="locationName" th:field="*{name}" type="text"
-							placeholder="…" class="mx-2 bg-white font-light" readonly disabled/>
+						<label for="locationName" class="form-label">Lieu</label>
+						<input id="locationName" th:field="*{name}" type="text" placeholder="…"
+							class="border-none mx-2 bg-white font-light" readonly />
 						<button id="openModalBtn" class="form-button"
 							th:text="${memory.memoryId == 0 ?'Choisir un lieu':'Modifier le lieu'}"></button>
 					</div>
@@ -95,7 +96,7 @@
 				<a th:href="@{/memory(memoryId=${memory.memoryId})}" class="button cancel form-button">Annuler</a>
 			</div>
 		</form>
-		
+
 		<div id="upload-status" class="hidden mt-4 p-3 bg-[#7e9076] text-white rounded flex items-center space-x-2">
 			<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
 			<span>Redimensionnement de l'image en cours...</span>
@@ -114,8 +115,7 @@
 			<div id="map" class="h-9/10 w-9/10 mb-4 mx-auto border border-black"></div>
 			<p id="southWest"></p>
 			<p id="northEast"></p>
-			<button id="validateLocation"
-				class="form-button">Valider</button>
+			<button id="validateLocation" class="form-button">Valider</button>
 		</div>
 	</aside>
 	<aside id="modalName" class="fixed inset-0 flex items-center justify-center hidden z-50">
@@ -126,9 +126,8 @@
 				class="js-close-modalName px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
 			<h3 id="title-modalName" class="mt-5 mb-2.5 text-2xl font-medium">Donnez un nom au lieu de votre souvenir
 			</h3>
-			<input id="modalNameInput" type="text" placeholder="Un nom pour votre lieu…" class="form-input"/>
-			<button id="validateLocationName" class="disabled-button"
-				disabled>Valider</button>
+			<input id="modalNameInput" type="text" placeholder="Un nom pour votre lieu…" class="form-input" />
+			<button id="validateLocationName" class="disabled-button" disabled>Valider</button>
 		</div>
 	</aside>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

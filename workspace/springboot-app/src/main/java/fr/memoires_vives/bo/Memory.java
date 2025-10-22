@@ -19,6 +19,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
@@ -55,6 +56,7 @@ public class Memory {
 
 	@ManyToOne
 	@JoinColumn(name = "category_id", nullable =true)
+	@NotNull
 	private Category category;
 	
 	@ManyToOne
