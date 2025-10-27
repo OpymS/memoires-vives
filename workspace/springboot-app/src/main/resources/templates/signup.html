@@ -15,7 +15,7 @@
 	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 		<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
 		<form th:action="@{/signup}" method="POST" th:object="${user}"
-			class="user-create-form w-full max-w-md flex flex-col" enctype="multipart/form-data" id="formWithImage">
+			class="user-create-form w-full max-w-lg flex flex-col" enctype="multipart/form-data" id="formWithImage">
 			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
 			<div th:replace="~{fragments/errors/fragment-error :: frag-error(pseudo)}"></div>
 			<div th:replace="~{fragments/errors/fragment-error :: frag-error(email)}"></div>
@@ -36,7 +36,7 @@
 					<div class="relative w-full block">
 						<input id="inputPassword" th:field="*{password}" type="password" class="form-input">
 						<button type="button"
-							class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
+							class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
 					</div>
 				</div>
 				<div class="confirm-password-input">
@@ -45,17 +45,17 @@
 						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password"
 							class="form-input">
 						<button type="button"
-							class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#x23FF;</button>
+							class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
 					</div>
 				</div>
-				<div class="image-input">
-					<label for="imageInput" class="form-label">Photo de profil
+				<div class="image-input mt-2 flex flex-col items-start w-auto">
+					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Photo de profil
 						<img id="image"
 							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] border border-[#bddab2] hover:border-[#7e9076]"
-							src="" alt="Votre photo de profil" />
+							src="" alt="Votre photo…" />
 					</label>
 					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg"
-						class="h-[0] w-[0] overflow-hidden">
+						class="hidden">
 				</div>
 			</div>
 
@@ -72,6 +72,7 @@
 	</main>
 	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>
 	<script src="/js/images.js"></script>
+	<script src="/js/password.js"></script>
 </body>
 
 </html>

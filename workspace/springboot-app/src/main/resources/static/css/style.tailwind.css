@@ -13,6 +13,10 @@
 	text-black rounded hover:bg-[#7e9076] focus:border-[#7e9076] focus:outline-none focus:ring focus:ring-[#7e9076];
 }
 
+@utility form-checkbox {
+  @apply h-5 w-5 text-[#bddab2] border-gray-300 rounded focus:ring-[#bddab2];
+}
+
 @utility disabled-button {
 	@apply inline-flex items-center justify-center my-2 px-4 py-2 bg-[#e9e9ed] text-black;
 }
