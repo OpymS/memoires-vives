@@ -181,6 +181,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User getUserByEmail(String email) {
+		User user = userRepository.findByEmail(email);
+		
+		if (user == null) {
+			throw new UsernameNotFoundException("Utilisateur non trouvé");
+		}
+		return user;
+	}
+
+	@Override
 	public User getUserById(long userId) {
 		User user = userRepository.findByUserId(userId);
 		if (user == null) {
@@ -261,4 +271,5 @@ public class UserServiceImpl implements UserService {
 		be.add("Un compte est déjà attaché à cet email.");
 		return false;
 	}
+
 }
