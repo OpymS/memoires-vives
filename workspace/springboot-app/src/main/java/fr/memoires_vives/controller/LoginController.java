@@ -55,22 +55,6 @@ public class LoginController {
 			});
 			return "signup";
 		}
-	}
-	
-	@GetMapping("/forgot-password")
-	public String forgotPasswordForm() {
-		return "forgot-password";
-	}
-	
-	@PostMapping("/forgot-password")
-	public String handleForgotPassword(@RequestParam("email") String email) {
-		User user = userService.getUserByEmail(email);
-		if (user != null) {
-			String token = UUID.randomUUID().toString();
-		}
-		
-		return "login";
-	}
-	
+	}	
 	
 }

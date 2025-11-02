@@ -17,4 +17,5 @@ public interface UserService {
 	public List<User> getAllUsers();
 	public boolean isAdmin();
 	public boolean verifyPassword(String rawPassword);
+	public void updatePassword(User user, String rawPassword) throws BusinessException;
 }

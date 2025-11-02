@@ -272,4 +272,19 @@ public class UserServiceImpl implements UserService {
 		return false;
 	}
 
+	@Override
+	@Transactional
+	public void updatePassword(User user, String rawPassword) throws BusinessException {
+		BusinessException be = new BusinessException();
+		Long userId = user.getUserId();
+		if (rawPassword == null || rawPassword.isBlank()) {
+			be.add("Vous devez renseigner le mot de passe");
+			throw be;
+		}
+		User managedUser = userRepository.findByUserId(userId);
+		String hashedPassword = passwordEncoder.encode(rawPassword);
+		managedUser.setPassword(hashedPassword);
+		
+	}
+
 }
