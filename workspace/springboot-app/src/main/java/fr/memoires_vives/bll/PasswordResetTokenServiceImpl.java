@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import fr.memoires_vives.bo.PasswordResetToken;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.repositories.PasswordResetTokenRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
@@ -33,6 +34,7 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
 	}
 
 	@Override
+	@Transactional
 	public void deleteToken(String token) {
 		tokenRepository.deleteByToken(token);
 	}

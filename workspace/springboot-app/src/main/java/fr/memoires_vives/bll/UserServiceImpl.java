@@ -47,10 +47,10 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional(rollbackFor = BusinessException.class)
-	public User createAccount(String pseudo, String email, String password, String passwordConfirm,
-			MultipartFile image) throws BusinessException{
+	public User createAccount(String pseudo, String email, String password, String passwordConfirm, MultipartFile image)
+			throws BusinessException {
 		BusinessException be = new BusinessException();
-		
+
 		boolean isValid = checkPassword(password, passwordConfirm, be) && checkPseudoAvailable(pseudo, be)
 				&& checkEmailAvailable(email, be);
 
@@ -92,35 +92,35 @@ public class UserServiceImpl implements UserService {
 			throw be;
 		}
 	}
-	
+
 	@Override
 	@Transactional(rollbackFor = BusinessException.class)
-	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage) throws BusinessException {
+	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage)
+			throws BusinessException {
 		BusinessException be = new BusinessException();
-		
+
 		boolean isValid = true;
-		
-		
+
 		User userToSave = userRepository.findByUserId(userWithUpdate.getUserId());
 		String updatedPseudo = userWithUpdate.getPseudo();
 		String currentPseudo = userToSave.getPseudo();
-		
+
 		String updatedEmail = userWithUpdate.getEmail();
 		String currentEmail = userToSave.getEmail();
-		
+
 		isValid &= (isAdmin() && verifyPassword(currentPassword))
 				|| passwordEncoder.matches(currentPassword, userToSave.getPassword());
-		
+
 		if (currentPassword.isBlank()) {
 			be.add("Vous devez renseigner le mot de passe");
 			throw be;
 		}
-		
+
 		if (!isValid) {
 			be.add("Erreur de mot de passe");
 			throw be;
 		}
-		
+
 		// si les 2 mots de passe renseignés sont blancs, il n'y a pas de changement de
 		// mot de passe et on conserve le mdp de userToSave
 		if (!userWithUpdate.getPassword().isBlank() || !userWithUpdate.getPasswordConfirm().isBlank()) {
@@ -129,17 +129,17 @@ public class UserServiceImpl implements UserService {
 				userToSave.setPassword(passwordEncoder.encode(userWithUpdate.getPassword()));
 			}
 		}
-		
+
 		if (!updatedPseudo.equals(currentPseudo)) {
 			isValid &= checkPseudoAvailable(updatedPseudo, be);
 			userToSave.setPseudo(updatedPseudo);
 		}
-		
+
 		if (!updatedEmail.equals(currentEmail)) {
 			isValid &= checkEmailAvailable(updatedEmail, be);
 			userToSave.setEmail(updatedEmail);
 		}
-		
+
 		if (fileImage != null && !fileImage.isEmpty()) {
 			try {
 				userToSave.setMediaUUID(fileService.saveUserFile(fileImage, updatedPseudo));
@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
 				throw be;
 			}
 		}
-		
+
 		if (isValid) {
 			try {
 				userToSave = userRepository.save(userToSave);
@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
 						updatedUserDetails, updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
 				SecurityContextHolder.getContext().setAuthentication(newAuth);
 				return userToSave;
-				
+
 			} catch (DataAccessException e) {
 				e.printStackTrace();
 				be.add("Un problème est survenu lors de l'accès à la base de données.");
@@ -183,7 +183,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByEmail(String email) {
 		User user = userRepository.findByEmail(email);
-		
+
 		if (user == null) {
 			throw new UsernameNotFoundException("Utilisateur non trouvé");
 		}
@@ -219,7 +219,6 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
-
 	@Override
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
@@ -241,7 +240,7 @@ public class UserServiceImpl implements UserService {
 		String storedPassword = userDetails.getPassword();
 		return passwordEncoder.matches(rawPassword, storedPassword);
 	}
-	
+
 	private boolean checkPassword(String password, String passwordConfirm, BusinessException be) {
 		boolean isValid = false;
 		if (!password.isBlank() && password.equals(passwordConfirm)) {
@@ -253,7 +252,7 @@ public class UserServiceImpl implements UserService {
 		}
 		return isValid;
 	}
-	
+
 	private boolean checkPseudoAvailable(String pseudo, BusinessException be) {
 		User testUser = userRepository.findByPseudo(pseudo);
 		if (testUser == null) {
@@ -262,7 +261,7 @@ public class UserServiceImpl implements UserService {
 		be.add("Ce pseudo est déjà utilisé.");
 		return false;
 	}
-	
+
 	private boolean checkEmailAvailable(String email, BusinessException be) {
 		User testUser = userRepository.findByEmail(email);
 		if (testUser == null) {
@@ -284,7 +283,7 @@ public class UserServiceImpl implements UserService {
 		User managedUser = userRepository.findByUserId(userId);
 		String hashedPassword = passwordEncoder.encode(rawPassword);
 		managedUser.setPassword(hashedPassword);
-		
+
 	}
 
 }
