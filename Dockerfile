@@ -5,7 +5,7 @@ COPY workspace/springboot-app/ /app/
 RUN gradle bootJar
 
 # Étape 2 : Runtime
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 COPY --from=builder /app/build/libs/memoires-vives.jar /app/memoires-vives.jar
 EXPOSE 8080
