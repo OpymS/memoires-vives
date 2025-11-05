@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import fr.memoires_vives.bo.User;
 import fr.memoires_vives.exception.BusinessException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -37,9 +38,11 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
-	public void sendPasswordResetEmail(String to, String resetLink) {
+	public void sendPasswordResetEmail(User user, String resetLink) {
+		String to = user.getEmail();
 		Context context = new Context();
 		context.setVariable("resetLink", resetLink);
+		context.setVariable("name", user.getPseudo());
 
 		String htmlContent = templateEngine.process("email/reset-password", context);
 

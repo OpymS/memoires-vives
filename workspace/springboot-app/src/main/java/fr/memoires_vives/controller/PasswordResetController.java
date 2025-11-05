@@ -47,7 +47,7 @@ public class PasswordResetController {
 			String token = UUID.randomUUID().toString();
 			tokenService.createPasswordResetTokenForUser(user, token);
 			String resetUrl = baseUrl + "/forgot-password/reset-password?token="+token;
-			emailService.sendPasswordResetEmail(user.getEmail(), resetUrl);
+			emailService.sendPasswordResetEmail(user, resetUrl);
 		}
 		model.addAttribute("message", "Si l'adresse existe, vous recevrez un mail avec un lien de réinitialisation");
 		return "forgot-password";
