@@ -49,14 +49,20 @@
 					</div>
 				</div>
 				<div class="image-input mt-2 flex flex-col items-start w-auto">
-					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Photo de profil
+					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Photo de
+						profil
 						<img id="image"
 							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] border border-[#bddab2] hover:border-[#7e9076]"
 							src="" alt="Votre photo…" />
 					</label>
-					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg"
-						class="hidden">
+					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden">
 				</div>
+				<div class="hidden">
+					<label for="website">Ne pas remplir :</label>
+					<input type="text" id="website" name="website" autocomplete="off" tabindex="-1">
+				</div>
+
+				<input type="hidden" id="formTimestamp" name="formTimestamp">
 			</div>
 
 			<div class="buttons-container">
@@ -73,6 +79,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>
 	<script src="/js/images.js"></script>
 	<script src="/js/password.js"></script>
+	<script src="/js/captcha.js"></script>
 </body>
 
 </html>

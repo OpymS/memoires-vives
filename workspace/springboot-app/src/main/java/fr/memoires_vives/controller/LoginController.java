@@ -37,7 +37,16 @@ public class LoginController {
 
 	@PostMapping("/signup")
 	public String processSignup(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model,
-			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
+			@RequestParam(name = "image", required = false) MultipartFile fileImage,
+			@RequestParam(name = "website", required = false) String website,
+			@RequestParam(name = "formTimestamp", required = false) Long formTimestamp) {
+
+		if ((website != null && !website.isBlank()) || formTimestamp == null
+				|| (System.currentTimeMillis() - formTimestamp < 3000)) {
+			bindingResult.addError(new ObjectError("globalError", "Requête invalide, veuillez réessayer."));
+			return "signup";
+		}
+
 		if (bindingResult.hasErrors()) {
 			return "signup";
 		}
@@ -53,6 +62,6 @@ public class LoginController {
 			});
 			return "signup";
 		}
-	}	
-	
+	}
+
 }
