@@ -20,7 +20,8 @@
 
 			<label for="password" class="form-label">Mot de passe:</label>
 			<div class="relative w-full">
-				<input id="password" name="password" type="password" placeholder="Mot de passe" class="form-input" required>
+				<input id="password" name="password" type="password" placeholder="Mot de passe" class="form-input"
+					required>
 				<button type="button"
 					class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
 			</div>
@@ -28,9 +29,13 @@
 			<!--	        <input type="password" id="password" name="password" placeholder="Mot de passe" class="form-input" required />-->
 
 			<button type="submit" class="form-button">Se connecter</button>
-			<div class="forgot-password-container">
-                <a href="/forgot-password">Mot de passe oublié</a>
-            </div>
+			<div>
+				<label for="remember-me" class="font-light text-sm">Se souvenir de moi</label>
+				<input type="checkbox" name="remember-me" id="remember-me" class="accent-[#7e9076]">				
+			</div>
+			<div class="forgot-password-container w-full mt-4">
+				<a href="/forgot-password" class="py-2 rounded hover:bg-[#bddab2]"> Mot de passe oublié</a>
+			</div>
 		</form>
 	</main>
 	<script src="/js/password.js"></script>
