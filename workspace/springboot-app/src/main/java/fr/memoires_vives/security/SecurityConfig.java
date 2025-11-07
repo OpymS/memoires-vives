@@ -2,6 +2,7 @@ package fr.memoires_vives.security;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -20,6 +21,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig {
 
+	@Value("${security.remember-me.key}")
+	private String rememberMeKey;
+	
 	public SecurityConfig() {
 	}
 
@@ -38,7 +42,7 @@ public class SecurityConfig {
 				.httpBasic(Customizer.withDefaults()).csrf(csrf -> csrf.ignoringRequestMatchers("/images/public/**"))
 				.with(new RememberMeConfigurer<>(),
 						rememberMe -> rememberMe.tokenRepository(tokenRepository).userDetailsService(userDetailsService)
-								.rememberMeParameter("remember-me").key("uneCleSecreteTresLongueEtUnique123!@#")
+								.rememberMeParameter("remember-me").key(rememberMeKey)
 								.alwaysRemember(false).tokenValiditySeconds(14 * 24 * 60 * 60));
 //								.alwaysRemember(false).tokenValiditySeconds(30));
 		return http.build();
