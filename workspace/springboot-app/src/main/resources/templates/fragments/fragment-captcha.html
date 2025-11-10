@@ -1,0 +1,10 @@
+<div th:fragment="fragment-captcha">
+	<div class="hidden">
+		<label for="website">Ne pas remplir :</label>
+		<input type="text" id="website" name="website" autocomplete="off" tabindex="-1">
+	</div>
+
+	<input type="hidden" id="formTimestamp" name="formTimestamp">
+
+	<script src="/js/captcha.js"></script>
+</div>

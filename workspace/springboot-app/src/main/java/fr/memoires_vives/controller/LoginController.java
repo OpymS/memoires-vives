@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import fr.memoires_vives.bll.InvisibleCaptchaService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.exception.BusinessException;
@@ -18,9 +20,11 @@ import jakarta.validation.Valid;
 public class LoginController {
 
 	private final UserService userService;
+	private final InvisibleCaptchaService captchaService;
 
-	public LoginController(UserService userService) {
+	public LoginController(UserService userService, InvisibleCaptchaService captchaService) {
 		this.userService = userService;
+		this.captchaService = captchaService;
 	}
 
 	@GetMapping("/login")
@@ -41,8 +45,7 @@ public class LoginController {
 			@RequestParam(name = "website", required = false) String website,
 			@RequestParam(name = "formTimestamp", required = false) Long formTimestamp) {
 
-		if ((website != null && !website.isBlank()) || formTimestamp == null
-				|| (System.currentTimeMillis() - formTimestamp < 3000)) {
+		if (captchaService.isBot(website, formTimestamp)) {
 			bindingResult.addError(new ObjectError("globalError", "Requête invalide, veuillez réessayer."));
 			return "signup";
 		}

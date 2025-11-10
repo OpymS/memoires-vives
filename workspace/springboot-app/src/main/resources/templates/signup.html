@@ -10,7 +10,7 @@
 </head>
 
 <body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
 
 	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
 		<h1 class="text-[#bddab2] text-2xl">S'inscrire</h1>
@@ -57,12 +57,7 @@
 					</label>
 					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden">
 				</div>
-				<div class="hidden">
-					<label for="website">Ne pas remplir :</label>
-					<input type="text" id="website" name="website" autocomplete="off" tabindex="-1">
-				</div>
-
-				<input type="hidden" id="formTimestamp" name="formTimestamp">
+				<div th:replace="~{fragments/fragment-captcha :: fragment-captcha}"></div>
 			</div>
 
 			<div class="buttons-container">
@@ -79,7 +74,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>
 	<script src="/js/images.js"></script>
 	<script src="/js/password.js"></script>
-	<script src="/js/captcha.js"></script>
 </body>
 
 </html>
