@@ -2,10 +2,17 @@ package fr.memoires_vives.bll;
 
 import org.springframework.stereotype.Service;
 
+import fr.memoires_vives.component.CaptchaCounter;
+
 @Service
 public class InvisibleCaptchaServiceIpml implements InvisibleCaptchaService {
+	private final CaptchaCounter counter;
 
 	private static final long MIN_DELAY_MS = 3000;
+
+	public InvisibleCaptchaServiceIpml(CaptchaCounter counter) {
+		this.counter = counter;
+	}
 
 	@Override
 	public boolean isBot(String website, long formTimestamp) {
@@ -14,7 +21,11 @@ public class InvisibleCaptchaServiceIpml implements InvisibleCaptchaService {
 		boolean honeypotTriggered = website != null && !website.trim().isEmpty();
 		boolean tooFast = (now - formTimestamp) < MIN_DELAY_MS;
 
-		return honeypotTriggered || tooFast;
+		if (honeypotTriggered || tooFast) {
+			counter.increment();
+			return true;
+		}
+		return false;
 	}
 
 }

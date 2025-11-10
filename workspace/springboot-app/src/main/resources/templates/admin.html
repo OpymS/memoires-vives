@@ -16,6 +16,7 @@
 		<main class="font-bold w-full flex flex-col items-center">
 			<h1 class="mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration</h1>
 			<p th:text="${page}"></p>
+			<p>Nombre de bots détectés : <span th:text="${counter}">0</span></p>
 		</main>
 		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
 	</div>

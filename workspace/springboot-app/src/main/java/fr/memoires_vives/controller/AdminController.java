@@ -20,6 +20,7 @@ import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.component.CaptchaCounter;
 
 @Controller
 @RequestMapping("/admin")
@@ -30,16 +31,19 @@ public class AdminController {
 	private final MemoryService memoryService;
 	private final CategoryService categoryService;
 	private final LocationService locationService;
+	private final CaptchaCounter counter;
 	
-	public AdminController(UserService userService, MemoryService memoryService, CategoryService categoryService, LocationService locationService) {
+	public AdminController(UserService userService, MemoryService memoryService, CategoryService categoryService, LocationService locationService, CaptchaCounter counter) {
 		this.userService = userService;
 		this.memoryService = memoryService;
 		this.categoryService = categoryService;
 		this.locationService = locationService;
+		this.counter = counter;
 	}
 
 	@GetMapping
-	public String showAdminPanel() {
+	public String showAdminPanel(Model model) {
+		model.addAttribute("counter", counter.getCount());
 		return "admin";
 	}
 	
