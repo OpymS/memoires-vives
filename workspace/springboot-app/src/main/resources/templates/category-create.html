@@ -4,35 +4,34 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Création/Modification de catégorie</title>
-    <link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-    <link rel="icon" href="/images/public/favicon.png" />
+	<title>Admin - Création/Modification de catégorie</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
 </head>
 
-<body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	
-	<main>
-		<main class="mt-[80px] font-bold w-full flex flex-col items-center">
-		<h1 th:if="${category.categoryId == 0}" class="text-[#bddab2] text-2xl">Créer une nouvelle catégorie</h1>
-		<h1 th:if="${category.categoryId != 0}" class="text-[#bddab2] text-2xl">Modifier une catégorie</h1>
-	    <form th:action="@{/admin/category/new}" method="POST" th:object="${category}" enctype="multipart/form-data">
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+
+	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
+		<h1 th:if="${category.categoryId == 0}" class="text-[#bddab2] text-2xl font-bold">Créer une nouvelle catégorie
+		</h1>
+		<h1 th:if="${category.categoryId != 0}" class="text-[#bddab2] text-2xl font-bold">Modifier une catégorie</h1>
+		<form th:action="@{/admin/category/new}" method="POST" th:object="${category}" enctype="multipart/form-data">
 			<div class="inputs-container">
 				<div class="name-input">
-					<label for="name">Nom </label>
-					<input id="name" th:field="*{name}" type="text" placeholder="Nom de la catégorie">
-				</div>		
+					<label for="name" class="form-label">Nom </label>
+					<input id="name" th:field="*{name}" type="text" placeholder="Nom de la catégorie"
+						class="form-input">
+				</div>
 			</div>
 			<div class="buttons-container">
-				<button type="submit" class="button create" th:text="${category.categoryId == 0 ? 'Créer' : 'Modifier'}"></button>
-				<a th:href="@{/admin/categories}" class="button cancel">Annuler</a>
-			</div>	
+				<button type="submit" class="button create form-button"
+					th:text="${category.categoryId == 0 ? 'Créer' : 'Modifier'}"></button>
+				<a th:href="@{/admin/categories}" class="button cancel form-button">Annuler</a>
+			</div>
 		</form>
 	</main>
-		
-		
-	
-	</main>
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 </body>
 
 </html>

@@ -23,16 +23,17 @@ public class SecurityConfig {
 
 	@Value("${security.remember-me.key}")
 	private String rememberMeKey;
-	
+
 	public SecurityConfig() {
 	}
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http, PersistentTokenRepository tokenRepository, CustomUserDetailsService userDetailsService) throws Exception {
+	SecurityFilterChain securityFilterChain(HttpSecurity http, PersistentTokenRepository tokenRepository,
+			CustomUserDetailsService userDetailsService) throws Exception {
 		http.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login",
 						"/signup", "/logout", "/error", "/error/**", "/memory", "/about", "/try", "/api/memory/**",
-						"/upload-error", "/forgot-password/**")
+						"/upload-error", "/forgot-password/**", "/legal-notices", "/privacy-policy", "/conditions")
 				.permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated())
 				.formLogin(login -> login.loginPage("/login").permitAll().defaultSuccessUrl("/", true)
 						.failureUrl("/login?error=true"))
@@ -42,9 +43,8 @@ public class SecurityConfig {
 				.httpBasic(Customizer.withDefaults()).csrf(csrf -> csrf.ignoringRequestMatchers("/images/public/**"))
 				.with(new RememberMeConfigurer<>(),
 						rememberMe -> rememberMe.tokenRepository(tokenRepository).userDetailsService(userDetailsService)
-								.rememberMeParameter("remember-me").key(rememberMeKey)
-								.alwaysRemember(false).tokenValiditySeconds(14 * 24 * 60 * 60));
-//								.alwaysRemember(false).tokenValiditySeconds(30));
+								.rememberMeParameter("remember-me").key(rememberMeKey).alwaysRemember(false)
+								.tokenValiditySeconds(14 * 24 * 60 * 60));
 		return http.build();
 	}
 

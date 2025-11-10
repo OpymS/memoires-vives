@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mentions légales - Mémoires vives</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+	<main class="flex-grow max-w-4xl mx-auto px-4 py-12">
+		<h1 class="h1-title">Conditions d’utilisation</h1>
+
+		<section class="mb-8">
+			<p>
+				Les présentes conditions régissent l’accès et l’utilisation du site <strong>Mémoires vives</strong>.
+				En utilisant le site, l’utilisateur reconnaît avoir pris connaissance de ces conditions et les accepter.
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">1. Objet du service</h2>
+			<p>
+				Mémoires vives est une plateforme participative permettant aux utilisateurs de publier des souvenirs,
+				récits ou événements liés à des lieux.
+				Le service est fourni à titre gratuit et non commercial.
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">2. Création de compte</h2>
+			<p>
+				Pour publier un souvenir, l’utilisateur doit créer un compte avec un nom d’utilisateur, une adresse
+				e-mail et un mot de passe.
+				Les informations fournies doivent être exactes et mises à jour.
+				Le compte peut être supprimé à tout moment sur demande à
+				<a href="mailto:contact@memoires-vives.fr"
+					class="text-[#7e9076] hover:underline">contact@memoires-vives.fr</a>.
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">3. Contributions et modération</h2>
+			<p>
+				Les utilisateurs sont responsables du contenu qu’ils publient.
+				Les contributions sont modérées a posteriori : tout contenu signalé comme inapproprié, offensant ou
+				contraire à la loi pourra être supprimé sans préavis.
+			</p>
+			<p class="text-gray-600">
+				Les utilisateurs s’engagent à ne pas publier de propos diffamatoires, discriminatoires, ou violant les
+				droits d’autrui.
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">4. Droits sur les contenus</h2>
+			<p>
+				Les contributions (textes, photos, etc.) publiées sur le site sont placées sous licence
+				<strong>Creative Commons BY-SA 4.0</strong>.
+			</p>
+			<p>
+				L’utilisateur reste propriétaire de ses contenus, mais autorise leur diffusion publique selon les termes
+				de cette licence.
+			</p>
+			<p class="text-gray-600">
+				⚠️ L’utilisateur s’engage à ne pas téléverser d’images ou documents soumis à des droits d’auteur sans
+				l’autorisation du titulaire.
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">5. Responsabilité</h2>
+			<p>
+				L’éditeur du site décline toute responsabilité quant aux informations publiées par les utilisateurs.
+				Le site ne garantit pas l’exactitude des souvenirs partagés.
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">6. Suppression de compte et de contenu</h2>
+			<p>
+				En cas de manquement aux présentes conditions ou de comportement contraire à la loi, le compte d’un
+				utilisateur peut être suspendu ou supprimé.
+			</p>
+		</section>
+
+		<section>
+			<h2 class="h2-title">7. Évolution des conditions</h2>
+			<p>
+				Ces conditions peuvent être modifiées à tout moment pour s’adapter à l’évolution du site ou à la
+				législation.
+				Les utilisateurs seront informés des changements via le site.
+			</p>
+		</section>
+	</main>
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
+</body>
+
+</html>

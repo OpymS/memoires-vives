@@ -4,20 +4,112 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>À propos</title>
+	<title>À propos - Mémoires vives</title>
+	<meta name="description"
+		content="Mémoires vives est une carte participative des souvenirs : faits historiques, événements culturels ou sportifs, catastrophes naturelles, anecdotes. Contribuez à la mémoire vivante des lieux." />
+	<meta name="author" content="Mémoires vives" />
+	<link rel="canonical" href="https://www.memoiresvives.example/about" />
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
 	<link rel="icon" href="/images/public/favicon.png" />
 	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
 </head>
 
-<body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	<main class="font-bold w-full flex flex-col items-center">
-		<h1 class="mt-[80px] text-[#bddab2] text-2xl">Bienvenue sur mémoires vives</h1>
-		<p>Ce site a pour objectif de rassembler, préserver et partager des souvenirs locaux afin de créer une mémoire
-			collective de la région en permettant aux habitants de partager des anecdotes, des photos, et des histoires
-			liées à des lieux spécifiques.</p>
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+
+	<main class="flex-grow max-w-4xl mx-auto px-4 py-12">
+		<section class="mb-12">
+			<h1 class="h1-title">Mémoires vives</h1>
+			<p class="text-lg text-gray-700">
+				Une carte participative où les souvenirs reprennent vie et se partagent à travers les lieux.
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="h2-title">À propos du projet</h2>
+			<p class="mb-4">
+				Chaque lieu garde en lui une trace. Sous les pavés, au détour d’une rue, dans le silence d’une plaine ou
+				le murmure d’une rivière,
+				la mémoire du monde sommeille. <strong>Mémoires vives</strong> est né de l’envie de lui redonner voix, à
+				travers une carte où chacun
+				peut déposer un souvenir, petit ou grand, intime ou collectif.
+			</p>
+			<p>
+				Faits historiques, événements culturels ou sportifs, catastrophes naturelles, anecdotes du quotidien —
+				tous trouvent leur place sur cette
+				carte vivante qui relie les hommes et les époques.
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="h2-title">Une carte vivante et participative</h2>
+			<p class="mb-4">
+				<em>Mémoires vives</em> est avant tout une expérience collective. Chaque utilisateur peut :
+			</p>
+			<ul class="list-disc list-inside mb-4">
+				<li>Ajouter un souvenir en le liant à un lieu précis,</li>
+				<li>Joindre une photo ou une illustration,</li>
+				<li>Filtrer les souvenirs par thème, période ou type d’événement,</li>
+				<li>Explorer la carte pour découvrir d’autres récits et émotions.</li>
+			</ul>
+			<p>
+				Ces contributions tissent une mosaïque d’histoires humaines, une mémoire partagée en perpétuel
+				mouvement.
+			</p>
+			<div class="mt-6">
+				<a th:href="@{/}" class="form-button">Explorer la
+					carte</a>
+				<a th:href="@{/new}" class="form-button">Contribuer</a>
+			</div>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="h2-title">Une mémoire à plusieurs voix</h2>
+			<p class="mb-4">
+				La mémoire n’existe que lorsqu’elle circule. En partageant vos souvenirs, vous faites revivre des
+				fragments d’histoire
+				et permettez à d’autres de comprendre, d’apprendre, de se souvenir. Chaque témoignage est une lumière
+				qui éclaire un lieu autrement.
+			</p>
+			<p>
+				<em>Mémoires vives</em> n’est pas un musée figé, mais un espace vivant, évolutif, bâti par ceux qui le
+				peuplent.
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="h2-title">Pour qui ?</h2>
+			<p>
+				Ce site s’adresse aux passionnés d’histoire, aux curieux, aux enseignants, aux chercheurs, aux familles
+				et aux voyageurs de mémoire.
+				Chacun peut y trouver sa place : pour transmettre, témoigner, ou simplement découvrir.
+			</p>
+		</section>
+
+		<section class="mb-12">
+			<h2 class="h2-title">Respect et bienveillance</h2>
+			<p>
+				Parce que chaque souvenir compte, la communauté <em>Mémoires vives</em> s’engage à préserver le respect,
+				la véracité et la dignité
+				des récits partagés. Les contributions sont modérées et peuvent être accompagnées de sources ou de
+				précisions historiques.
+			</p>
+		</section>
+
+		<section>
+			<h2 class="h2-title">Rejoignez l’aventure</h2>
+			<p class="mb-4">
+				Si un lieu vous parle, si une photo ancienne sommeille dans un tiroir, si une histoire mérite d’être
+				transmise —
+				ajoutez-la à la carte. Ensemble, faisons vivre la mémoire des lieux.
+			</p>
+			<a th:href="@{/new}" class="form-button">
+				Partager un souvenir
+			</a>
+		</section>
 	</main>
+
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 
 </body>
 

@@ -44,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					const memoryLink = document.createElement('a');
 					memoryLink.href = `/memory?memoryId=${memory.memoryId}`;
 					memoryLink.textContent = memory.title;
+					memoryLink.classList.add('hover:underline');
 					line.append(memoryLink);
 					newContainer.append(line);
 				});

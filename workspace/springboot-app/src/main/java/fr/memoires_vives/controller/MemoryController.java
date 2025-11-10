@@ -139,5 +139,20 @@ public class MemoryController {
 		}
 
 	}
-
+	
+	@GetMapping("/legal-notices")
+	public String showLegalNotices() {
+		return "legal-notices";
+	}
+	
+	@GetMapping("/privacy-policy")
+	public String showPrivacyPolicy() {
+		return "privacy-policy";
+	}
+	
+	@GetMapping("/conditions")
+	public String showConditions() {
+		return "conditions";
+	}
+	
 }

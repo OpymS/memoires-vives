@@ -10,15 +10,17 @@
 	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
 </head>
 
-<body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	<div class="flex flex-row justify-between items-start h-screen">
-		<main class="font-bold w-full flex flex-col items-center">
-			<h1 class="mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration</h1>
-			<p th:text="${page}"></p>
-			<p>Nombre de bots détectés : <span th:text="${counter}">0</span></p>
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+	<div class="flex flex-grow flex-row">
+		<main class="flex flex-col flex-grow">
+			<div class="flex-grow w-full flex flex-col items-center justify-start font-bold p-4">
+				<h1 class="mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration</h1>
+				<p>Nombre de bots détectés : <span th:text="${counter}">0</span></p>				
+			</div>
+			<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 		</main>
-		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
+		<div th:replace="~{fragments/fragment-admin-aside :: admin}"></div>
 	</div>
 </body>
 

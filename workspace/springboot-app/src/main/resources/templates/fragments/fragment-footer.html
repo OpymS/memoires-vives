@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.com" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<footer th:fragment="footer"
+	class="max-w-4xl mx-auto my-2 px-4 py-8 text-sm text-gray-600 text-center border-t border-[#bddab2] shadow-md">
+	<p>
+		© Mémoires vives — Projet participatif.
+		<a th:href="@{/legal-notices}" class="text-[#7e9076] hover:underline">Mentions légales</a> •
+		<a th:href="@{/privacy-policy}" class="text-[#7e9076] hover:underline">Politique de
+			confidentialité</a> •
+		<a th:href="@{/conditions}" class="text-[#7e9076] hover:underline">Conditions d’utilisation</a>
+	</p>
+</footer>
+
+</html>

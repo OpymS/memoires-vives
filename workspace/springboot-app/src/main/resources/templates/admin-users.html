@@ -10,50 +10,57 @@
 	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
 </head>
 
-<body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	<div class="flex flex-row justify-between items-start h-screen">
-		<main class="font-bold w-full flex flex-col sm:items-center overflow-auto">
-			<h1 class="mt-4 sm:mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration des utilisateurs</h1>
-			<table class="border border-black border-collapse w-full sm:w-9/10">
-				<thead>
-					<tr class="border border-black">
-						<th class="border border-black w-1/10 sm:w-1/12">userId</th>
-						<th class="border border-black w-1/10 sm:w-1/12">pseudo</th>
-						<th class="border border-black w-2/5 sm:w-1/4">email</th>
-						<th class="w-1/12 hidden sm:table-cell">image</th>
-						<th class="border border-black w-1/5 sm:w-1/6">droits</th>
-						<th class="border border-black w-1/5 sm:w-1/12">actif</th>
-						<th class="border border-black w-1/5 sm:w-1/6">actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="border border-black h-[35px]" th:each="user:${users}">
-						<td class="border border-black pl-2" th:text="${user.userId}"></td>
-						<td class="border border-black pl-2" th:text="${user.pseudo}"></td>
-						<td class="border border-black pl-2" th:text="${user.email}"></td>
-						<td class="hidden sm:table-cell sm:border sm:border-black">
-							<img class="rounded-[50%] w-[30px] h-[30px] m-auto" th:if="${user.mediaUUID}!=null"
-								th:src="@{/uploads/{filename}(filename=${user.mediaUUID})}"
-								alt="image de profil de l'utilisateur" />
-						</td>
-						<td class="border border-black pl-2"
-							th:text="${#lists.contains(user.roles.![name], 'ROLE_ADMIN') ? 'Administrateur' : 'Membre'}">
-						</td>
-						<td class="border border-black pl-2" th:text="${user.isActivated ? 'OUI' : 'NON'}"></td>
-						<td class="border border-black pl-2 space-x-2">
-							<span th:if="${user.isActivated}"><a href="#modal-activate">désactiver</a></span>
-							<span th:unless="${user.isActivated}"><a href="#modal-activate">activer</a></span>
-							<a href="#modal-delete">supprimer</a>
-							<a th:href="@{/profil(userId=${user.userId})}">voir</a>
-							<a th:href="@{/profil/modify(userId=${user.userId})}">modifier</a>
-							<span th:unless="${#lists.contains(user.roles.![name], 'ROLE_ADMIN')}"><a href="#modal-admin">upgrader</a></span>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+	<div class="flex-grow flex flex-row justify-between">
+		<main class="w-full flex flex-col flex-grow sm:items-center overflow-auto">
+			<div class="flex-grow w-full flex flex-col items-center justify-start">
+				<h1 class="mt-4 mb-2 sm:mt-[80px] text-[#bddab2] text-2xl font-bold">Panneau d'administration des
+					utilisateurs</h1>
+				<table class="border border-black border-collapse w-full sm:w-9/10">
+					<thead>
+						<tr class="border border-black font-bold">
+							<th class="border border-black w-1/10 sm:w-1/12">userId</th>
+							<th class="border border-black w-1/10 sm:w-1/12">pseudo</th>
+							<th class="border border-black w-2/5 sm:w-1/4">email</th>
+							<th class="w-1/12 hidden sm:table-cell">image</th>
+							<th class="border border-black w-1/5 sm:w-1/6">droits</th>
+							<th class="border border-black w-1/5 sm:w-1/12">actif</th>
+							<th class="border border-black w-1/5 sm:w-1/6">actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="border border-black h-[35px]" th:each="user:${users}">
+							<td class="border border-black pl-2" th:text="${user.userId}"></td>
+							<td class="border border-black pl-2" th:text="${user.pseudo}"></td>
+							<td class="border border-black pl-2" th:text="${user.email}"></td>
+							<td class="hidden sm:table-cell sm:border sm:border-black">
+								<img class="rounded-[50%] w-[30px] h-[30px] m-auto" th:if="${user.mediaUUID}!=null"
+									th:src="@{/uploads/{filename}(filename=${user.mediaUUID})}"
+									alt="image de profil de l'utilisateur" />
+							</td>
+							<td class="border border-black pl-2"
+								th:text="${#lists.contains(user.roles.![name], 'ROLE_ADMIN') ? 'Administrateur' : 'Membre'}">
+							</td>
+							<td class="border border-black pl-2" th:text="${user.isActivated ? 'OUI' : 'NON'}"></td>
+							<td class="border border-black pl-2 space-x-2">
+								<span th:if="${user.isActivated}"><a href="#modal-activate"
+										class="form-button">désactiver</a></span>
+								<span th:unless="${user.isActivated}"><a href="#modal-activate"
+										class="form-button">activer</a></span>
+								<a href="#modal-delete" class="form-button">supprimer</a>
+								<a th:href="@{/profil(userId=${user.userId})}" class="form-button">voir</a>
+								<a th:href="@{/profil/modify(userId=${user.userId})}" class="form-button">modifier</a>
+								<span th:unless="${#lists.contains(user.roles.![name], 'ROLE_ADMIN')}"><a
+										href="#modal-admin" class="form-button">upgrader</a></span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 		</main>
-		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
+		<div th:replace="~{fragments/fragment-admin-aside :: admin}"></div>
 	</div>
 </body>
 

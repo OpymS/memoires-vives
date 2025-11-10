@@ -10,42 +10,47 @@
 	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
 </head>
 
-<body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	<div class="flex flex-row justify-between items-start h-screen">
-		<main class="font-bold w-full flex flex-col sm:items-center overflow-auto">
-			<h1 class="mt-4 sm:mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration des catégories de souvenir
-			</h1>
-			<table class="border border-black border-collapse w-full sm:w-9/10">
-				<thead>
-					<tr class="border border-black">
-						<th class="border border-black w-1/12">Id</th>
-						<th class="border border-black w-1/4">Nom</th>
-						<th class="border border-black w-5/12">Souvenirs associés</th>
-						<th class="border border-black w-1/4">Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr class="border border-black h-[35px]" th:each="category:${categories}">
-						<td class="border border-black px-2" th:text="${category.categoryId}"></td>
-						<td class="border border-black px-2" th:text="${category.name}"></td>
-						<td class="border border-black px-2">
-							<p class="" th:text="${#lists.size(category.memories)}"></p>
-							<button th:id="'showBtn-' + ${category.categoryId}"
-								class="px-4 py-2 bg-[#bddab2] text-black rounded">Voir</button>
-						</td>
-						<td class="border border-black px-2 space-x-2">
-							<a th:href="@{/admin/category/modify(categoryId=${category.categoryId})}">Modifier</a>
-							<a href="#modal-delete">Supprimer</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<div>
-				<a th:href="@{/admin/category/new}">Nouvelle catégorie</a>
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+	<div class="flex-grow flex flex-row justify-between">
+		<main class="w-full flex flex-col flex-grow sm:items-center overflow-auto">
+			<div class="flex-grow w-full flex flex-col items-center justify-start">
+				<h1 class="mt-4 mb-2 sm:mt-[80px] text-[#bddab2] text-2xl font-bold">Panneau d'administration des
+					catégories de souvenir
+				</h1>
+				<table class="border border-black border-collapse w-full sm:w-9/10">
+					<thead>
+						<tr class="border border-black font-bold">
+							<th class="border border-black w-1/12">Id</th>
+							<th class="border border-black w-1/4">Nom</th>
+							<th class="border border-black w-5/12">Souvenirs associés</th>
+							<th class="border border-black w-1/4">Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="border border-black h-[35px]" th:each="category:${categories}">
+							<td class="border border-black px-2" th:text="${category.categoryId}"></td>
+							<td class="border border-black px-2" th:text="${category.name}"></td>
+							<td class="border border-black px-2">
+								<p class="" th:text="${#lists.size(category.memories)}"></p>
+								<button th:id="'showBtn-' + ${category.categoryId}" class="form-button">Voir</button>
+							</td>
+							<td class="border border-black px-2 space-x-2">
+								<a th:href="@{/admin/category/modify(categoryId=${category.categoryId})}"
+									class="form-button">Modifier</a>
+								<a href="#modal-delete" class="form-button">Supprimer</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div>
+					<a th:href="@{/admin/category/new}" class="form-button">Nouvelle catégorie</a>
+				</div>
+
 			</div>
+			<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 		</main>
-		<div data-th-replace="~{fragments/fragment-admin-aside :: admin}"></div>
+		<div th:replace="~{fragments/fragment-admin-aside :: admin}"></div>
 	</div>
 	<script src="/js/admin-category.js"></script>
 </body>

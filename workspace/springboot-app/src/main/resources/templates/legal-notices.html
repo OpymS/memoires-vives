@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mentions légales - Mémoires vives</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+	<main class="flex-grow max-w-4xl mx-auto px-4 py-12">
+		<h1 class="h1-title">Mentions légales</h1>
+
+		<section class="mb-8">
+			<h2 class="h2-title">Éditeur du site</h2>
+			<p>
+				Le site <strong>Mémoires vives</strong> est un projet personnel et non commercial, réalisé à titre
+				individuel.
+				Il a pour objet de permettre aux utilisateurs de partager des souvenirs ou des événements liés à des
+				lieux.
+			</p>
+			<p>
+				Responsable de la publication : <strong>Opym</strong><br />
+				Contact : <a href="mailto:contact@memoires-vives.fr"
+					class="text-[#7e9076] hover:underline">contact@memoires-vives.fr</a>
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">Hébergement</h2>
+			<p>
+				Le site est hébergé par :
+			</p>
+			<p>
+				<strong>OVH SAS</strong><br />
+				2 rue Kellermann — 59100 Roubaix — France<br />
+				Téléphone : 09 72 10 10 07<br />
+				Site web : <a href="https://www.ovhcloud.com" class="text-[#7e9076] hover:underline">www.ovhcloud.com</a>
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">Propriété intellectuelle</h2>
+			<p>
+				Sauf mention contraire, le contenu du site (textes, structure, éléments graphiques) est placé sous
+				<strong>licence libre Creative Commons BY-SA 4.0</strong>.
+			</p>
+			<p>
+				Les utilisateurs restent propriétaires des textes, images et contributions qu’ils publient, tout en
+				acceptant
+				que celles-ci soient diffusées selon la même licence.
+			</p>
+			<p class="text-gray-600">
+				⚠️ Il est strictement interdit de mettre en ligne des images ou documents soumis à des droits d’auteur
+				sans autorisation explicite.
+				L’utilisateur garantit qu’il dispose des droits nécessaires sur les fichiers qu’il téléverse.
+			</p>
+		</section>
+
+		<section>
+			<h2 class="h2-title">Responsabilité</h2>
+			<p>
+				L’éditeur du site ne saurait être tenu responsable du contenu publié par les utilisateurs. Les
+				contributions sont modérées
+				a posteriori et peuvent être supprimées en cas de non-conformité à la charte ou à la loi.
+			</p>
+		</section>
+	</main>
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
+</body>
+
+</html>

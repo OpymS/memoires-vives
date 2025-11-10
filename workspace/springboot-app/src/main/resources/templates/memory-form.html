@@ -4,7 +4,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:text="${memory.memoryId == 0 ? 'Nouveau souvenir' : 'Modification d''un souvenir'}"></title>
+	<title th:text="${memory.memoryId == 0 ? 'Nouveau souvenir' : 'Modification d''un souvenir'}+' - Mémoires vives'">
+	</title>
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
 	<link rel="icon" href="/images/public/favicon.png" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -12,11 +13,11 @@
 
 </head>
 
-<body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
 
-	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
-		<h1 class="text-[#bddab2] text-2xl"
+	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
+		<h1 class="h1-title"
 			th:text="${memory.memoryId == 0 ? 'Partager un nouveau souvenir' : 'Modifier un souvenir'}"></h1>
 		<form th:action="${memory.memoryId == 0} ? @{/new} : @{/memory/modify}" method="POST" th:object="${memory}"
 			enctype="multipart/form-data" id="formWithImage" class="w-full max-w-lg flex flex-col">
@@ -53,7 +54,8 @@
 				<!--					</select>-->
 				<!--				</div>-->
 				<div class="image-input mt-2 flex flex-col items-start w-auto">
-					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Choisir l'image associée
+					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Choisir
+						l'image associée
 						<img th:if="${memory.mediaUUID}!=null" id="image"
 							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
 							th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
@@ -63,8 +65,7 @@
 							src="/images/public/memory-placeholder.png"
 							th:alt="'image associée au souvenir ' + ${memory.title}" />
 					</label>
-					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg"
-						class="hidden" />
+					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden" />
 				</div>
 				<input id="memoryId" th:field="*{memoryId}" type="hidden" />
 				<div class="publish flex items-center gap-2">
@@ -108,9 +109,9 @@
 			class="w-11/12 min-w-xs h-9/10 min-h-[300px] p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 			<button
 				class="js-close-modal px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
-			<h1 id="title-modal" class="mb-2.5 text-2xl font-medium"
+			<h2 id="title-modal" class="h2-title"
 				th:text="${memory.memoryId == 0 ? 'Choisissez un lieu pour votre souvenir' : 'Modifier le lieu de votre souvenir'}">
-			</h1>
+			</h2>
 			<div id="map" class="h-9/10 w-9/10 mb-4 mx-auto border border-black"></div>
 			<p id="southWest"></p>
 			<p id="northEast"></p>
@@ -123,12 +124,13 @@
 			class="w-3/5 min-w-xs h-1/4 min-h-[300px] p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
 			<button
 				class="js-close-modalName px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
-			<h3 id="title-modalName" class="mt-5 mb-2.5 text-2xl font-medium">Donnez un nom au lieu de votre souvenir
-			</h3>
+			<h21 id="title-modalName" class="h2-title">Donnez un nom au lieu de votre souvenir
+			</h21>
 			<input id="modalNameInput" type="text" placeholder="Un nom pour votre lieu…" class="form-input" />
 			<button id="validateLocationName" class="disabled-button" disabled>Valider</button>
 		</div>
 	</aside>
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>

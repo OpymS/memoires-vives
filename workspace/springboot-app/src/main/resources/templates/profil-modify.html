@@ -4,16 +4,16 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Modification du profil</title>
+	<title>Modification du profil - Mémoires vives</title>
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
 	<link rel="icon" href="/images/public/favicon.png" />
 </head>
 
-<body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
 
-	<main class="mt-[80px] font-bold w-full flex flex-col items-center">
-		<h1 class="text-[#bddab2] text-2xl">Modifier son profil</h1>
+	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
+		<h1 class="h1-title">Modifier son profil</h1>
 		<form th:action="@{/profil/modify}" method="POST" th:object="${user}" class="user-create-form w-full max-w-lg flex flex-col"
 			enctype="multipart/form-data" id="formWithImage">
 			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
@@ -85,6 +85,7 @@
 			<span>Redimensionnement de l'image en cours...</span>
 		</div>
 	</main>
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>
 	<script src="/js/images.js"></script>
 	<script src="/js/password.js"></script>

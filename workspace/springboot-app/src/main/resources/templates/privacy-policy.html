@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mentions légales - Mémoires vives</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+	<main class="flex-grow max-w-4xl mx-auto px-4 py-12">
+		<h1 class="h1-title">Politique de confidentialité</h1>
+
+		<section class="mb-8">
+			<p>
+				La présente politique explique comment <strong>Mémoires vives</strong> collecte, utilise et protège les
+				données personnelles
+				des utilisateurs conformément au Règlement Général sur la Protection des Données (RGPD).
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">Données collectées</h2>
+			<ul class="list-disc list-inside">
+				<li>Nom d’utilisateur (pseudonyme) et adresse e-mail lors de la création de compte,</li>
+				<li>Mot de passe (chiffré de manière sécurisée),</li>
+				<li>Photo de profil (facultative),</li>
+				<li>Photos associées aux souvenirs publiés,</li>
+				<li>Données de géolocalisation, uniquement si l’utilisateur y consent,</li>
+				<li>Adresse IP et informations techniques minimales pour la sécurité et la modération.</li>
+			</ul>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">Finalités de traitement</h2>
+			<p>
+				Les données sont collectées dans le seul but de :
+			</p>
+			<ul class="list-disc list-inside">
+				<li>Permettre la création et la gestion des comptes utilisateurs,</li>
+				<li>Publier et afficher les contributions sur la carte,</li>
+				<li>Assurer la sécurité et la modération du site,</li>
+				<li>Améliorer l’expérience utilisateur.</li>
+			</ul>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">Partage et conservation</h2>
+			<p>
+				Les données ne sont partagées avec aucun tiers à des fins commerciales.
+				Elles sont hébergées en France sur les serveurs d’OVH.
+			</p>
+			<p>
+				Les comptes inactifs peuvent être supprimés après une période prolongée d’inactivité.
+			</p>
+		</section>
+
+		<section class="mb-8">
+			<h2 class="h2-title">Droits des utilisateurs</h2>
+			<p>
+				Conformément au RGPD, vous disposez d’un droit d’accès, de rectification, d’effacement, de limitation du
+				traitement
+				et de portabilité de vos données.
+				Pour exercer ces droits, vous pouvez écrire à :
+				<a href="mailto:contact@memoires-vives.fr"
+					class="text-[#7e9076] hover:underline">contact@memoires-vives.fr</a>.
+			</p>
+		</section>
+
+		<section>
+			<h2 class="h2-title">Cookies</h2>
+			<p>
+				Le site utilise uniquement des cookies techniques nécessaires à son fonctionnement (session,
+				authentification).
+				Aucun cookie publicitaire ni de suivi externe n’est utilisé.
+			</p>
+		</section>
+	</main>
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
+</body>
+
+</html>

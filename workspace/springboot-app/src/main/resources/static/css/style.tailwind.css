@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @utility form-label {
-	@apply mb-1;
+	@apply mb-1 font-semibold;
 }
 
 @utility form-input {
@@ -27,4 +27,12 @@
 
 @utility filter-option {
 	@apply hover:bg-[#bddab2];
+}
+
+@utility h1-title {
+	@apply mt-[80px] text-[#7e9076] text-3xl font-bold mb-2;
+}
+
+@utility h2-title {
+	@apply text-2xl text-[#bddab2] w-9/10 font-semibold mb-3
 }
