@@ -11,27 +11,32 @@
 		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 </head>
 
-<body class="min-h-screen flex flex-col">
-	<div th:replace="~{fragments/fragment-header :: header}"></div>
+<body class="md:h-screen flex flex-col md:overflow-hidden">
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
 
-	<main class="w-full flex justify-center flex-grow md:flex-grow-0">
+	<main class="w-full flex justify-center flex-grow md:overflow-hidden">
 		<div
-			class="mt-6 font-bold w-full lg:w-4/5 flex flex-col md:flex-row items-stretch">
+			class="mt-6 w-full lg:w-4/5 flex flex-col justify-start items-center md:flex-row md:justify-center md:items-start md:items-stretch">
 			<div id="memoryPresentation"
-				class="border border-[#7e9076] w-full md:h-full md:w-1/2 flex flex-col items-center gap-3 py-2">
-				<h1 class="h1-title" th:text="${memoryToDisplay.title}"></h1>
-				<img class="min-w-[150px] min-h-[150px] max-w-4/5" th:if="${memoryToDisplay.mediaUUID}!=null"
-					th:src="@{/uploads/{filename}(filename=${memoryToDisplay.mediaUUID})}"
-					alt="image d'illustration du souvenir" />
-				<img class="min-w-[150px] min-h-[150px] max-w-4/5" th:if="${memoryToDisplay.mediaUUID}==null"
-					src="/images/public/memory-placeholder.png" alt="image d'illustration du souvenir" />
-				<div class="w-3/5 text-center">
-					Souvenir de <a th:href="@{/profil(userId=${memoryToDisplay.rememberer.userId})}"
-						th:text="${memoryToDisplay.rememberer.pseudo}"
-						class="text-[#7e9076] hover:text-white hover:bg-[#bddab2]"></a> du <span
-						th:text="${#temporals.format(memoryToDisplay.memoryDate, 'dd MMMM yyyy')}"></span>
-				</div>
-				<div th:text="${memoryToDisplay.description}" class="w-4/5 font-light text-justify">
+				class="border border-[#7e9076] w-full md:w-1/2 flex flex-col justify-between items-center gap-3 md:overflow-hidden">
+				<div class="w-full flex flex-col items-center justify-start gap-2 md:overflow-hidden">
+					<h1 class="h1-title mt-2 text-center" th:text="${memoryToDisplay.title}"></h1>
+					<img class="min-w-[150px] min-h-[150px] max-w-4/5 max-h-2/3"
+						th:if="${memoryToDisplay.mediaUUID}!=null"
+						th:src="@{/uploads/{filename}(filename=${memoryToDisplay.mediaUUID})}"
+						alt="image d'illustration du souvenir" />
+					<img class="min-w-[150px] min-h-[150px] max-w-4/5 max-h-2/3"
+						th:if="${memoryToDisplay.mediaUUID}==null" src="/images/public/memory-placeholder.png"
+						alt="image d'illustration du souvenir" />
+					<div class="w-3/5 text-center text-sm">
+						Souvenir de <a th:href="@{/profil(userId=${memoryToDisplay.rememberer.userId})}"
+							th:text="${memoryToDisplay.rememberer.pseudo}"
+							class="text-[#7e9076] hover:text-white hover:bg-[#bddab2]"></a> du <span
+							th:text="${#temporals.format(memoryToDisplay.memoryDate, 'dd MMMM yyyy')}"></span>
+					</div>
+					<div th:text="${memoryToDisplay.description}"
+						class="w-4/5 font-light text-justify mt-4 md:overflow-y-auto">
+					</div>
 				</div>
 				<div
 					th:if="${#authentication.authorities.?[#this.authority == 'ROLE_ANONYMOUS'].isEmpty() and memoryToDisplay.rememberer.userId == #authentication?.principal?.user?.userId}">
@@ -41,10 +46,12 @@
 
 			</div>
 			<div id="map-container"
-				class="border border-[#7e9076] w-full md:w-1/2 flex flex-col items-center gap-2 min-h-[50vh]">
+				class="border border-[#7e9076] w-full h-[50vh] md:h-full md:w-1/2 flex flex-col items-center gap-2">
 				<div id="locationName" th:data-location_name="${memoryToDisplay.location.name}"></div>
-				<div>Latitude : <span id="latitude" th:data-latitude="${memoryToDisplay.location.latitude}"></span> - Longitude :
-					<span id="longitude" th:data-longitude="${memoryToDisplay.location.longitude}"></span></div>
+				<div>Latitude : <span id="latitude" th:data-latitude="${memoryToDisplay.location.latitude}"></span> -
+					Longitude :
+					<span id="longitude" th:data-longitude="${memoryToDisplay.location.longitude}"></span>
+				</div>
 				<div id="map" class="h-9/10 w-9/10"></div>
 			</div>
 		</div>
