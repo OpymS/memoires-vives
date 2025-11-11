@@ -19,7 +19,7 @@
 	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
 		<h1 class="h1-title"
 			th:text="${memory.memoryId == 0 ? 'Partager un nouveau souvenir' : 'Modifier un souvenir'}"></h1>
-		<form th:action="${memory.memoryId == 0} ? @{/new} : @{/memory/modify}" method="POST" th:object="${memory}"
+		<form th:action="${memory.memoryId == 0} ? @{/memory/new} : @{/memory/modify}" method="POST" th:object="${memory}"
 			enctype="multipart/form-data" id="formWithImage" class="w-full max-w-lg flex flex-col">
 			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
 			<div th:replace="~{fragments/errors/fragment-error :: frag-error(title)}"></div>

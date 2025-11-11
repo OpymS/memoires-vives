@@ -9,15 +9,15 @@
 	<link rel="icon" href="/images/public/favicon.png" />
 </head>
 
-<body>
-	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
-	<main class="font-bold w-full flex flex-col items-center">
-		<a class="font-bold text-xl" th:href="@{/new}">Erreur 413</a>
-		<h1 class="mt-[80px] text-[#bddab2] text-2xl">L'image que vous essayez de télécharger est trop grosse. Veuillez
-			réduire la taille de votre image à moins de 2 Mo.</h1>
-		<a th:href="${backUrl}" class="form-button">Retour</a>
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+	<main class="w-full flex-grow flex flex-col items-center">
+		<h1 class="h1-title text-center">Erreur 413</a>
+			<h2 class="h2-title text-center">L'image que vous essayez de télécharger est trop grosse. Veuillez
+				réduire la taille de votre image à moins de 2 Mo.</h2>
+			<a href="/">Retour à l'accueil</a>
 	</main>
-
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 </body>
 
 </html>

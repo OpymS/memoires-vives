@@ -1,7 +1,5 @@
 package fr.memoires_vives.controller;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,13 +16,15 @@ import fr.memoires_vives.exception.BusinessException;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
+@RequestMapping("/memory")
 public class MemoryController {
 
-	private static final int PAGE_SIZE = 6;
+	
 
 	private final MemoryService memoryService;
 	private final CategoryService categoryService;
@@ -32,19 +32,6 @@ public class MemoryController {
 	public MemoryController(MemoryService memoryService, CategoryService categoryService) {
 		this.memoryService = memoryService;
 		this.categoryService = categoryService;
-	}
-
-	@GetMapping("/")
-	public String home(Model model, @RequestParam(name = "currentPage", defaultValue = "1") int currentPage) {
-		Page<Memory> memories = memoryService.findMemories(PageRequest.of(currentPage - 1, PAGE_SIZE));
-		model.addAttribute("memories", memories);
-		model.addAttribute("categories", categoryService.getAllCategories());
-		return "index";
-	}
-
-	@GetMapping("/about")
-	public String showAboutPage() {
-		return "about";
 	}
 
 	@GetMapping("/new")
@@ -80,7 +67,7 @@ public class MemoryController {
 
 	}
 
-	@GetMapping("/memory")
+	@GetMapping
 	public String showMemoryPage(@RequestParam(name = "memoryId", required = false) Long memoryId, Model model) {
 		Memory memoryToDisplay = new Memory();
 		if (memoryId != null && memoryId != 0) {
@@ -96,7 +83,7 @@ public class MemoryController {
 		return "memory";
 	}
 
-	@GetMapping("/memory/modify")
+	@GetMapping("/modify")
 	public String showModifyMemoryForm(@RequestParam(name = "memoryId", required = true) Long memoryId, Model model) {
 		Memory memory = memoryService.getMemoryById(memoryId);
 		boolean isAllowed = memoryService.authorizedModification(memory);
@@ -112,7 +99,7 @@ public class MemoryController {
 		return "memory-form";
 	}
 
-	@PostMapping("/memory/modify")
+	@PostMapping("/modify")
 	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult memoryBindingResult,
 			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
 			@RequestParam(name = "publish", required = false) Boolean published,
@@ -139,20 +126,4 @@ public class MemoryController {
 		}
 
 	}
-	
-	@GetMapping("/legal-notices")
-	public String showLegalNotices() {
-		return "legal-notices";
-	}
-	
-	@GetMapping("/privacy-policy")
-	public String showPrivacyPolicy() {
-		return "privacy-policy";
-	}
-	
-	@GetMapping("/conditions")
-	public String showConditions() {
-		return "conditions";
-	}
-	
 }
