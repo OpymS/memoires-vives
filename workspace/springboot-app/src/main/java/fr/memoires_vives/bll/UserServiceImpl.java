@@ -51,121 +51,88 @@ public class UserServiceImpl implements UserService {
 			throws BusinessException {
 		BusinessException be = new BusinessException();
 
-		boolean isValid = checkPassword(password, passwordConfirm, be) && checkPseudoAvailable(pseudo, be)
-				&& checkEmailAvailable(email, be);
+		checkPassword(password, passwordConfirm, be);
+		checkPseudoAvailable(pseudo, be);
+		checkEmailAvailable(email, be);
 
-		if (isValid) {
-			try {
-				User user = new User();
-				user.setPseudo(pseudo);
-				user.setEmail(email);
-				user.setPassword(passwordEncoder.encode(password));
-				user.setAdmin(false);
-				user.setActivated(true);
-				Role userRole = roleRepository.findByName("ROLE_USER");
-				if (userRole == null) {
-					userRole = new Role();
-					userRole.setName("ROLE_USER");
-					roleRepository.save(userRole);
-				}
-				user.getRoles().add(userRole);
+		if (be.hasError()) {
+			throw be;
+		}
 
-				if (image != null && !image.isEmpty()) {
-					try {
-						user.setMediaUUID(fileService.saveUserFile(image, pseudo));
-					} catch (IOException e) {
-						e.printStackTrace();
-						be.add("Un problème est survenu lors de l'enregistrement de l'image.");
-						throw be;
-					}
-				} else {
-					user.setMediaUUID(null);
-				}
+		User user = new User();
+		user.setPseudo(pseudo);
+		user.setEmail(email);
+		user.setPassword(passwordEncoder.encode(password));
+		user.setAdmin(false);
+		user.setActivated(true);
 
-				return userRepository.save(user);
-			} catch (DataAccessException e) {
-				e.printStackTrace();
-				be.add("Un problème est survenu lors de l'accès à la base de données.");
-				throw be;
-			}
-		} else {
+		Role userRole = roleRepository.findByName("ROLE_USER");
+		if (userRole == null) {
+			userRole = new Role();
+			userRole.setName("ROLE_USER");
+			roleRepository.save(userRole);
+		}
+		user.getRoles().add(userRole);
+
+		handleProfileImage(user, image, be);
+
+		if (be.hasError()) {
+			throw be;
+		}
+
+		try {
+			return userRepository.save(user);
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+			be.add("Un problème est survenu lors de l'accès à la base de données.");
 			throw be;
 		}
 	}
 
 	@Override
 	@Transactional(rollbackFor = BusinessException.class)
-	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage)
+	public User updateProfile(User updatedData, String currentPassword, MultipartFile fileImage)
 			throws BusinessException {
 		BusinessException be = new BusinessException();
 
-		boolean isValid = true;
-
-		User userToSave = userRepository.findByUserId(userWithUpdate.getUserId());
-		String updatedPseudo = userWithUpdate.getPseudo();
-		String currentPseudo = userToSave.getPseudo();
-
-		String updatedEmail = userWithUpdate.getEmail();
-		String currentEmail = userToSave.getEmail();
-
-		isValid &= (isAdmin() && verifyPassword(currentPassword))
-				|| passwordEncoder.matches(currentPassword, userToSave.getPassword());
-
-		if (currentPassword.isBlank()) {
-			be.add("Vous devez renseigner le mot de passe");
+		User userToUpdate = userRepository.findByUserId(updatedData.getUserId());
+		if (userToUpdate == null) {
+			be.add("Utilisateur introuvable");
 			throw be;
 		}
 
-		if (!isValid) {
-			be.add("Erreur de mot de passe");
+		if (currentPassword == null || currentPassword.isBlank()) {
+			be.add("Vous devez renseigner le mot de passe.");
 			throw be;
 		}
 
-		// si les 2 mots de passe renseignés sont blancs, il n'y a pas de changement de
-		// mot de passe et on conserve le mdp de userToSave
-		if (!userWithUpdate.getPassword().isBlank() || !userWithUpdate.getPasswordConfirm().isBlank()) {
-			isValid &= checkPassword(userWithUpdate.getPassword(), userWithUpdate.getPasswordConfirm(), be);
-			if (isValid) {
-				userToSave.setPassword(passwordEncoder.encode(userWithUpdate.getPassword()));
-			}
+		boolean isPasswordValid = (isAdmin() && verifyPassword(currentPassword))
+				|| passwordEncoder.matches(currentPassword, userToUpdate.getPassword());
+
+		if (!isPasswordValid) {
+			be.add("Erreur de mot de passe.");
+			throw be;
 		}
 
-		if (!updatedPseudo.equals(currentPseudo)) {
-			isValid &= checkPseudoAvailable(updatedPseudo, be);
-			userToSave.setPseudo(updatedPseudo);
+		updateProfileFields(userToUpdate, updatedData, be);
+
+		if (be.hasError()) {
+			throw be;
 		}
 
-		if (!updatedEmail.equals(currentEmail)) {
-			isValid &= checkEmailAvailable(updatedEmail, be);
-			userToSave.setEmail(updatedEmail);
+		handleProfileImage(userToUpdate, fileImage, be);
+
+		if (be.hasError()) {
+			throw be;
 		}
 
-		if (fileImage != null && !fileImage.isEmpty()) {
-			try {
-				userToSave.setMediaUUID(fileService.saveUserFile(fileImage, updatedPseudo));
-			} catch (IOException e) {
-				e.printStackTrace();
-				be.add("Un problème est survenu lors de l'enregistrement de l'image.");
-				throw be;
-			}
-		}
+		try {
+			User saved = userRepository.save(userToUpdate);
+			refreshSecurityContext(saved);
+			return saved;
 
-		if (isValid) {
-			try {
-				userToSave = userRepository.save(userToSave);
-				CustomUserDetails updatedUserDetails = (CustomUserDetails) customUserDetailsService
-						.loadUserByUsername(userToSave.getPseudo());
-				UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
-						updatedUserDetails, updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(newAuth);
-				return userToSave;
-
-			} catch (DataAccessException e) {
-				e.printStackTrace();
-				be.add("Un problème est survenu lors de l'accès à la base de données.");
-				throw be;
-			}
-		} else {
+		} catch (DataAccessException e) {
+			be.add("Problème lors de l'accès à la base de données.");
 			throw be;
 		}
 	}
@@ -236,34 +203,25 @@ public class UserServiceImpl implements UserService {
 		return passwordEncoder.matches(rawPassword, storedPassword);
 	}
 
-	private boolean checkPassword(String password, String passwordConfirm, BusinessException be) {
-		boolean isValid = false;
-		if (!password.isBlank() && password.equals(passwordConfirm)) {
-			isValid = true;
-		} else if (password.isBlank()) {
+	private void checkPassword(String password, String passwordConfirm, BusinessException be) {
+		if (password.isBlank()) {
 			be.add("Le mot de passe ne peut pas être vide.");
-		} else {
+		}
+		if (!password.equals(passwordConfirm)) {
 			be.add("Les mots de passe ne sont pas identiques.");
 		}
-		return isValid;
 	}
 
-	private boolean checkPseudoAvailable(String pseudo, BusinessException be) {
-		User testUser = userRepository.findByPseudo(pseudo);
-		if (testUser == null) {
-			return true;
+	private void checkPseudoAvailable(String pseudo, BusinessException be) {
+		if (userRepository.findByPseudo(pseudo) != null) {
+			be.add("Ce pseudo est déjà utilisé.");
 		}
-		be.add("Ce pseudo est déjà utilisé.");
-		return false;
 	}
 
-	private boolean checkEmailAvailable(String email, BusinessException be) {
-		User testUser = userRepository.findByEmail(email);
-		if (testUser == null) {
-			return true;
+	private void checkEmailAvailable(String email, BusinessException be) {
+		if (userRepository.findByEmail(email) != null) {
+			be.add("Un compte est déjà attaché à cet email.");
 		}
-		be.add("Un compte est déjà attaché à cet email.");
-		return false;
 	}
 
 	@Override
@@ -281,4 +239,50 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	private void updateProfileFields(User user, User updatedData, BusinessException be) {
+		if (!user.getPseudo().equals(updatedData.getPseudo())) {
+			checkPseudoAvailable(updatedData.getPseudo(), be);
+			if (!be.hasError()) {
+				user.setPseudo(updatedData.getPseudo());
+			}
+		}
+
+		if (!user.getEmail().equals(updatedData.getEmail())) {
+			checkEmailAvailable(updatedData.getEmail(), be);
+			if (!be.hasError()) {
+				user.setEmail(updatedData.getEmail());
+			}
+		}
+
+		String newPass = updatedData.getPassword();
+		String confirm = updatedData.getPasswordConfirm();
+		if (!newPass.isBlank() || !confirm.isBlank()) {
+			// si les 2 mots de passe renseignés sont blancs, il n'y a pas de changement de
+			// mot de passe et on conserve le mdp de initial
+			checkPassword(newPass, confirm, be);
+			if (!be.hasError()) {
+				user.setPassword(passwordEncoder.encode(newPass));
+			}
+		}
+	}
+
+	private void handleProfileImage(User user, MultipartFile fileImage, BusinessException be) throws BusinessException {
+		if (fileImage != null && !fileImage.isEmpty()) {
+			try {
+				user.setMediaUUID(fileService.saveUserFile(fileImage, user.getPseudo()));
+			} catch (IOException e) {
+				e.printStackTrace();
+				be.add("Un problème est survenu lors de l'enregistrement de l'image.");
+				throw be;
+			}
+		}
+	}
+
+	private void refreshSecurityContext(User user) {
+		CustomUserDetails updatedUserDetails = (CustomUserDetails) customUserDetailsService
+				.loadUserByUsername(user.getPseudo());
+		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(updatedUserDetails,
+				updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
+	}
 }
