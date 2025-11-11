@@ -22,13 +22,12 @@
 		<form th:action="${memory.memoryId == 0} ? @{/memory/new} : @{/memory/modify}" method="POST" th:object="${memory}"
 			enctype="multipart/form-data" id="formWithImage" class="w-full max-w-lg flex flex-col">
 			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
-			<div th:replace="~{fragments/errors/fragment-error :: frag-error(title)}"></div>
-			<div th:replace="~{fragments/errors/fragment-error :: frag-error(memoryDate)}"></div>
 			<div class="inputs-container">
 				<div class="title-input">
 					<label for="title" class="form-label">Titre </label>
 					<input id="title" th:field="*{title}" type="text" placeholder="Donnez un titre à votre souvenir"
 						class="form-input" />
+					<div th:replace="~{fragments/errors/fragment-error :: frag-error(title)}"></div>
 				</div>
 				<div class="description-input">
 					<label for="description" class="form-label">Description </label>
@@ -45,6 +44,7 @@
 				<div class="date-input">
 					<label for="date" class="form-label">Date </label>
 					<input id="date" th:field="*{memoryDate}" type="date" class="form-input" />
+					<div th:replace="~{fragments/errors/fragment-error :: frag-error(memoryDate)}"></div>
 				</div>
 				<!--				<div class="visibility-input">-->
 				<!--					<label for="visibility">Visibilité </label>-->

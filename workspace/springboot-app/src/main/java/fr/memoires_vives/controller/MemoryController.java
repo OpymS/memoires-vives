@@ -12,7 +12,7 @@ import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
-import fr.memoires_vives.exception.BusinessException;
+import fr.memoires_vives.exception.ValidationException;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping("/memory")
 public class MemoryController {
-
-	
 
 	private final MemoryService memoryService;
 	private final CategoryService categoryService;
@@ -57,8 +55,8 @@ public class MemoryController {
 		try {
 			memoryService.createMemory(memory, fileImage, published, location);
 			return "redirect:/";
-		} catch (BusinessException e) {
-			e.getErrors().forEach(err -> {
+		} catch (ValidationException ve) {
+			ve.getErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
 				memoryBindingResult.addError(error);
 			});
@@ -117,8 +115,8 @@ public class MemoryController {
 		try {
 			memoryService.updateMemory(memory, fileImage, published, location);
 			return "redirect:/memory?memoryId=" + memory.getMemoryId();
-		} catch (BusinessException e) {
-			e.getErrors().forEach(err -> {
+		} catch (ValidationException ve) {
+			ve.getErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
 				memoryBindingResult.addError(error);
 			});

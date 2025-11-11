@@ -1,6 +1,5 @@
 package fr.memoires_vives.bll;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -17,7 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.memoires_vives.bo.Role;
 import fr.memoires_vives.bo.User;
-import fr.memoires_vives.exception.BusinessException;
+import fr.memoires_vives.exception.FileStorageException;
+import fr.memoires_vives.exception.ValidationException;
 import fr.memoires_vives.repositories.RoleRepository;
 import fr.memoires_vives.repositories.UserRepository;
 import fr.memoires_vives.security.CustomUserDetails;
@@ -46,17 +46,17 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	@Transactional(rollbackFor = BusinessException.class)
-	public User createAccount(String pseudo, String email, String password, String passwordConfirm, MultipartFile image)
-			throws BusinessException {
-		BusinessException be = new BusinessException();
+	@Transactional
+	public User createAccount(String pseudo, String email, String password, String passwordConfirm,
+			MultipartFile image) {
+		ValidationException ve = new ValidationException();
 
-		checkPassword(password, passwordConfirm, be);
-		checkPseudoAvailable(pseudo, be);
-		checkEmailAvailable(email, be);
+		checkPassword(password, passwordConfirm, ve);
+		checkPseudoAvailable(pseudo, ve);
+		checkEmailAvailable(email, ve);
 
-		if (be.hasError()) {
-			throw be;
+		if (ve.hasError()) {
+			throw ve;
 		}
 
 		User user = new User();
@@ -74,56 +74,63 @@ public class UserServiceImpl implements UserService {
 		}
 		user.getRoles().add(userRole);
 
-		handleProfileImage(user, image, be);
+		try {
+			handleProfileImage(user, image);
+		} catch (FileStorageException e) {
+			user.setMediaUUID(null);
+		}
 
-		if (be.hasError()) {
-			throw be;
+		if (ve.hasError()) {
+			throw ve;
 		}
 
 		try {
 			return userRepository.save(user);
 		} catch (DataAccessException e) {
 			e.printStackTrace();
-			be.add("Un problème est survenu lors de l'accès à la base de données.");
-			throw be;
+			ve.add("Un problème est survenu lors de l'accès à la base de données.");
+			throw ve;
 		}
 	}
 
 	@Override
-	@Transactional(rollbackFor = BusinessException.class)
-	public User updateProfile(User updatedData, String currentPassword, MultipartFile fileImage)
-			throws BusinessException {
-		BusinessException be = new BusinessException();
+	@Transactional
+	public User updateProfile(User updatedData, String currentPassword, MultipartFile fileImage) {
+		ValidationException ve = new ValidationException();
 
 		User userToUpdate = userRepository.findByUserId(updatedData.getUserId());
 		if (userToUpdate == null) {
-			be.add("Utilisateur introuvable");
-			throw be;
+			ve.add("Utilisateur introuvable");
+			throw ve;
 		}
 
 		if (currentPassword == null || currentPassword.isBlank()) {
-			be.add("Vous devez renseigner le mot de passe.");
-			throw be;
+			ve.add("Vous devez renseigner le mot de passe.");
+			throw ve;
 		}
 
 		boolean isPasswordValid = (isAdmin() && verifyPassword(currentPassword))
 				|| passwordEncoder.matches(currentPassword, userToUpdate.getPassword());
 
 		if (!isPasswordValid) {
-			be.add("Erreur de mot de passe.");
-			throw be;
+			ve.add("Erreur de mot de passe.");
+			throw ve;
 		}
 
-		updateProfileFields(userToUpdate, updatedData, be);
+		updateProfileFields(userToUpdate, updatedData, ve);
 
-		if (be.hasError()) {
-			throw be;
+		if (ve.hasError()) {
+			throw ve;
 		}
 
-		handleProfileImage(userToUpdate, fileImage, be);
+		try {
+			handleProfileImage(userToUpdate, fileImage);
+		} catch (FileStorageException e) {
+			// on ne fait rien, on laisse l'ancienne image
+		}
 
-		if (be.hasError()) {
-			throw be;
+		if (ve.hasError()) {
+			throw ve;
 		}
 
 		try {
@@ -132,8 +139,8 @@ public class UserServiceImpl implements UserService {
 			return saved;
 
 		} catch (DataAccessException e) {
-			be.add("Problème lors de l'accès à la base de données.");
-			throw be;
+			ve.add("Problème lors de l'accès à la base de données.");
+			throw ve;
 		}
 	}
 
@@ -203,35 +210,35 @@ public class UserServiceImpl implements UserService {
 		return passwordEncoder.matches(rawPassword, storedPassword);
 	}
 
-	private void checkPassword(String password, String passwordConfirm, BusinessException be) {
+	private void checkPassword(String password, String passwordConfirm, ValidationException ve) {
 		if (password.isBlank()) {
-			be.add("Le mot de passe ne peut pas être vide.");
+			ve.add("Le mot de passe ne peut pas être vide.");
 		}
 		if (!password.equals(passwordConfirm)) {
-			be.add("Les mots de passe ne sont pas identiques.");
+			ve.add("Les mots de passe ne sont pas identiques.");
 		}
 	}
 
-	private void checkPseudoAvailable(String pseudo, BusinessException be) {
+	private void checkPseudoAvailable(String pseudo, ValidationException ve) {
 		if (userRepository.findByPseudo(pseudo) != null) {
-			be.add("Ce pseudo est déjà utilisé.");
+			ve.add("Ce pseudo est déjà utilisé.");
 		}
 	}
 
-	private void checkEmailAvailable(String email, BusinessException be) {
+	private void checkEmailAvailable(String email, ValidationException ve) {
 		if (userRepository.findByEmail(email) != null) {
-			be.add("Un compte est déjà attaché à cet email.");
+			ve.add("Un compte est déjà attaché à cet email.");
 		}
 	}
 
 	@Override
 	@Transactional
-	public void updatePassword(User user, String rawPassword) throws BusinessException {
-		BusinessException be = new BusinessException();
+	public void updatePassword(User user, String rawPassword) {
+		ValidationException ve = new ValidationException();
 		Long userId = user.getUserId();
 		if (rawPassword == null || rawPassword.isBlank()) {
-			be.add("Vous devez renseigner le mot de passe");
-			throw be;
+			ve.add("Vous devez renseigner le mot de passe");
+			throw ve;
 		}
 		User managedUser = userRepository.findByUserId(userId);
 		String hashedPassword = passwordEncoder.encode(rawPassword);
@@ -239,17 +246,17 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	private void updateProfileFields(User user, User updatedData, BusinessException be) {
+	private void updateProfileFields(User user, User updatedData, ValidationException ve) {
 		if (!user.getPseudo().equals(updatedData.getPseudo())) {
-			checkPseudoAvailable(updatedData.getPseudo(), be);
-			if (!be.hasError()) {
+			checkPseudoAvailable(updatedData.getPseudo(), ve);
+			if (!ve.hasError()) {
 				user.setPseudo(updatedData.getPseudo());
 			}
 		}
 
 		if (!user.getEmail().equals(updatedData.getEmail())) {
-			checkEmailAvailable(updatedData.getEmail(), be);
-			if (!be.hasError()) {
+			checkEmailAvailable(updatedData.getEmail(), ve);
+			if (!ve.hasError()) {
 				user.setEmail(updatedData.getEmail());
 			}
 		}
@@ -259,22 +266,16 @@ public class UserServiceImpl implements UserService {
 		if (!newPass.isBlank() || !confirm.isBlank()) {
 			// si les 2 mots de passe renseignés sont blancs, il n'y a pas de changement de
 			// mot de passe et on conserve le mdp de initial
-			checkPassword(newPass, confirm, be);
-			if (!be.hasError()) {
+			checkPassword(newPass, confirm, ve);
+			if (!ve.hasError()) {
 				user.setPassword(passwordEncoder.encode(newPass));
 			}
 		}
 	}
 
-	private void handleProfileImage(User user, MultipartFile fileImage, BusinessException be) throws BusinessException {
+	private void handleProfileImage(User user, MultipartFile fileImage) {
 		if (fileImage != null && !fileImage.isEmpty()) {
-			try {
-				user.setMediaUUID(fileService.saveUserFile(fileImage, user.getPseudo()));
-			} catch (IOException e) {
-				e.printStackTrace();
-				be.add("Un problème est survenu lors de l'enregistrement de l'image.");
-				throw be;
-			}
+			user.setMediaUUID(fileService.saveUserFile(fileImage, user.getPseudo()));
 		}
 	}
 

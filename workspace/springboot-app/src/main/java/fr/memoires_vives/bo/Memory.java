@@ -42,7 +42,7 @@ public class Memory {
 	private String mediaUUID;
 
 	@Column(nullable = false)
-	@PastOrPresent
+	@PastOrPresent(message = "Le souvenir ne peut pas être dans le futur.")
 	private LocalDate memoryDate;
 
 	@Column(nullable = false, updatable = false)

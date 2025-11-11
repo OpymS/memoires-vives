@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fr.memoires_vives.bll.InvisibleCaptchaService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
-import fr.memoires_vives.exception.BusinessException;
+import fr.memoires_vives.exception.ValidationException;
 import jakarta.validation.Valid;
 
 @Controller
@@ -57,9 +57,8 @@ public class LoginController {
 			userService.createAccount(user.getPseudo(), user.getEmail(), user.getPassword(), user.getPasswordConfirm(),
 					fileImage);
 			return "redirect:/login";
-		} catch (BusinessException e) {
-			e.getErrors().forEach(err -> {
-//				String errorMessage = messageSource.getMessage(err, null, locale);
+		} catch (ValidationException ve) {
+			ve.getErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
 				bindingResult.addError(error);
 			});

@@ -1,6 +1,5 @@
 package fr.memoires_vives.controller;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,6 +23,7 @@ import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.exception.FileStorageException;
 
 @RestController
 @RequestMapping("/uploads")
@@ -69,7 +69,7 @@ public class FileController {
 			} else {
 				return ResponseEntity.status(404).body("Image non trouvée");
 			}
-		} catch (IOException e) {
+		} catch (FileStorageException e) {
 			return ResponseEntity.status(500).body("Erreur lors de la suppression de l'image.");
 		}
 	}

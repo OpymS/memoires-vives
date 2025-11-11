@@ -1,6 +1,5 @@
 package fr.memoires_vives.bll;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,7 +23,7 @@ import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.dto.SearchCriteria;
-import fr.memoires_vives.exception.BusinessException;
+import fr.memoires_vives.exception.FileStorageException;
 import fr.memoires_vives.repositories.MemoryRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -71,12 +70,9 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
-	@Transactional(rollbackFor = BusinessException.class)
-	public Memory createMemory(Memory memory, MultipartFile image, Boolean published, Location location)
-			throws BusinessException {
+	@Transactional
+	public Memory createMemory(Memory memory, MultipartFile image, Boolean published, Location location) {
 		memory.setCreationDate(LocalDateTime.now());
-		
-		BusinessException be = new BusinessException();
 
 		Location savedLocation = locationService.saveLocation(location);
 		if (published == null || !published) {
@@ -95,10 +91,8 @@ public class MemoryServiceImpl implements MemoryService {
 		if (image != null && !image.isEmpty()) {
 			try {
 				memory.setMediaUUID(fileService.saveFile(image));
-			} catch (IOException e) {
-				e.printStackTrace();
-				be.add("Un problème est survenu lors de l'enregistrement de l'image.");
-				throw be;
+			} catch (FileStorageException e) {
+				memory.setMediaUUID(null);
 			}
 		} else {
 			memory.setMediaUUID(null);
@@ -146,39 +140,37 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
-	@Transactional(rollbackFor = BusinessException.class)
-	public Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish,
-			Location locationWithUpdate) throws BusinessException {
-		
-		BusinessException be = new BusinessException();
+	@Transactional
+	public Memory updateMemory(Memory updatedData, MultipartFile newImage, Boolean publish,
+			Location locationWithUpdate) {
 
-		Memory existingMemoryToUpdate = memoryRepository.findByMemoryId(memoryWithUpdate.getMemoryId());
+		Memory existingMemoryToUpdate = memoryRepository.findByMemoryId(updatedData.getMemoryId());
 		Location existingLocation = locationService.getById(existingMemoryToUpdate.getLocation().getLocationId());
 
-		if (memoryWithUpdate.getTitle() != "" && existingMemoryToUpdate.getTitle() != memoryWithUpdate.getTitle()) {
-			existingMemoryToUpdate.setTitle(memoryWithUpdate.getTitle());
+		if (updatedData.getTitle() != "" && existingMemoryToUpdate.getTitle() != updatedData.getTitle()) {
+			existingMemoryToUpdate.setTitle(updatedData.getTitle());
 		}
 
-		if (memoryWithUpdate.getDescription() != ""
-				&& existingMemoryToUpdate.getDescription() != memoryWithUpdate.getDescription()) {
-			existingMemoryToUpdate.setDescription(memoryWithUpdate.getDescription());
+		if (updatedData.getDescription() != ""
+				&& existingMemoryToUpdate.getDescription() != updatedData.getDescription()) {
+			existingMemoryToUpdate.setDescription(updatedData.getDescription());
 		}
 
-		if (memoryWithUpdate.getMemoryDate() != null
-				&& existingMemoryToUpdate.getMemoryDate() != memoryWithUpdate.getMemoryDate()) {
-			existingMemoryToUpdate.setMemoryDate(memoryWithUpdate.getMemoryDate());
+		if (updatedData.getMemoryDate() != null
+				&& existingMemoryToUpdate.getMemoryDate() != updatedData.getMemoryDate()) {
+			existingMemoryToUpdate.setMemoryDate(updatedData.getMemoryDate());
 		}
 
-		if (memoryWithUpdate.getCategory() != null
-				&& existingMemoryToUpdate.getCategory() != memoryWithUpdate.getCategory()) {
-			existingMemoryToUpdate.setCategory(memoryWithUpdate.getCategory());
+		if (updatedData.getCategory() != null
+				&& existingMemoryToUpdate.getCategory() != updatedData.getCategory()) {
+			existingMemoryToUpdate.setCategory(updatedData.getCategory());
 		}
 
 		existingMemoryToUpdate.setModificationDate(LocalDateTime.now());
 
-		if (memoryWithUpdate.getVisibility() != null
-				&& existingMemoryToUpdate.getVisibility() != memoryWithUpdate.getVisibility()) {
-			existingMemoryToUpdate.setVisibility(memoryWithUpdate.getVisibility());
+		if (updatedData.getVisibility() != null
+				&& existingMemoryToUpdate.getVisibility() != updatedData.getVisibility()) {
+			existingMemoryToUpdate.setVisibility(updatedData.getVisibility());
 		}
 
 		if (publish == null || !publish) {
@@ -191,10 +183,8 @@ public class MemoryServiceImpl implements MemoryService {
 			try {
 				fileService.deleteFile(existingMemoryToUpdate.getMediaUUID());
 				existingMemoryToUpdate.setMediaUUID(fileService.saveFile(newImage));
-			} catch (IOException e) {
-				e.printStackTrace();
-				be.add("Un problème est survenu lors de l'enregistrement de l'image.");
-				throw be;
+			} catch (FileStorageException e) {
+				// on ne fait rien, on laisse l'ancienne image
 			}
 		}
 

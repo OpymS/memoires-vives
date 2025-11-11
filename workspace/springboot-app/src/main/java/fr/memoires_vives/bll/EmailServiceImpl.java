@@ -1,7 +1,7 @@
 package fr.memoires_vives.bll;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -9,7 +9,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import fr.memoires_vives.bo.User;
-import fr.memoires_vives.exception.BusinessException;
+import fr.memoires_vives.exception.EmailSendingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
@@ -25,16 +25,6 @@ public class EmailServiceImpl implements EmailService {
 	public EmailServiceImpl(JavaMailSender mailSender, TemplateEngine templateEngine) {
 		this.mailSender = mailSender;
 		this.templateEngine = templateEngine;
-	}
-
-	@Override
-	public void sendEmail(String to, String token) throws BusinessException {
-		SimpleMailMessage message = new SimpleMailMessage();
-		message.setFrom(fromAddress);
-		message.setTo(to);
-		message.setSubject("test d'envoi");
-		message.setText("et on va voir si ça marche");
-		mailSender.send(message);
 	}
 
 	@Override
@@ -58,9 +48,8 @@ public class EmailServiceImpl implements EmailService {
 			helper.setSubject(subject);
 			helper.setText(htmlBody, true);
 			mailSender.send(message);
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (MessagingException | MailException e) {
+			throw new EmailSendingException("Impossible d'envoyer l'email à " + to, e);
 		}
 	}
 }

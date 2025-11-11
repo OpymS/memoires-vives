@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
-import fr.memoires_vives.exception.BusinessException;
+import fr.memoires_vives.exception.ValidationException;
 
 @Controller
 @RequestMapping("/profil")
@@ -65,8 +65,8 @@ public class ProfilController {
 			try {
 				userService.updateProfile(updatedUser, currentPassword, fileImage);
 				return "redirect:/profil?userId=" + updatedUser.getUserId();
-			} catch (BusinessException e) {
-				e.getErrors().forEach(err -> {
+			} catch (ValidationException ve) {
+				ve.getErrors().forEach(err -> {
 					ObjectError error = new ObjectError("globalError", err);
 					bindingResult.addError(error);
 				});
