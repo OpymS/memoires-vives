@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import fr.memoires_vives.bo.Role;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.FileStorageException;
 import fr.memoires_vives.exception.ValidationException;
 import fr.memoires_vives.repositories.RoleRepository;
@@ -55,10 +56,6 @@ public class UserServiceImpl implements UserService {
 		checkPseudoAvailable(pseudo, ve);
 		checkEmailAvailable(email, ve);
 
-		if (ve.hasError()) {
-			throw ve;
-		}
-
 		User user = new User();
 		user.setPseudo(pseudo);
 		user.setEmail(email);
@@ -74,21 +71,21 @@ public class UserServiceImpl implements UserService {
 		}
 		user.getRoles().add(userRole);
 
+		if (ve.hasError()) {
+			throw ve;
+		}
+
 		try {
 			handleProfileImage(user, image);
 		} catch (FileStorageException e) {
 			user.setMediaUUID(null);
 		}
 
-		if (ve.hasError()) {
-			throw ve;
-		}
-
 		try {
 			return userRepository.save(user);
 		} catch (DataAccessException e) {
 			e.printStackTrace();
-			ve.add("Un problème est survenu lors de l'accès à la base de données.");
+			ve.addGlobalError("Un problème est survenu lors de l'accès à la base de données.");
 			throw ve;
 		}
 	}
@@ -100,21 +97,18 @@ public class UserServiceImpl implements UserService {
 
 		User userToUpdate = userRepository.findByUserId(updatedData.getUserId());
 		if (userToUpdate == null) {
-			ve.add("Utilisateur introuvable");
-			throw ve;
+			throw new EntityNotFoundException("Utilisateur introuvable pour l'ID " + updatedData.getUserId());
 		}
 
 		if (currentPassword == null || currentPassword.isBlank()) {
-			ve.add("Vous devez renseigner le mot de passe.");
-			throw ve;
+			ve.addFieldError("currentPassword", "Vous devez renseigner le mot de passe.");
 		}
 
 		boolean isPasswordValid = (isAdmin() && verifyPassword(currentPassword))
 				|| passwordEncoder.matches(currentPassword, userToUpdate.getPassword());
 
 		if (!isPasswordValid) {
-			ve.add("Erreur de mot de passe.");
-			throw ve;
+			ve.addFieldError("currentPassword", "Erreur de mot de passe.");
 		}
 
 		updateProfileFields(userToUpdate, updatedData, ve);
@@ -129,17 +123,13 @@ public class UserServiceImpl implements UserService {
 			// on ne fait rien, on laisse l'ancienne image
 		}
 
-		if (ve.hasError()) {
-			throw ve;
-		}
-
 		try {
 			User saved = userRepository.save(userToUpdate);
 			refreshSecurityContext(saved);
 			return saved;
 
 		} catch (DataAccessException e) {
-			ve.add("Problème lors de l'accès à la base de données.");
+			ve.addGlobalError("Problème lors de l'accès à la base de données.");
 			throw ve;
 		}
 	}
@@ -212,22 +202,22 @@ public class UserServiceImpl implements UserService {
 
 	private void checkPassword(String password, String passwordConfirm, ValidationException ve) {
 		if (password.isBlank()) {
-			ve.add("Le mot de passe ne peut pas être vide.");
+			ve.addFieldError("password", "Le mot de passe ne peut pas être vide.");
 		}
 		if (!password.equals(passwordConfirm)) {
-			ve.add("Les mots de passe ne sont pas identiques.");
+			ve.addFieldError("password", "Les mots de passe ne sont pas identiques.");
 		}
 	}
 
 	private void checkPseudoAvailable(String pseudo, ValidationException ve) {
 		if (userRepository.findByPseudo(pseudo) != null) {
-			ve.add("Ce pseudo est déjà utilisé.");
+			ve.addFieldError("pseudo", "Ce pseudo est déjà utilisé.");
 		}
 	}
 
 	private void checkEmailAvailable(String email, ValidationException ve) {
 		if (userRepository.findByEmail(email) != null) {
-			ve.add("Un compte est déjà attaché à cet email.");
+			ve.addFieldError("email", "Un compte est déjà attaché à cet email.");
 		}
 	}
 
@@ -237,7 +227,7 @@ public class UserServiceImpl implements UserService {
 		ValidationException ve = new ValidationException();
 		Long userId = user.getUserId();
 		if (rawPassword == null || rawPassword.isBlank()) {
-			ve.add("Vous devez renseigner le mot de passe");
+			ve.addFieldError("currentPassword", "Vous devez renseigner le mot de passe");
 			throw ve;
 		}
 		User managedUser = userRepository.findByUserId(userId);

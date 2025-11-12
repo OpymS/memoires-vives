@@ -44,11 +44,11 @@ public class MemoryController {
 	}
 
 	@PostMapping("/new")
-	public String createMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult memoryBindingResult,
+	public String createMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
 			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
-		if (memoryBindingResult.hasErrors() || locationBindingResult.hasErrors()) {
+		if (bindingResult.hasErrors() || locationBindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
@@ -56,9 +56,13 @@ public class MemoryController {
 			memoryService.createMemory(memory, fileImage, published, location);
 			return "redirect:/";
 		} catch (ValidationException ve) {
-			ve.getErrors().forEach(err -> {
+			ve.getGlobalErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
-				memoryBindingResult.addError(error);
+				bindingResult.addError(error);
+			});
+			ve.getFieldErrors().forEach(err -> {
+				ObjectError error = new ObjectError(err.getField(), err.getMessage());
+				bindingResult.addError(error);
 			});
 			return "memory-form";
 		}
@@ -98,17 +102,17 @@ public class MemoryController {
 	}
 
 	@PostMapping("/modify")
-	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult memoryBindingResult,
-			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
+	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
+			@Valid @ModelAttribute("location") Location location,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		boolean isAllowed = memoryService.authorizedModification(memory);
 		if (!isAllowed) {
 			ObjectError error = new ObjectError("globalError", "Vous n'êtes pas autorisé à modifier ce souvenir");
-			memoryBindingResult.addError(error);
+			bindingResult.addError(error);
 		}
 
-		if (memoryBindingResult.hasErrors() || locationBindingResult.hasErrors()) {
+		if (bindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
@@ -116,9 +120,13 @@ public class MemoryController {
 			memoryService.updateMemory(memory, fileImage, published, location);
 			return "redirect:/memory?memoryId=" + memory.getMemoryId();
 		} catch (ValidationException ve) {
-			ve.getErrors().forEach(err -> {
+			ve.getGlobalErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
-				memoryBindingResult.addError(error);
+				bindingResult.addError(error);
+			});
+			ve.getFieldErrors().forEach(err -> {
+				ObjectError error = new ObjectError(err.getField(), err.getMessage());
+				bindingResult.addError(error);
 			});
 			return "memory-form";
 		}

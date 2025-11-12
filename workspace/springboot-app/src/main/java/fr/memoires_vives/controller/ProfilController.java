@@ -3,6 +3,7 @@ package fr.memoires_vives.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -59,15 +60,21 @@ public class ProfilController {
 		if (bindingResult.hasErrors()) {
 			return "profil-modify";
 		}
-		
+
 		User currentUser = userService.getCurrentUser();
 		if (userService.isAdmin() || currentUser.getUserId() == updatedUser.getUserId()) {
 			try {
 				userService.updateProfile(updatedUser, currentPassword, fileImage);
 				return "redirect:/profil?userId=" + updatedUser.getUserId();
 			} catch (ValidationException ve) {
-				ve.getErrors().forEach(err -> {
+				ve.getGlobalErrors().forEach(err -> {
 					ObjectError error = new ObjectError("globalError", err);
+					bindingResult.addError(error);
+				});
+
+				ve.getFieldErrors().forEach(err -> {
+					FieldError error = new FieldError("user", err.getField(), null, false, null, null,
+							err.getMessage());
 					bindingResult.addError(error);
 				});
 				return "profil-modify";

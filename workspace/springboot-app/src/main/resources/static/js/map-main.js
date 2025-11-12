@@ -186,20 +186,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 		memories.forEach((memory) => {
 			const memoryDiv = document.createElement('a');
 			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
-			memoryDiv.className = 'border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw] overflow-hidden';
+			memoryDiv.className = 'border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw] overflow-hidden duration-200 hover:scale-101';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
 							<img class="absolute rounded-t-lg w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
 						</div>
-						<h3 class="text-xl mx-2 text-center">${memory.title}</h3>
-						<h4 class="w-full px-1 font-light text-justify">${memory.description}</h4>
+						<h3 class="h3-title mb-2">${memory.title}</h3>
+						<p class="w-full px-1 text-justify">${memory.description}</p>
 				`;
 			} else {
 				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
 						<img class="absolute rounded-t-lg w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="illustration de ${memory.title}" />
 					</div>
-					<h3 class="text-xl mx-2 text-center">${memory.title}</h3>
-					<h4 class="w-full px-1 font-light text-justify">${memory.description}</h4>
+					<h3 class="h3-title mb-2">${memory.title}</h3>
+					<p class="w-full px-1 font-light text-justify">${memory.description}</p>
 			`;
 			}
 			cardsContainer.appendChild(memoryDiv);
@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const marker = L.marker([memory.location.latitude, memory.location.longitude]).addTo(markers);
 			const memoryDiv = document.createElement('a');
 			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
-			memoryDiv.className = 'flex flex-row h-[150px] w-[300px] items-center p-4 gap-6';
+			memoryDiv.className = 'flex flex-row h-[150px] w-[300px] items-center p-2 gap-4';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">
 							<img class="w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
@@ -241,8 +241,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 						</div>`;
 			}
 			memoryDiv.innerHTML += `<div class="h-full flex-1 min-w-0 flex flex-col text-black justify-start items-start">
-							<h3 class="text-xl text-left">${memory.title}</h3>
-							<h4 class="w-full font-light text-justify overflow-y-scroll wrap-break-word">${memory.description}</h4>
+							<h3 class="text-xl text-center">${memory.title}</h3>
+							<p class="w-full font-light text-justify overflow-y-scroll wrap-break-word">${memory.description}</p>
 						</div>`;
 			marker.on('click', function() {
 				openPopup(marker, memoryDiv);

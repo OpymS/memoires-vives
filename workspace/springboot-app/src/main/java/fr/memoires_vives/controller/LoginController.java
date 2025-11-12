@@ -58,8 +58,12 @@ public class LoginController {
 					fileImage);
 			return "redirect:/login";
 		} catch (ValidationException ve) {
-			ve.getErrors().forEach(err -> {
+			ve.getGlobalErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
+				bindingResult.addError(error);
+			});
+			ve.getFieldErrors().forEach(err -> {
+				ObjectError error = new ObjectError(err.getField(), err.getMessage());
 				bindingResult.addError(error);
 			});
 			return "signup";

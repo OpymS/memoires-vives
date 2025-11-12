@@ -36,3 +36,7 @@
 @utility h2-title {
 	@apply text-2xl text-[#bddab2] w-9/10 font-semibold mb-3
 }
+
+@utility h3-title {
+	@apply text-xl mx-2 font-bold text-center
+}
