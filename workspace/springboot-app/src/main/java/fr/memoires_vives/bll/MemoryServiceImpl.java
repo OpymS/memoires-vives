@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Primary;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +25,10 @@ import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.dto.SearchCriteria;
+import fr.memoires_vives.exception.DataPersistenceException;
+import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.FileStorageException;
+import fr.memoires_vives.exception.UnauthorizedActionException;
 import fr.memoires_vives.repositories.MemoryRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -70,6 +75,59 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
+	public Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria) {
+		List<Memory> memoriesList = memoryRepository.findAll(createSpecification(searchCriteria));
+		
+		int pageSize = pageable.getPageSize();
+		int currentPage = pageable.getPageNumber();
+		int startItem = currentPage * pageSize;
+		List<Memory> shortMemoriesList;
+		
+		if (memoriesList.size() < startItem) {
+			shortMemoriesList = Collections.emptyList();
+		} else {
+			int endIndex = Math.min(startItem + pageSize, memoriesList.size());
+			shortMemoriesList = memoriesList.subList(startItem, endIndex);
+		}
+		
+		Page<Memory> memoriesPage = new PageImpl<Memory>(shortMemoriesList, PageRequest.of(currentPage, pageSize),
+				memoriesList.size());
+		
+		// TODO Gérer les cas des souvenirs privés
+		return memoriesPage;
+	}
+
+	@Override
+	public List<Memory> findMemoriesOnMapWithCriteria(SearchCriteria searchCriteria) {
+		Specification<Memory> baseSpecification = createSpecification(searchCriteria);
+		Specification<Memory> geographicSpecification = getGeographicSpecification(searchCriteria);
+		
+		Specification<Memory> globalSpecification = Specification.where(baseSpecification).and(geographicSpecification);
+		
+		return memoryRepository.findAll(globalSpecification);
+	}
+
+	@Override
+	public Memory getMemoryById(long memoryId) {
+		return memoryRepository.findByMemoryId(memoryId);
+
+	}
+
+	@Override
+	public Memory getMemoryForModification(long memoryId) {
+		Memory memory = memoryRepository.findById(memoryId)
+				.orElseThrow(() -> new EntityNotFoundException("Souvenir introuvable"));
+		System.out.println("j'ai le memory " + memoryId);
+		assertUserCanModify(memory);
+		return memory;
+	}
+	
+	@Override
+	public Memory getMemoryByImage(String mediaUUID) {
+		return memoryRepository.findByMediaUUID(mediaUUID);
+	}
+
+	@Override
 	@Transactional
 	public Memory createMemory(Memory memory, MultipartFile image, Boolean published, Location location) {
 		memory.setCreationDate(LocalDateTime.now());
@@ -98,16 +156,36 @@ public class MemoryServiceImpl implements MemoryService {
 			memory.setMediaUUID(null);
 		}
 
-		return memoryRepository.save(memory);
+		try {
+			return memoryRepository.save(memory);
+		} catch (DataAccessException e) {
+			throw new DataPersistenceException("Problème lors de l'enregistrement en base de données", e);
+		}
 	}
 
 	@Override
-	public Memory getMemoryById(long memoryId) {
-		return memoryRepository.findByMemoryId(memoryId);
+	@Transactional
+	public Memory updateMemory(Memory updatedData, MultipartFile newImage, Boolean publish,
+			Location locationWithUpdate) {
+
+		Memory existingMemory = fetchExistingMemory(updatedData.getMemoryId());
+
+		assertUserCanModify(existingMemory);
+
+		updateBasicFields(existingMemory, updatedData);
+
+		updateState(existingMemory, publish);
+
+		updateMedia(existingMemory, newImage);
+
+		updateLocation(existingMemory, locationWithUpdate);
+		
+		return saveMemory(existingMemory);
 	}
 
 	@Override
 	public boolean authorizedDisplay(Memory memory) {
+		// TODO revoir cette méthode en prenant en compte la publication.
 		if (memory.getVisibility() == MemoryVisibility.PUBLIC)
 			return true;
 		if (userService.isAdmin())
@@ -124,126 +202,22 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
-	public boolean authorizedModification(Memory memory) {
-		if (userService.isAdmin())
-			return true;
-		User currentUser = userService.getCurrentUser();
-		long remembererId;
-		if (memory.getRememberer() == null) {
-			remembererId = this.getMemoryById(memory.getMemoryId()).getRememberer().getUserId();
-		} else {
-			remembererId = memory.getRememberer().getUserId();
-		}
-		if (currentUser != null && remembererId == currentUser.getUserId())
-			return true;
-		return false;
-	}
-
-	@Override
-	@Transactional
-	public Memory updateMemory(Memory updatedData, MultipartFile newImage, Boolean publish,
-			Location locationWithUpdate) {
-
-		Memory existingMemoryToUpdate = memoryRepository.findByMemoryId(updatedData.getMemoryId());
-		Location existingLocation = locationService.getById(existingMemoryToUpdate.getLocation().getLocationId());
-
-		if (updatedData.getTitle() != "" && existingMemoryToUpdate.getTitle() != updatedData.getTitle()) {
-			existingMemoryToUpdate.setTitle(updatedData.getTitle());
-		}
-
-		if (updatedData.getDescription() != ""
-				&& existingMemoryToUpdate.getDescription() != updatedData.getDescription()) {
-			existingMemoryToUpdate.setDescription(updatedData.getDescription());
-		}
-
-		if (updatedData.getMemoryDate() != null
-				&& existingMemoryToUpdate.getMemoryDate() != updatedData.getMemoryDate()) {
-			existingMemoryToUpdate.setMemoryDate(updatedData.getMemoryDate());
-		}
-
-		if (updatedData.getCategory() != null
-				&& existingMemoryToUpdate.getCategory() != updatedData.getCategory()) {
-			existingMemoryToUpdate.setCategory(updatedData.getCategory());
-		}
-
-		existingMemoryToUpdate.setModificationDate(LocalDateTime.now());
-
-		if (updatedData.getVisibility() != null
-				&& existingMemoryToUpdate.getVisibility() != updatedData.getVisibility()) {
-			existingMemoryToUpdate.setVisibility(updatedData.getVisibility());
-		}
-
-		if (publish == null || !publish) {
-			existingMemoryToUpdate.setState(MemoryState.CREATED);
-		} else {
-			existingMemoryToUpdate.setState(MemoryState.PUBLISHED);
-		}
-
-		if (newImage != null && !newImage.isEmpty()) {
-			try {
-				fileService.deleteFile(existingMemoryToUpdate.getMediaUUID());
-				existingMemoryToUpdate.setMediaUUID(fileService.saveFile(newImage));
-			} catch (FileStorageException e) {
-				// on ne fait rien, on laisse l'ancienne image
-			}
-		}
-
-		if (existingLocation.getMemories().size() <= 1) {
-			locationWithUpdate.setLocationId(existingLocation.getLocationId());
-			locationService.saveLocation(locationWithUpdate);
-		} else if (locationWithUpdate.getName() != existingLocation.getName()
-				|| locationWithUpdate.getLatitude() != existingLocation.getLatitude()
-				|| locationWithUpdate.getLongitude() != existingLocation.getLongitude()) {
-			Location newLocation = locationService.saveLocation(locationWithUpdate);
-			existingMemoryToUpdate.setLocation(newLocation);
-		}
-		System.out.println(existingMemoryToUpdate);
-		return memoryRepository.save(existingMemoryToUpdate);
-	}
-
-	@Override
-	public Memory getMemoryByImage(String mediaUUID) {
-		return memoryRepository.findByMediaUUID(mediaUUID);
-	}
-
-	@Override
 	public List<Memory> getMemoriesByCategory(Category category) {
 		return memoryRepository.findByCategoryId(category.getCategoryId());
 	}
 
-	@Override
-	public Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria) {
-		List<Memory> memoriesList = memoryRepository.findAll(createSpecification(searchCriteria));
-
-		int pageSize = pageable.getPageSize();
-		int currentPage = pageable.getPageNumber();
-		int startItem = currentPage * pageSize;
-		List<Memory> shortMemoriesList;
-
-		if (memoriesList.size() < startItem) {
-			shortMemoriesList = Collections.emptyList();
-		} else {
-			int endIndex = Math.min(startItem + pageSize, memoriesList.size());
-			shortMemoriesList = memoriesList.subList(startItem, endIndex);
-		}
-
-		Page<Memory> memoriesPage = new PageImpl<Memory>(shortMemoriesList, PageRequest.of(currentPage, pageSize),
-				memoriesList.size());
-
-		// TODO Gérer les cas des souvenirs privés
-		return memoriesPage;
-	}
-
+//	Les méthodes privées
+	
 	private Specification<Memory> createSpecification(SearchCriteria criteria) {
 		return (Root<Memory> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
-
+			
 			if (criteria.getWords() != null && !criteria.getWords().isEmpty()) {
 				List<Predicate> wordPredicates = new ArrayList<>();
 				for (String word : criteria.getWords()) {
 					if (criteria.isTitleOnly()) {
 						wordPredicates.add(cb.like(root.get("title"), "%" + word + "%"));
-
+						
 					} else {
 						Predicate titlePredicate = cb.like(root.get("title"), "%" + word + "%");
 						Predicate descriptionPredicate = cb.like(root.get("description"), "%" + word + "%");
@@ -252,15 +226,15 @@ public class MemoryServiceImpl implements MemoryService {
 				}
 				predicates.add(cb.and(wordPredicates.toArray(new Predicate[0])));
 			}
-
+			
 			if (criteria.getAfter() != null) {
 				predicates.add(cb.greaterThanOrEqualTo(root.get("memoryDate"), criteria.getAfter()));
 			}
-
+			
 			if (criteria.getBefore() != null) {
 				predicates.add(cb.lessThanOrEqualTo(root.get("memoryDate"), criteria.getBefore()));
 			}
-
+			
 			if (criteria.getCategoriesId() != null && !criteria.getCategoriesId().isEmpty()) {
 				List<Predicate> categoriesPredicates = new ArrayList<>();
 				for (long categoryId : criteria.getCategoriesId()) {
@@ -268,59 +242,51 @@ public class MemoryServiceImpl implements MemoryService {
 				}
 				predicates.add(cb.or(categoriesPredicates.toArray(new Predicate[0])));
 			}
-
+			
 			User user = userService.getCurrentUser();
 			if (criteria.isOnlyMine() && user != null) {
 				predicates.add(cb.equal(root.get("rememberer").get("userId"), user.getUserId()));
 				if (criteria.getStatus() == 2) {
 					predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
 				}
-
+				
 				if (criteria.getStatus() == 3) {
 					predicates.add(cb.equal(root.get("state"), MemoryState.CREATED));
 				}
 			} else {
 				predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
+				// TODO Permettre l'affichage quand je suis propriétaire du Mémory mais qu'il
+				// n'est pas publié.
 			}
-
+			
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
 	}
-
-	@Override
-	public List<Memory> findMemoriesOnMapWithCriteria(SearchCriteria searchCriteria) {
-		Specification<Memory> baseSpecification = createSpecification(searchCriteria);
-		Specification<Memory> geographicSpecification = getGeographicSpecification(searchCriteria);
-
-		Specification<Memory> globalSpecification = Specification.where(baseSpecification).and(geographicSpecification);
-
-		return memoryRepository.findAll(globalSpecification);
-	}
-
+	
 	private Specification<Memory> getGeographicSpecification(SearchCriteria criteria) {
 		double north = criteria.getNorth();
 		double south = criteria.getSouth();
 		double east = criteria.getEast();
 		double west = criteria.getWest();
-
+		
 		if (east - west >= 300) {
 			east = 180;
 			west = -180;
 		}
-
+		
 		while (west < -180) {
 			west += 360;
 		}
 		while (east > 180) {
 			east -= 360;
 		}
-
+		
 		final double innerEast = east;
 		final double innerWest = west;
-
+		
 		return (Root<Memory> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
-
+			
 			predicates.add(cb.greaterThanOrEqualTo(root.get("location").get("latitude"), south));
 			predicates.add(cb.lessThanOrEqualTo(root.get("location").get("latitude"), north));
 			if (innerWest < innerEast) {
@@ -332,8 +298,97 @@ public class MemoryServiceImpl implements MemoryService {
 				longitudesPredicates.add(cb.lessThanOrEqualTo(root.get("location").get("longitude"), innerEast));
 				predicates.add(cb.or(longitudesPredicates.toArray(new Predicate[0])));
 			}
-
+			
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
 	}
+
+	private void assertUserCanModify(Memory memory) {
+		User currentUser = userService.getCurrentUser();
+		if (currentUser == null) {
+			throw new UnauthorizedActionException("Vous devez être connecté pour modifier un souvenir.");
+		}
+		System.out.println("utilisateur : " + currentUser.getUserId());
+
+		User rememberer = memory.getRememberer();
+		System.out.println("Souvenir de " + rememberer.getUserId());
+		if (!userService.isAdmin() && rememberer.getUserId() != currentUser.getUserId()) {
+			throw new UnauthorizedActionException(
+					"Vous n'êtes pas autorisé à modifier ce souvenir car vous n'en êtes pas l'auteur·e.");
+		}
+	}
+
+	private Memory fetchExistingMemory(long memoryId) {
+		return memoryRepository.findById(memoryId)
+				.orElseThrow(() -> new EntityNotFoundException("Souvenir introuvable."));
+	}
+
+	private void updateBasicFields(Memory existingMemory, Memory updatedData) {
+		if (StringUtils.isNotBlank(updatedData.getTitle())
+				&& !updatedData.getTitle().equals(existingMemory.getTitle())) {
+			existingMemory.setTitle(updatedData.getTitle());
+		}
+
+		if (StringUtils.isNotBlank(updatedData.getDescription())
+				&& !updatedData.getDescription().equals(existingMemory.getDescription())) {
+			existingMemory.setDescription(updatedData.getDescription());
+		}
+
+		if (updatedData.getMemoryDate() != null
+				&& !updatedData.getMemoryDate().equals(existingMemory.getMemoryDate())) {
+			existingMemory.setMemoryDate(updatedData.getMemoryDate());
+		}
+
+		if (updatedData.getCategory() != null && !updatedData.getCategory().equals(existingMemory.getCategory())) {
+			existingMemory.setCategory(updatedData.getCategory());
+		}
+
+		if (updatedData.getVisibility() != null
+				&& !updatedData.getVisibility().equals(existingMemory.getVisibility())) {
+			existingMemory.setVisibility(updatedData.getVisibility());
+		}
+
+		existingMemory.setModificationDate(LocalDateTime.now());
+	}
+
+	private void updateState(Memory memory, Boolean publish) {
+		boolean shouldPublish = publish != null && publish;
+		memory.setState(shouldPublish ? MemoryState.PUBLISHED : MemoryState.CREATED);
+	}
+
+	private void updateMedia(Memory memory, MultipartFile newImage) {
+		if (newImage != null && !newImage.isEmpty()) {
+			try {
+				fileService.deleteFile(memory.getMediaUUID());
+				memory.setMediaUUID(fileService.saveFile(newImage));
+			} catch (FileStorageException e) {
+				// on ne fait rien, on laisse l'ancienne image
+			}
+		}
+	}
+
+	private void updateLocation(Memory memory, Location locationWithUpdate) {
+		Location existingLocation = locationService.getById(memory.getLocation().getLocationId());
+
+		boolean isDifferent = !existingLocation.getName().equals(locationWithUpdate.getName())
+				|| Double.compare(existingLocation.getLatitude(), locationWithUpdate.getLatitude()) != 0
+				|| Double.compare(existingLocation.getLongitude(), locationWithUpdate.getLongitude()) != 0;
+
+		if (existingLocation.getMemories().size() <= 1) {
+			locationWithUpdate.setLocationId(existingLocation.getLocationId());
+			locationService.saveLocation(locationWithUpdate);
+		} else if (isDifferent) {
+			Location newLocation = locationService.saveLocation(locationWithUpdate);
+			memory.setLocation(newLocation);
+		}
+	}
+
+	private Memory saveMemory(Memory memory) {
+		try {
+			return memoryRepository.save(memory);
+		} catch (DataAccessException e) {
+			throw new DataPersistenceException("Problème lors de l'enregistrement en base de données", e);
+		}
+	}
+
 }

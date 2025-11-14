@@ -12,7 +12,9 @@ import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
+import fr.memoires_vives.exception.UnauthorizedActionException;
 import fr.memoires_vives.exception.ValidationException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -75,11 +77,10 @@ public class MemoryController {
 		if (memoryId != null && memoryId != 0) {
 			memoryToDisplay = memoryService.getMemoryById(memoryId);
 		} else {
-			return "redirect:/";
+			throw new EntityNotFoundException("Souvenir introuvable (pas d'ID ou ID nul).");
 		}
-		boolean isAllowed = memoryService.authorizedDisplay(memoryToDisplay);
-		if (!isAllowed) {
-			return "error/403";
+		if (!memoryService.authorizedDisplay(memoryToDisplay)) {
+			throw new UnauthorizedActionException("Vous n'êtes pas autorisé à voir ce souvenir.");
 		}
 		model.addAttribute("memoryToDisplay", memoryToDisplay);
 		return "memory";
@@ -87,13 +88,9 @@ public class MemoryController {
 
 	@GetMapping("/modify")
 	public String showModifyMemoryForm(@RequestParam(name = "memoryId", required = true) Long memoryId, Model model) {
-		Memory memory = memoryService.getMemoryById(memoryId);
-		boolean isAllowed = memoryService.authorizedModification(memory);
-		if (!isAllowed) {
-			return "error/403";
-		}
+		Memory memory = memoryService.getMemoryForModification(memoryId);
+		
 		Location location = memory.getLocation();
-		System.out.println(location);
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
 		model.addAttribute("visibilities", MemoryVisibility.values());
@@ -106,12 +103,7 @@ public class MemoryController {
 			@Valid @ModelAttribute("location") Location location,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
-		boolean isAllowed = memoryService.authorizedModification(memory);
-		if (!isAllowed) {
-			ObjectError error = new ObjectError("globalError", "Vous n'êtes pas autorisé à modifier ce souvenir");
-			bindingResult.addError(error);
-		}
-
+		
 		if (bindingResult.hasErrors()) {
 			return "memory-form";
 		}

@@ -1,6 +1,7 @@
 package fr.memoires_vives.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -12,6 +13,7 @@ import fr.memoires_vives.bo.Memory;
 public interface MemoryRepository extends JpaRepository<Memory, Long>, JpaSpecificationExecutor<Memory> {
 
 	List<Memory> findByTitle(String title);
+	Optional<Memory> findById(long memoryId);
 	Memory findByMemoryId(long memoryId);
 	Memory findByMediaUUID(String mediaUUID);
 	
