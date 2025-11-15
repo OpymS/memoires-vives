@@ -74,6 +74,7 @@ public class Memory {
 
 	@ManyToMany
 	@JoinTable(name = "memory_group", joinColumns = @JoinColumn(name = "memory_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
+	@JsonIgnore
 	private List<Group> groups;
 
 	public Memory() {

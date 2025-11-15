@@ -2,6 +2,7 @@ package fr.memoires_vives.bll;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
@@ -53,7 +54,7 @@ public class FileServiceImpl implements FileService {
 		return uniqueFileName;
 	}
 
-	private void saveWithName(MultipartFile file, String name) throws IOException{
+	private void saveWithName(MultipartFile file, String name) throws IOException {
 		Path uploadDir = Paths.get(uploadPath);
 		if (!Files.exists(uploadDir)) {
 			try {
@@ -69,16 +70,25 @@ public class FileServiceImpl implements FileService {
 
 	@Override
 	public boolean deleteFile(String mediaUUID) {
-		Path filePath = Paths.get(uploadPath, mediaUUID);
-		if (Files.exists(filePath)) {
-			try {
-				Files.delete(filePath);
-			} catch (IOException e) {
-				throw new FileStorageException("Impossible de supprimer le fichier " + filePath, e);
-			}
-			return true;
+		if (mediaUUID == null || mediaUUID.trim().isEmpty()) {
+			return false;
 		}
-		return false;
+
+		Path filePath;
+		try {
+			filePath = Paths.get(uploadPath, mediaUUID);
+		} catch (InvalidPathException | NullPointerException e) {
+			throw new FileStorageException("Chemin de fichier invalide pour : " + mediaUUID, e);
+		}
+		if (!Files.exists(filePath)) {
+			return false;
+		}
+		try {
+			Files.delete(filePath);
+			return true;
+		} catch (IOException e) {
+			throw new FileStorageException("Impossible de supprimer le fichier " + filePath, e);
+		}
 	}
 
 }
