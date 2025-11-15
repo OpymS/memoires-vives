@@ -83,7 +83,6 @@ public class MemoryServiceImpl implements MemoryService {
 		Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
 				Sort.by(Sort.Direction.DESC, "memoryId"));
 
-		// TODO Gérer les cas des souvenirs privés
 		return memoryRepository.findAll(specification, sortedPageable);
 	}
 
@@ -163,24 +162,6 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
-	public boolean authorizedDisplay(Memory memory) {
-		// TODO revoir cette méthode en prenant en compte la publication.
-		if (memory.getVisibility() == MemoryVisibility.PUBLIC)
-			return true;
-		if (userService.isAdmin())
-			return true;
-		User currentUser = userService.getCurrentUser();
-		if (currentUser != null && memory.getRememberer().getUserId() == currentUser.getUserId())
-			return true;
-		if (memory.getVisibility() == MemoryVisibility.MEMBERS && currentUser != null)
-			return true;
-		if (memory.getVisibility() == MemoryVisibility.PRIVATE && currentUser != null
-				&& memory.getRememberer().getUserId() == currentUser.getUserId())
-			return true;
-		return false;
-	}
-
-	@Override
 	public List<Memory> getMemoriesByCategory(Category category) {
 		return memoryRepository.findByCategoryId(category.getCategoryId());
 	}
@@ -200,6 +181,7 @@ public class MemoryServiceImpl implements MemoryService {
 //	Les méthodes privées
 
 	private Specification<Memory> createSpecification(SearchCriteria criteria) {
+		// TODO Gérer la visibilité. Pas critique pour l'instant car tous les souvenirs sont publics dès qu'ils sont publiés.
 		return (Root<Memory> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 

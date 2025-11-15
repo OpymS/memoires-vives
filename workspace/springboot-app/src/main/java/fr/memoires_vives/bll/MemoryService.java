@@ -20,7 +20,6 @@ public interface MemoryService {
 	Memory getMemoryByImage(String mediaUUID);
 	Memory createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);
 	Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish, Location locationWithUpdate);
-	boolean authorizedDisplay(Memory memory);
 	List<Memory> getMemoriesByCategory(Category category);
 	List<Memory> getMemoriesByCategoryForAdmin(long categoryId);
 }

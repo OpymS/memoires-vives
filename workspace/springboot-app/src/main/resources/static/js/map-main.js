@@ -230,7 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const marker = L.marker([memory.location.latitude, memory.location.longitude]).addTo(markers);
 			const memoryDiv = document.createElement('a');
 			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
-			memoryDiv.className = 'flex flex-row h-[150px] w-[300px] items-center p-2 gap-4';
+			memoryDiv.className = 'flex flex-row h-[200px] w-[350px] items-center p-2 gap-4';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">
 							<img class="w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
@@ -441,7 +441,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		map.off('moveend', updateMemories);
 
 		setTimeout(function() {
-			marker.bindPopup(popupContent).openPopup();
+			marker.bindPopup(popupContent,{maxWidth:350}).openPopup();
 		}, 100);
 
 		map.once('popupclose', function() {
