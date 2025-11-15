@@ -78,9 +78,10 @@ public class MemoryServiceImpl implements MemoryService {
 	@Override
 	public Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria) {
 		Specification<Memory> specification = createSpecification(searchCriteria);
-		
-		Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "memoryId"));
-		
+
+		Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+				Sort.by(Sort.Direction.DESC, "memoryId"));
+
 		// TODO Gérer les cas des souvenirs privés
 		return memoryRepository.findAll(specification, sortedPageable);
 	}
@@ -96,8 +97,11 @@ public class MemoryServiceImpl implements MemoryService {
 	}
 
 	@Override
-	public Memory getMemoryById(long memoryId) {
-		return memoryRepository.findByMemoryId(memoryId);
+	public Memory getMemoryById(Long memoryId) {
+		Memory memory = memoryRepository.findById(memoryId)
+				.orElseThrow(() -> new EntityNotFoundException("Souvenir introuvable"));
+		assertUserCanSee(memory);
+		return memory;
 
 	}
 
@@ -105,7 +109,6 @@ public class MemoryServiceImpl implements MemoryService {
 	public Memory getMemoryForModification(long memoryId) {
 		Memory memory = memoryRepository.findById(memoryId)
 				.orElseThrow(() -> new EntityNotFoundException("Souvenir introuvable"));
-		System.out.println("j'ai le memory " + memoryId);
 		assertUserCanModify(memory);
 		return memory;
 	}
@@ -118,7 +121,11 @@ public class MemoryServiceImpl implements MemoryService {
 	@Override
 	@Transactional
 	public Memory createMemory(Memory memory, MultipartFile image, Boolean published, Location location) {
-
+		User rememberer = userService.getCurrentUser();
+		if (rememberer == null) {
+			throw new UnauthorizedActionException("Vous devez vous connecter pour ajouter un souvenir");
+		}
+		
 		memory.setCreationDate(LocalDateTime.now());
 		updateVisibility(memory);
 		updateState(memory, published);
@@ -126,7 +133,6 @@ public class MemoryServiceImpl implements MemoryService {
 		Location savedLocation = locationService.saveLocation(location);
 		memory.setLocation(savedLocation);
 
-		User rememberer = userService.getCurrentUser();
 		memory.setRememberer(rememberer);
 		Hibernate.initialize(rememberer.getMemories());
 
@@ -227,7 +233,7 @@ public class MemoryServiceImpl implements MemoryService {
 				}
 			} else {
 				Predicate published = cb.equal(root.get("state"), MemoryState.PUBLISHED);
-				
+
 				if (user != null) {
 					Predicate mine = cb.equal(root.get("rememberer").get("userId"), user.getUserId());
 					predicates.add(cb.or(published, mine));
@@ -285,13 +291,32 @@ public class MemoryServiceImpl implements MemoryService {
 		if (currentUser == null) {
 			throw new UnauthorizedActionException("Vous devez être connecté pour modifier un souvenir.");
 		}
-		System.out.println("utilisateur : " + currentUser.getUserId());
 
 		User rememberer = memory.getRememberer();
-		System.out.println("Souvenir de " + rememberer.getUserId());
 		if (!userService.isAdmin() && rememberer.getUserId() != currentUser.getUserId()) {
 			throw new UnauthorizedActionException(
 					"Vous n'êtes pas autorisé à modifier ce souvenir car vous n'en êtes pas l'auteur·e.");
+		}
+	}
+
+	private void assertUserCanSee(Memory memory) {
+		User currentUser = userService.getCurrentUser();
+		User rememberer = memory.getRememberer();
+		boolean notOwner = currentUser == null || rememberer.getUserId() != currentUser.getUserId();
+		if (!userService.isAdmin()) {
+			if (memory.getVisibility().equals(MemoryVisibility.PRIVATE) && notOwner) {
+				throw new UnauthorizedActionException(
+						"Vous n'êtes pas autorisé à voir ce souvenir. Souvenir privé dont vous n'êtes pas l@ propriétaire");
+			}
+			if (memory.getVisibility().equals(MemoryVisibility.MEMBERS) && currentUser == null) {
+				throw new UnauthorizedActionException(
+						"Vous n'êtes pas autorisé à voir ce souvenir. Son affichage est réservé aux membres inscrit·e·s");
+			}
+			if ((memory.getState().equals(MemoryState.CREATED) || memory.getState().equals(MemoryState.DELETED))
+					&& notOwner) {
+				throw new UnauthorizedActionException(
+						"Vous n'êtes pas autorisé à voir ce souvenir. Souvenir non publié dont vous n'êtes pas l@ propriétaire");
+			}
 		}
 	}
 

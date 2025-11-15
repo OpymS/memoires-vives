@@ -12,9 +12,7 @@ import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
-import fr.memoires_vives.exception.UnauthorizedActionException;
 import fr.memoires_vives.exception.ValidationException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,15 +71,7 @@ public class MemoryController {
 
 	@GetMapping
 	public String showMemoryPage(@RequestParam(name = "memoryId", required = false) Long memoryId, Model model) {
-		Memory memoryToDisplay = new Memory();
-		if (memoryId != null && memoryId != 0) {
-			memoryToDisplay = memoryService.getMemoryById(memoryId);
-		} else {
-			throw new EntityNotFoundException("Souvenir introuvable (pas d'ID ou ID nul).");
-		}
-		if (!memoryService.authorizedDisplay(memoryToDisplay)) {
-			throw new UnauthorizedActionException("Vous n'êtes pas autorisé à voir ce souvenir.");
-		}
+		Memory memoryToDisplay = memoryService.getMemoryById(memoryId);
 		model.addAttribute("memoryToDisplay", memoryToDisplay);
 		return "memory";
 	}

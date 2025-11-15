@@ -14,7 +14,6 @@ public interface MemoryRepository extends JpaRepository<Memory, Long>, JpaSpecif
 
 	List<Memory> findByTitle(String title);
 	Optional<Memory> findById(long memoryId);
-	Memory findByMemoryId(long memoryId);
 	Memory findByMediaUUID(String mediaUUID);
 	
 	@Query("SELECT m FROM Memory m WHERE m.category.categoryId = :categoryId")

@@ -15,7 +15,7 @@ public interface MemoryService {
 	Page<Memory> findMemories(Pageable pageable);
 	Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria);
 	List<Memory> findMemoriesOnMapWithCriteria(SearchCriteria searchCriteria);
-	Memory getMemoryById(long memoryId);
+	Memory getMemoryById(Long memoryId);
 	Memory getMemoryForModification(long memoryId);
 	Memory getMemoryByImage(String mediaUUID);
 	Memory createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);

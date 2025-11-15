@@ -47,6 +47,45 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User getUserByPseudo(String pseudo) {
+		User user = userRepository.findByPseudo(pseudo)
+				.orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
+		return user;
+	}
+
+	@Override
+	public User getUserByEmail(String email) {
+		return userRepository.findByEmail(email).orElse(null);
+	}
+
+	@Override
+	public User getUserById(long userId) {
+		User user = userRepository.findByUserId(userId)
+				.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
+		Hibernate.initialize(user.getFriends());
+		Hibernate.initialize(user.getMemories());
+		return user;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public User getCurrentUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
+			return null;
+		}
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+		User user = userRepository.findByUserId(userDetails.getUser().getUserId()).orElse(null);
+		if (user == null) {
+			return null;
+		}
+		Hibernate.initialize(user.getMemories());
+		entityManager.detach(user);
+		user.setPassword(null);
+		return user;
+	}
+
+	@Override
 	@Transactional
 	public User createAccount(String pseudo, String email, String password, String passwordConfirm,
 			MultipartFile image) {
@@ -95,10 +134,8 @@ public class UserServiceImpl implements UserService {
 	public User updateProfile(User updatedData, String currentPassword, MultipartFile fileImage) {
 		ValidationException ve = new ValidationException();
 
-		User userToUpdate = userRepository.findByUserId(updatedData.getUserId());
-		if (userToUpdate == null) {
-			throw new EntityNotFoundException("Utilisateur introuvable pour l'ID " + updatedData.getUserId());
-		}
+		User userToUpdate = userRepository.findByUserId(updatedData.getUserId()).orElseThrow(
+				() -> new EntityNotFoundException("Utilisateur introuvable pour l'ID " + updatedData.getUserId()));
 
 		if (currentPassword == null || currentPassword.isBlank()) {
 			ve.addFieldError("currentPassword", "Vous devez renseigner le mot de passe.");
@@ -135,50 +172,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUserByPseudo(String pseudo) {
-		User user = userRepository.findByPseudo(pseudo);
-
-		if (user == null) {
-			throw new UsernameNotFoundException("Utilisateur non trouvé");
-		}
-		return user;
-	}
-
-	@Override
-	public User getUserByEmail(String email) {
-		return userRepository.findByEmail(email);
-	}
-
-	@Override
-	public User getUserById(long userId) {
-		User user = userRepository.findByUserId(userId);
-		if (user == null) {
-			throw new UsernameNotFoundException("Utilisateur non trouvé");
-		}
-		Hibernate.initialize(user.getFriends());
-		Hibernate.initialize(user.getMemories());
-		return user;
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public User getCurrentUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails)) {
-			return null;
-		}
-		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-		User user = userRepository.findByUserId(userDetails.getUser().getUserId());
-		if (user == null) {
-			return null;
-		}
-		Hibernate.initialize(user.getMemories());
-		entityManager.detach(user);
-		user.setPassword(null);
-		return user;
-	}
-
-	@Override
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
 	}
@@ -200,6 +193,23 @@ public class UserServiceImpl implements UserService {
 		return passwordEncoder.matches(rawPassword, storedPassword);
 	}
 
+	@Override
+	@Transactional
+	public void updatePassword(User user, String rawPassword) {
+		ValidationException ve = new ValidationException();
+		Long userId = user.getUserId();
+		if (rawPassword == null || rawPassword.isBlank()) {
+			ve.addFieldError("currentPassword", "Vous devez renseigner le mot de passe");
+			throw ve;
+		}
+		User managedUser = userRepository.findByUserId(userId)
+				.orElseThrow(() -> new EntityNotFoundException("Utilisateurice introuvable."));
+		String hashedPassword = passwordEncoder.encode(rawPassword);
+		managedUser.setPassword(hashedPassword);
+	}
+
+//	Les méthodes privées
+
 	private void checkPassword(String password, String passwordConfirm, ValidationException ve) {
 		if (password.isBlank()) {
 			ve.addFieldError("password", "Le mot de passe ne peut pas être vide.");
@@ -210,30 +220,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void checkPseudoAvailable(String pseudo, ValidationException ve) {
-		if (userRepository.findByPseudo(pseudo) != null) {
-			ve.addFieldError("pseudo", "Ce pseudo est déjà utilisé.");
-		}
+		userRepository.findByPseudo(pseudo)
+				.ifPresent(user -> ve.addFieldError("pseudo", "Ce pseudo est déjà utilisé."));
 	}
 
 	private void checkEmailAvailable(String email, ValidationException ve) {
 		if (userRepository.findByEmail(email) != null) {
 			ve.addFieldError("email", "Un compte est déjà attaché à cet email.");
 		}
-	}
-
-	@Override
-	@Transactional
-	public void updatePassword(User user, String rawPassword) {
-		ValidationException ve = new ValidationException();
-		Long userId = user.getUserId();
-		if (rawPassword == null || rawPassword.isBlank()) {
-			ve.addFieldError("currentPassword", "Vous devez renseigner le mot de passe");
-			throw ve;
-		}
-		User managedUser = userRepository.findByUserId(userId);
-		String hashedPassword = passwordEncoder.encode(rawPassword);
-		managedUser.setPassword(hashedPassword);
-
 	}
 
 	private void updateProfileFields(User user, User updatedData, ValidationException ve) {

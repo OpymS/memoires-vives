@@ -1,5 +1,7 @@
 package fr.memoires_vives.repositories;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -7,9 +9,9 @@ import org.springframework.data.repository.query.Param;
 import fr.memoires_vives.bo.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-	User findByPseudo(String pseudo);
-	User findByUserId(long userId);
-	User findByEmail(String email);
+	Optional<User> findByPseudo(String pseudo);
+	Optional<User> findByUserId(long userId);
+	Optional<User> findByEmail(String email);
 	
 	@Query("SELECT u.password FROM User u WHERE u.userId = :userId")
 	String findPasswordByUserId(@Param("userId") long userId);
