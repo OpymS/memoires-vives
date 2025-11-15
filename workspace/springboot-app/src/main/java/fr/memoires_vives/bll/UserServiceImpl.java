@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +17,7 @@ import fr.memoires_vives.bo.Role;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.FileStorageException;
+import fr.memoires_vives.exception.UnauthorizedActionException;
 import fr.memoires_vives.exception.ValidationException;
 import fr.memoires_vives.repositories.RoleRepository;
 import fr.memoires_vives.repositories.UserRepository;
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserById(long userId) {
 		User user = userRepository.findByUserId(userId)
-				.orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
+				.orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé pour l'ID " + userId));
 		Hibernate.initialize(user.getFriends());
 		Hibernate.initialize(user.getMemories());
 		return user;
@@ -86,47 +86,32 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public User getUserOrCurrent(Long userId) {
+		if (userId == null || userId == 0) {
+			return getCurrentUser();
+		}
+		return getUserById(userId);
+	}
+
+	@Override
 	@Transactional
 	public User createAccount(String pseudo, String email, String password, String passwordConfirm,
 			MultipartFile image) {
 		ValidationException ve = new ValidationException();
 
-		checkPassword(password, passwordConfirm, ve);
-		checkPseudoAvailable(pseudo, ve);
-		checkEmailAvailable(email, ve);
+		validateAccountInputs(pseudo, email, password, passwordConfirm, ve);
 
-		User user = new User();
-		user.setPseudo(pseudo);
-		user.setEmail(email);
-		user.setPassword(passwordEncoder.encode(password));
-		user.setAdmin(false);
-		user.setActivated(true);
+		User user = buildUser(pseudo, email, passwordConfirm);
 
-		Role userRole = roleRepository.findByName("ROLE_USER");
-		if (userRole == null) {
-			userRole = new Role();
-			userRole.setName("ROLE_USER");
-			roleRepository.save(userRole);
-		}
-		user.getRoles().add(userRole);
+		assignUserRole(user);
 
 		if (ve.hasError()) {
 			throw ve;
 		}
 
-		try {
-			handleProfileImage(user, image);
-		} catch (FileStorageException e) {
-			user.setMediaUUID(null);
-		}
+		saveProfileImage(user, image, true);
 
-		try {
-			return userRepository.save(user);
-		} catch (DataAccessException e) {
-			e.printStackTrace();
-			ve.addGlobalError("Un problème est survenu lors de l'accès à la base de données.");
-			throw ve;
-		}
+		return persistUser(user, ve);
 	}
 
 	@Override
@@ -134,19 +119,14 @@ public class UserServiceImpl implements UserService {
 	public User updateProfile(User updatedData, String currentPassword, MultipartFile fileImage) {
 		ValidationException ve = new ValidationException();
 
-		User userToUpdate = userRepository.findByUserId(updatedData.getUserId()).orElseThrow(
-				() -> new EntityNotFoundException("Utilisateur introuvable pour l'ID " + updatedData.getUserId()));
+		User currentUser = getCurrentUser();
+		User userToUpdate = getUserById(updatedData.getUserId());
 
-		if (currentPassword == null || currentPassword.isBlank()) {
-			ve.addFieldError("currentPassword", "Vous devez renseigner le mot de passe.");
+		if ((!isAdmin() && currentUser.getUserId() != userToUpdate.getUserId())) {
+			throw new UnauthorizedActionException("Vous n'avez pas la permission de modifier ce profil");
 		}
 
-		boolean isPasswordValid = (isAdmin() && verifyPassword(currentPassword))
-				|| passwordEncoder.matches(currentPassword, userToUpdate.getPassword());
-
-		if (!isPasswordValid) {
-			ve.addFieldError("currentPassword", "Erreur de mot de passe.");
-		}
+		validatePassword(userToUpdate, currentPassword, ve);
 
 		updateProfileFields(userToUpdate, updatedData, ve);
 
@@ -154,21 +134,13 @@ public class UserServiceImpl implements UserService {
 			throw ve;
 		}
 
-		try {
-			handleProfileImage(userToUpdate, fileImage);
-		} catch (FileStorageException e) {
-			// on ne fait rien, on laisse l'ancienne image
-		}
+		saveProfileImage(userToUpdate, fileImage, false);
 
-		try {
-			User saved = userRepository.save(userToUpdate);
-			refreshSecurityContext(saved);
-			return saved;
+		User saved = persistUser(userToUpdate, ve);
 
-		} catch (DataAccessException e) {
-			ve.addGlobalError("Problème lors de l'accès à la base de données.");
-			throw ve;
-		}
+		refreshSecurityContext(saved);
+
+		return saved;
 	}
 
 	@Override
@@ -209,6 +181,75 @@ public class UserServiceImpl implements UserService {
 	}
 
 //	Les méthodes privées
+
+	private void validateAccountInputs(String pseudo, String email, String password, String passwordConfirm,
+			ValidationException ve) {
+		checkPassword(password, passwordConfirm, ve);
+		checkPseudoAvailable(pseudo, ve);
+		checkEmailAvailable(email, ve);
+	}
+
+	private User buildUser(String pseudo, String email, String password) {
+		User user = new User();
+		user.setPseudo(pseudo);
+		user.setEmail(email);
+		user.setPassword(passwordEncoder.encode(password));
+		user.setAdmin(false);
+		user.setActivated(true);
+		return user;
+	}
+
+	private void assignUserRole(User user) {
+		Role userRole = roleRepository.findByName("ROLE_USER");
+		if (userRole == null) {
+			userRole = new Role();
+			userRole.setName("ROLE_USER");
+			roleRepository.save(userRole);
+		}
+		user.getRoles().add(userRole);
+	}
+
+	private void saveProfileImage(User user, MultipartFile image, boolean isCreate) {
+		if (image == null || image.isEmpty()) {
+			if (isCreate) {
+				user.setMediaUUID(null);
+			}
+			return;
+		}
+
+		try {
+			user.setMediaUUID(fileService.saveUserFile(image, user.getPseudo()));
+		} catch (FileStorageException e) {
+			if (isCreate) {
+				// Création : on met à null si erreur
+				user.setMediaUUID(null);
+			}
+			// Update : on laisse l'ancienne image
+		}
+	}
+
+	private User persistUser(User user, ValidationException ve) {
+		try {
+			return userRepository.save(user);
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+			ve.addGlobalError("Un problème est survenu lors de l'accès à la base de données.");
+			throw ve;
+		}
+	}
+
+	private void validatePassword(User user, String currentPassword, ValidationException ve) {
+		if (currentPassword == null || currentPassword.isBlank()) {
+			ve.addFieldError("currentPassword", "Vous devez renseigner le mot de passe.");
+		}
+
+		boolean isPasswordValid = (isAdmin() && verifyPassword(currentPassword))
+				|| passwordEncoder.matches(currentPassword, user.getPassword());
+
+		if (!isPasswordValid) {
+			ve.addFieldError("currentPassword", "Erreur de mot de passe.");
+		}
+	}
 
 	private void checkPassword(String password, String passwordConfirm, ValidationException ve) {
 		if (password.isBlank()) {
@@ -254,12 +295,6 @@ public class UserServiceImpl implements UserService {
 			if (!ve.hasError()) {
 				user.setPassword(passwordEncoder.encode(newPass));
 			}
-		}
-	}
-
-	private void handleProfileImage(User user, MultipartFile fileImage) {
-		if (fileImage != null && !fileImage.isEmpty()) {
-			user.setMediaUUID(fileService.saveUserFile(fileImage, user.getPseudo()));
 		}
 	}
 

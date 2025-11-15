@@ -18,7 +18,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
@@ -44,13 +43,15 @@ public class MemoryServiceImpl implements MemoryService {
 	private final FileService fileService;
 	private final LocationService locationService;
 	private final UserService userService;
+	private final CategoryService categoryService;
 
 	public MemoryServiceImpl(MemoryRepository memoryRepository, FileService fileService,
-			LocationService locationService, UserService userService) {
+			LocationService locationService, UserService userService, CategoryService categoryService) {
 		this.memoryRepository = memoryRepository;
 		this.fileService = fileService;
 		this.locationService = locationService;
 		this.userService = userService;
+		this.categoryService = categoryService;
 	}
 
 	@Override
@@ -125,7 +126,7 @@ public class MemoryServiceImpl implements MemoryService {
 		if (rememberer == null) {
 			throw new UnauthorizedActionException("Vous devez vous connecter pour ajouter un souvenir");
 		}
-		
+
 		memory.setCreationDate(LocalDateTime.now());
 		updateVisibility(memory);
 		updateState(memory, published);
@@ -182,6 +183,18 @@ public class MemoryServiceImpl implements MemoryService {
 	@Override
 	public List<Memory> getMemoriesByCategory(Category category) {
 		return memoryRepository.findByCategoryId(category.getCategoryId());
+	}
+
+	@Override
+	public List<Memory> getMemoriesByCategoryForAdmin(long categoryId) {
+		if (!userService.isAdmin()) {
+			throw new UnauthorizedActionException("Access forbidden");
+		}
+		Category category = categoryService.getCategoryById(categoryId);
+		if (category == null) {
+			throw new EntityNotFoundException("Category not found");
+		}
+		return memoryRepository.findByCategoryId(categoryId);
 	}
 
 //	Les méthodes privées

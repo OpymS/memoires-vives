@@ -27,26 +27,16 @@ public class ProfilController {
 
 	@GetMapping
 	public String showProfilPage(@RequestParam(name = "userId", required = false) Long userId, Model model) {
-		User userToDisplay = new User();
-		if (userId != null && userId != 0) {
-			userToDisplay = userService.getUserById(userId);
-		} else {
-			userToDisplay = userService.getCurrentUser();
-		}
+		User userToDisplay = userService.getUserOrCurrent(userId);
 		userToDisplay.setPassword(null);
 		model.addAttribute("userToDisplay", userToDisplay);
-
 		return "profil";
 	}
 
 	@GetMapping("/modify")
 	public String showModifyProfilForm(@RequestParam(name = "userId", required = false) Long userId, Model model) {
-		User user;
-		if (userService.isAdmin() && userId != null) {
-			user = userService.getUserById(userId);
-		} else {
-			user = userService.getCurrentUser();
-		}
+		User user = (userService.isAdmin() && userId != null) ? userService.getUserById(userId)
+				: userService.getCurrentUser();
 		model.addAttribute("user", user);
 		return "profil-modify";
 	}
@@ -55,32 +45,24 @@ public class ProfilController {
 	public String modifyProfil(@ModelAttribute("user") User updatedUser, BindingResult bindingResult,
 			@RequestParam(name = "currentPassword", required = false) String currentPassword,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
-		System.out.println(updatedUser);
-		System.out.println(fileImage);
 		if (bindingResult.hasErrors()) {
 			return "profil-modify";
 		}
 
-		User currentUser = userService.getCurrentUser();
-		if (userService.isAdmin() || currentUser.getUserId() == updatedUser.getUserId()) {
-			try {
-				userService.updateProfile(updatedUser, currentPassword, fileImage);
-				return "redirect:/profil?userId=" + updatedUser.getUserId();
-			} catch (ValidationException ve) {
-				ve.getGlobalErrors().forEach(err -> {
-					ObjectError error = new ObjectError("globalError", err);
-					bindingResult.addError(error);
-				});
+		try {
+			userService.updateProfile(updatedUser, currentPassword, fileImage);
+			return "redirect:/profil?userId=" + updatedUser.getUserId();
+		} catch (ValidationException ve) {
+			ve.getGlobalErrors().forEach(err -> {
+				ObjectError error = new ObjectError("globalError", err);
+				bindingResult.addError(error);
+			});
 
-				ve.getFieldErrors().forEach(err -> {
-					FieldError error = new FieldError("user", err.getField(), null, false, null, null,
-							err.getMessage());
-					bindingResult.addError(error);
-				});
-				return "profil-modify";
-			}
-		} else {
-			return "error/403";
+			ve.getFieldErrors().forEach(err -> {
+				FieldError error = new FieldError("user", err.getField(), null, false, null, null, err.getMessage());
+				bindingResult.addError(error);
+			});
+			return "profil-modify";
 		}
 	}
 

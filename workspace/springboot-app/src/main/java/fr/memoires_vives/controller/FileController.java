@@ -1,12 +1,8 @@
 package fr.memoires_vives.controller;
 
 import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +27,9 @@ public class FileController {
 	@Value("${upload.path}")
 	private String uploadPath;
 
-	private FileService fileService;
-	private UserService userService;
-	private MemoryService memoryService;
+	private final FileService fileService;
+	private final UserService userService;
+	private final MemoryService memoryService;
 
 	public FileController(FileService fileService, UserService userService, MemoryService memoryService) {
 		this.fileService = fileService;
@@ -43,34 +39,20 @@ public class FileController {
 
 	@GetMapping("/{filename:.+}")
 	public ResponseEntity<Resource> getFile(@PathVariable("filename") String filename) throws MalformedURLException {
-		Path filePath = Paths.get(uploadPath).resolve(filename);
-		Resource resource = new UrlResource(filePath.toUri());
-
-		if (!resource.exists() || !resource.isReadable()) {
+		try {
+			Resource resource = fileService.getFileResource(filename);
+			return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
+		} catch (FileStorageException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Fichier introuvable");
 		}
-
-		return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(resource);
 	}
 
 	@DeleteMapping("/images/uploadedImages/{uuid}")
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<String> deleteImage(@PathVariable String uuid) {
 		User currentUser = userService.getCurrentUser();
-		Memory memoryWithUUID = memoryService.getMemoryByImage(uuid);
-		if (currentUser == null || (currentUser.getMediaUUID() != uuid
-				&& currentUser.getUserId() != memoryWithUUID.getRememberer().getUserId())) {
-			return ResponseEntity.status(403).body("Vous n'avez pas le droit de supprimer cette image");
-		}
-		try {
-			boolean isDeleted = fileService.deleteFile(uuid);
-			if (isDeleted) {
-				return ResponseEntity.ok("Image supprimée avec succès");
-			} else {
-				return ResponseEntity.status(404).body("Image non trouvée");
-			}
-		} catch (FileStorageException e) {
-			return ResponseEntity.status(500).body("Erreur lors de la suppression de l'image.");
-		}
+		Memory memory = memoryService.getMemoryByImage(uuid);
+		fileService.deleteUserFile(currentUser, uuid, memory);
+		return ResponseEntity.ok("Image supprimée avec succès.");
 	}
 }

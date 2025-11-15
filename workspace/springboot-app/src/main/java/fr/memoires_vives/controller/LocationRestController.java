@@ -23,7 +23,6 @@ public class LocationRestController {
 	public ResponseEntity<?> getVisiblePoints(@RequestParam("north") double northLatitude,
 			@RequestParam("south") double southLatitude, @RequestParam("east") double eastLongitude,
 			@RequestParam("west") double westLongitude) {
-
 		
 		List<Location> locations = locationService.getLocationsInSquare(northLatitude, southLatitude, eastLongitude, westLongitude);
 		return ResponseEntity.ok(locations);
