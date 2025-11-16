@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import fr.memoires_vives.bll.InvisibleCaptchaService;
-import fr.memoires_vives.bll.PasswordResetTokenService;
+import fr.memoires_vives.bll.ResetPasswordService;
 import fr.memoires_vives.exception.EmailSendingException;
 import fr.memoires_vives.exception.InvalidTokenException;
 import fr.memoires_vives.exception.ValidationException;
@@ -17,13 +17,13 @@ import fr.memoires_vives.exception.ValidationException;
 @RequestMapping("/forgot-password")
 public class PasswordResetController {
 
-	private final PasswordResetTokenService tokenService;
+	private final ResetPasswordService tokenService;
 	private final InvisibleCaptchaService captchaService;
 
 	@Value("${app.base-url}")
 	private String baseUrl;
 
-	public PasswordResetController(PasswordResetTokenService tokenService, InvisibleCaptchaService captchaService) {
+	public PasswordResetController(ResetPasswordService tokenService, InvisibleCaptchaService captchaService) {
 		this.tokenService = tokenService;
 		this.captchaService = captchaService;
 	}

@@ -29,14 +29,15 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http, PersistentTokenRepository tokenRepository,
-			CustomUserDetailsService userDetailsService) throws Exception {
+			CustomUserDetailsService userDetailsService, CustomAuthenticationFailureHandler failureHandler)
+			throws Exception {
 		http.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login",
 						"/signup", "/logout", "/error", "/error/**", "/memory", "/about", "/try", "/api/memory/**",
 						"/upload-error", "/forgot-password/**", "/legal-notices", "/privacy-policy", "/conditions")
 				.permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated())
 				.formLogin(login -> login.loginPage("/login").permitAll().defaultSuccessUrl("/", true)
-						.failureUrl("/login?error=true"))
+						.failureHandler(failureHandler))
 				.logout(logout -> logout.permitAll().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 						.invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID")
 						.logoutSuccessUrl("/"))

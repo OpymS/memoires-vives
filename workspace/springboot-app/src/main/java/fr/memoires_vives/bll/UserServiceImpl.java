@@ -195,7 +195,7 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(email);
 		user.setPassword(passwordEncoder.encode(password));
 		user.setAdmin(false);
-		user.setActivated(true);
+		user.setActivated(false);
 		return user;
 	}
 
@@ -266,9 +266,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	private void checkEmailAvailable(String email, ValidationException ve) {
-		if (userRepository.findByEmail(email) != null) {
-			ve.addFieldError("email", "Un compte est déjà attaché à cet email.");
-		}
+		userRepository.findByEmail(email)
+				.ifPresent(user -> ve.addFieldError("email", "Un compte est déjà attaché à cet email."));
 	}
 
 	private void updateProfileFields(User user, User updatedData, ValidationException ve) {

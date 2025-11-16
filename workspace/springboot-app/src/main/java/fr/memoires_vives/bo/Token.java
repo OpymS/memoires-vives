@@ -10,9 +10,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
-public class PasswordResetToken {
+@Table(name="password_reset_token")
+public class Token {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long tokenId;
@@ -27,10 +29,10 @@ public class PasswordResetToken {
 	@Column(nullable = false)
 	private LocalDateTime expiration;
 
-	public PasswordResetToken() {
+	public Token() {
 	}
 
-	public PasswordResetToken(String token, User user, LocalDateTime expiration) {
+	public Token(String token, User user, LocalDateTime expiration) {
 		this.token = token;
 		this.user = user;
 		this.expiration = expiration;
