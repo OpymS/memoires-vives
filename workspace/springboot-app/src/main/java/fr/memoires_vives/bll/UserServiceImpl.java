@@ -195,7 +195,7 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(email);
 		user.setPassword(passwordEncoder.encode(password));
 		user.setAdmin(false);
-		user.setActivated(true);
+		user.setActivated(false);
 		return user;
 	}
 

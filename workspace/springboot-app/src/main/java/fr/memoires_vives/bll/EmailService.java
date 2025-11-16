@@ -5,4 +5,5 @@ import fr.memoires_vives.bo.User;
 public interface EmailService {
 	
 	void sendPasswordResetEmail(User user, String resetLink);
+	void sendActivationEmail(User user, String activationLink);
 }

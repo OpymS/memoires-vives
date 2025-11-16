@@ -25,11 +25,11 @@
 				<button type="button"
 					class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
 			</div>
-
+			<div th:if="${session.error}" th:text="${session.error}" class="text-red-500 font-light"></div>
 			<button type="submit" class="form-button">Se connecter</button>
 			<div>
 				<label for="remember-me" class="font-light text-sm">Se souvenir de moi</label>
-				<input type="checkbox" name="remember-me" id="remember-me" class="accent-[#7e9076]">				
+				<input type="checkbox" name="remember-me" id="remember-me" class="accent-[#7e9076]">
 			</div>
 			<div class="forgot-password-container w-full mt-4">
 				<a href="/forgot-password" class="py-2 rounded hover:bg-[#bddab2]"> Mot de passe oublié</a>
