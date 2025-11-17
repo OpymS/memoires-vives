@@ -6,17 +6,47 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Bienvenue sur Mémoires Vives</title>
 </head>
+<body style="margin:0; padding:0; font-family: Arial, sans-serif; background-color:#f4f4f4;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px; background-color:#ffffff; padding: 40px; border-radius:8px;">
+          
+          <tr>
+            <td align="center" style="padding-bottom:20px;">
+              <h2 th:text="'Bonjour ' + ${name} + ' !'" style="margin:0; font-size:24px; color:#333333;">
+                Bonjour, utilisateur !
+              </h2>
+            </td>
+          </tr>
 
-<body style="font-family: Arial, sans-serif;display:flex;flex-direction:flex-col;align-items:center;">
-	<h2 th:text="'Bonjour ' + ${name} + ' !'">Bonjour, utilisateur !</h2>
-	<div style="font-family: Arial;padding:20px;">
-		<p>Cliquez sur le lien ci-dessous pour activer votre compte</p>
-		<a th:href="${resetLink}"
-			style="background:#bddab2;color:black;padding:10px 20px;text-decoration:none;border-radius:4px;">
-			Activer mon compte
-		</a>
-		<p th:text="'Ce lien expire le ' + ${date} + ' à ' + ${heure}">Ce lien expire dans 24 heures.</p>
-	</div>
+          <tr>
+            <td align="center" style="padding-bottom:30px; font-size:16px; color:#555555;">
+              <p style="margin:0;">Cliquez sur le lien ci-dessous pour activer votre compte</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding-bottom:30px;">
+              <a th:href="${resetLink}"
+                 style="background:#bddab2; color:black; padding:12px 25px; text-decoration:none; border-radius:4px; display:inline-block; font-weight:bold;">
+                Activer mon compte
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="font-size:14px; color:#999999;">
+              <p th:text="'Ce lien expire le ' + ${date} + ' à ' + ${heure}" style="margin:0;">
+                Ce lien expire dans 24 heures
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 
 </html>
