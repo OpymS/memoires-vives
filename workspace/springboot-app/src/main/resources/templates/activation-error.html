@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Échec de l'activation du compte - Mémoires vives</title>
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
+	<link rel="icon" href="/images/public/favicon.png" />
+	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+</head>
+
+<body class="min-h-screen flex flex-col">
+	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
+	<main class="w-full flex-grow flex flex-col items-center">
+		<h1 class="h1-title" th:text="${message}"></h1>
+		<div class="button-container">
+			<a th:href="@{/}" class="form-button">Retour</a>
+		</div>
+
+	</main>
+	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
+</body>
+
+</html>

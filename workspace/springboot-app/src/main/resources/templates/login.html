@@ -13,9 +13,10 @@
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
 	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
 		<h1 class="h1-title">Se connecter</h1>
+		<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
 		<form th:action="@{/login}" method="post" class="w-full max-w-lg flex flex-col">
 			<label for="username" class="form-label">Nom d'utilisateur:</label>
-			<input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input"
+			<input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input" th:value="${loginUser}"
 				required />
 
 			<label for="password" class="form-label">Mot de passe:</label>
@@ -25,7 +26,7 @@
 				<button type="button"
 					class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
 			</div>
-			<div th:if="${session.error}" th:text="${session.error}" class="text-red-500 font-light"></div>
+			<div th:if="${error}" th:text="${error}" class="text-red-500 font-light"></div>
 			<button type="submit" class="form-button">Se connecter</button>
 			<div>
 				<label for="remember-me" class="font-light text-sm">Se souvenir de moi</label>

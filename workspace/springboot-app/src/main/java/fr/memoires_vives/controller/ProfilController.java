@@ -11,18 +11,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import fr.memoires_vives.bll.ActivationService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.exception.InvalidTokenException;
 import fr.memoires_vives.exception.ValidationException;
 
 @Controller
 @RequestMapping("/profil")
 public class ProfilController {
 	private final UserService userService;
+	private final ActivationService activationService;
 
-	public ProfilController(UserService userService) {
+	public ProfilController(UserService userService, ActivationService activationService) {
 		this.userService = userService;
+		this.activationService = activationService;
 	}
 
 	@GetMapping
@@ -64,6 +69,19 @@ public class ProfilController {
 			});
 			return "profil-modify";
 		}
+	}
+	
+	@GetMapping("/activation")
+	public String activateUserWithToken(@RequestParam("token") String token, Model model, RedirectAttributes redirectAttributes) {
+		try {
+			User activatedUser = activationService.activateUser(token);
+			redirectAttributes.addFlashAttribute("message", "Votre compte a été activé. Vous pouvez vous connecter.");
+			redirectAttributes.addFlashAttribute("loginUser", activatedUser.getPseudo());
+		} catch (InvalidTokenException e) {
+			model.addAttribute("message", e.getMessage());
+			return "activation-error";
+		}
+		return "redirect:/login";
 	}
 
 }

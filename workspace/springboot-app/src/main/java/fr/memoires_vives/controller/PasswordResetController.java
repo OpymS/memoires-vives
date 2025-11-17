@@ -17,14 +17,14 @@ import fr.memoires_vives.exception.ValidationException;
 @RequestMapping("/forgot-password")
 public class PasswordResetController {
 
-	private final ResetPasswordService tokenService;
+	private final ResetPasswordService resetPasswordService;
 	private final InvisibleCaptchaService captchaService;
 
 	@Value("${app.base-url}")
 	private String baseUrl;
 
-	public PasswordResetController(ResetPasswordService tokenService, InvisibleCaptchaService captchaService) {
-		this.tokenService = tokenService;
+	public PasswordResetController(ResetPasswordService resetPasswordService, InvisibleCaptchaService captchaService) {
+		this.resetPasswordService = resetPasswordService;
 		this.captchaService = captchaService;
 	}
 
@@ -44,7 +44,7 @@ public class PasswordResetController {
 		}
 
 		try {
-			tokenService.requestPasswordReset(email);
+			resetPasswordService.requestPasswordReset(email);
 		} catch (EmailSendingException e) {
 			model.addAttribute("errorMessage",
 					"Un problème est survenu lors de l'envoi du mail, veuillez réessayer plus tard.");
@@ -56,7 +56,7 @@ public class PasswordResetController {
 	@GetMapping("/reset-password")
 	public String displayResetPasswordPage(@RequestParam("token") String token, Model model) {
 		try {
-			tokenService.validatePasswordResetToken(token);
+			resetPasswordService.validatePasswordResetToken(token);
 		} catch (InvalidTokenException e) {
 			model.addAttribute("message", e.getMessage());
 			return "reset-password-error";
@@ -70,7 +70,7 @@ public class PasswordResetController {
 			Model model) {
 
 		try {
-			tokenService.resetPassword(token, password);
+			resetPasswordService.resetPassword(token, password);
 			return "reset-password-success";
 		} catch (InvalidTokenException e) {
 			model.addAttribute("message", e.getMessage());
