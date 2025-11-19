@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final FileService fileService;
 	private final CustomUserDetailsService customUserDetailsService;
-//	private final ActivationService activationService;
 
 	@PersistenceContext
 	private EntityManager entityManager;
