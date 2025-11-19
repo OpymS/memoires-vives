@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import fr.memoires_vives.bll.ActivationService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.InvalidTokenException;
 import fr.memoires_vives.exception.ValidationException;
 
@@ -72,7 +73,7 @@ public class ProfilController {
 	}
 	
 	@GetMapping("/activation")
-	public String activateUserWithToken(@RequestParam("token") String token, Model model, RedirectAttributes redirectAttributes) {
+	public String activateUserWithToken(@RequestParam(name="token") String token, Model model, RedirectAttributes redirectAttributes) {
 		try {
 			User activatedUser = activationService.activateUser(token);
 			redirectAttributes.addFlashAttribute("message", "Votre compte a été activé. Vous pouvez vous connecter.");
@@ -84,4 +85,28 @@ public class ProfilController {
 		return "redirect:/login";
 	}
 
+	@GetMapping("/activation/resend")
+	public String handleFormResendActivation(@RequestParam(name="username") String username, RedirectAttributes redirectAttributes) {
+	    User user;
+	    
+	    try {
+			user = userService.getUserByPseudo(username);
+		} catch (EntityNotFoundException e) {
+			redirectAttributes.addFlashAttribute("error", e.getMessage());
+			return "redirect:/login";
+		}
+
+	    if (user.isActivated()) {
+	        redirectAttributes.addFlashAttribute("error", "Ce compte est déjà activé.");
+	        return "redirect:/login";
+	    }
+
+	    activationService.regenerateTokenAndSendMail(user);
+
+	    redirectAttributes.addFlashAttribute("message",
+	            "Un email d’activation vient de vous être envoyé.");
+
+	    return "redirect:/login";
+	}
+	
 }

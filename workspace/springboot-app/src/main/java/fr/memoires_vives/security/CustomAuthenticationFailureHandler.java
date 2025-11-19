@@ -19,8 +19,10 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 		String errorMessage = "Pseudo ou mot de passe incorrect";
 
 		if (exception instanceof DisabledException) {
+			String username = request.getParameter("username"); 
 			errorMessage = "Votre compte n'est pas activé. Vérifiez votre boîte mail pour activer votre compte.";
 			request.getSession().setAttribute("resendActivation", true);
+			request.getSession().setAttribute("loginUser", username);
 		}
 
 		request.getSession().setAttribute("error", errorMessage);
