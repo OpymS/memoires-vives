@@ -2,8 +2,6 @@ package fr.memoires_vives.bll;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -43,8 +41,8 @@ public class ResetPasswordServiceImpl implements ResetPasswordService {
 		User user = userRepository.findByEmail(email).orElse(null);
 
 		if (user != null) {
-			String token = UUID.randomUUID().toString();
-			tokenService.createTokenForUser(user, token, 30);
+			tokenRepository.deleteAllByUser(user);
+			String token = tokenService.createTokenForUser(user, 30);
 			String resetUrl = baseUrl + "/forgot-password/reset-password?token=" + token;
 			try {
 				emailService.sendPasswordResetEmail(user, resetUrl);

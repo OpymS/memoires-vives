@@ -6,4 +6,5 @@ public interface ActivationService {
 
 	public void requestActivation(User user);
 	public User activateUser(String token);
+	public void regenerateTokenAndSendMail(User user);
 }

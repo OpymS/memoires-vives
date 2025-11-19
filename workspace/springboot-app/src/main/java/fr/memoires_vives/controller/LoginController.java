@@ -50,7 +50,7 @@ public class LoginController {
 	    
 	    Object resend = session.getAttribute("resendActivation");
 	    if (resend != null) {
-	    	model.addAttribute("resend", true);
+	    	model.addAttribute("resendActivation", true);
 	    	session.removeAttribute("resendActivation");
 	    }
 		return "login";

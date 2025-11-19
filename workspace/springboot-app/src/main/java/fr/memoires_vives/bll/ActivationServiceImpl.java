@@ -2,8 +2,6 @@ package fr.memoires_vives.bll;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +31,7 @@ public class ActivationServiceImpl implements ActivationService {
 
 	@Override
 	public void requestActivation(User user) {
-		String token = UUID.randomUUID().toString();
-		tokenService.createTokenForUser(user, token, 24 * 60);
+		String token = tokenService.createTokenForUser(user, 24 * 60);
 		String resetUrl = baseUrl + "/profil/activation?token=" + token;
 		try {
 			emailService.sendActivationEmail(user, resetUrl);
@@ -51,13 +48,18 @@ public class ActivationServiceImpl implements ActivationService {
 				.filter(activationToken -> activationToken.getExpiration().isAfter(LocalDateTime.now()))
 				.map(Token::getUser);
 		if (userOpt.isEmpty()) {
-			System.out.println("ça a foiré ici");
 			throw new InvalidTokenException("Lien expiré ou invalide.");
 		}
 		User user = userOpt.get();
 		user.setActivated(true);
 		tokenService.deleteToken(token);
 		return user;
+	}
+
+	@Override
+	public void regenerateTokenAndSendMail(User user) {
+		tokenRepository.deleteAllByUser(user);
+		requestActivation(user);
 	}
 
 }

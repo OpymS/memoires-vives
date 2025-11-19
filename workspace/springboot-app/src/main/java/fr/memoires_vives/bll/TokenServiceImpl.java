@@ -1,6 +1,7 @@
 package fr.memoires_vives.bll;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +27,12 @@ public class TokenServiceImpl implements TokenService {
 
 
 	@Override
-	public void createTokenForUser(User user, String token, int minutes) {
+	public String createTokenForUser(User user, int minutes) {
+		String token = UUID.randomUUID().toString();
 		Token passwordResetToken = new Token(token, user,
 				LocalDateTime.now().plusMinutes(minutes));
 		tokenRepository.save(passwordResetToken);
+		return token;
 	}
 
 }
