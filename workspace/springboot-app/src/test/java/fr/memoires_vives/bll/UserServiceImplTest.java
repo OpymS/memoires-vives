@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -17,7 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,9 +26,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -207,28 +205,6 @@ public class UserServiceImplTest {
 		verify(userRepository, times(1)).findByUserId(mockUser.getUserId());
 	}
 
-//	@Test
-//	void getCurrentUser_returnsUserWhenFound() {
-//		User mockUser = new User();
-//		mockUser.setUserId(42L);
-//		mockUser.setMemories(new ArrayList<>());
-//		mockUser.setPassword("secret");
-//
-//		mockAuthenticatedUser(mockUser);
-//
-//		when(userRepository.findByUserId(mockUser.getUserId())).thenReturn(Optional.of(mockUser));
-//		doNothing().when(entityManager).detach(any(User.class));
-//
-//		User result = userService.getCurrentUser();
-//
-//		assertNotNull(result);
-//		assertEquals(mockUser.getUserId(), result.getUserId());
-//		assertNull(result.getPassword());
-//		assertNotNull(result.getMemories());
-//		verify(userRepository, times(1)).findByUserId(mockUser.getUserId());
-//		verify(entityManager, times(1)).detach(mockUser);
-//	}
-
 //	Test getUserOrCurrent
 
 	@Test
@@ -279,6 +255,7 @@ public class UserServiceImplTest {
 		verify(spyUserService, times(1)).getUserById(42L);
 	}
 
+//  Test des méthodes privées de createAccount et updateProfile
 //	Test de checkPassword
 
 	@Test
@@ -321,6 +298,8 @@ public class UserServiceImplTest {
 		verify(userRepository, never()).save(any());
 	}
 
+//  Test de checkPseudo
+
 	@Test
 	void createAccount_throwsValidationException_whenPseudoAlreadyUsed() {
 		String pseudo = "testuser";
@@ -342,6 +321,8 @@ public class UserServiceImplTest {
 
 		verify(userRepository, never()).save(any());
 	}
+
+//  Test de checkEmail	
 
 	@Test
 	void createAccount_throwsValidationException_whenEmailAlreadyUsed() {
@@ -466,6 +447,55 @@ public class UserServiceImplTest {
 		verify(fileService, times(1)).saveUserFile(image, pseudo);
 	}
 
+//  Tests de assignUserRole
+
+	@Test
+	void createAccount_assignsExistingRoleToUser() {
+		String pseudo = "john";
+		String email = "john@doe.fr";
+		String password = "password123";
+		String passwordConfirm = "password123";
+		MultipartFile image = null;
+
+		Role existingRole = new Role();
+		existingRole.setName("ROLE_USER");
+		when(roleRepository.findByName("ROLE_USER")).thenReturn(existingRole);
+		when(passwordEncoder.encode(passwordConfirm)).thenReturn("encodedPassword");
+		when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+		User createdUser = userService.createAccount(pseudo, email, password, passwordConfirm, image);
+
+		assertNotNull(createdUser);
+		assertEquals(1, createdUser.getRoles().size());
+		assertTrue(createdUser.getRoles().contains(existingRole));
+		verify(roleRepository, times(1)).findByName("ROLE_USER");
+		verify(roleRepository, never()).save(any());
+	}
+
+// Test de createAccount
+
+	@SuppressWarnings("serial")
+	@Test
+	void createAccount_throwsValidationException_whenUserRepositorySaveFails() {
+		String pseudo = "john";
+		String email = "john@doe.fr";
+		String password = "password123";
+		String passwordConfirm = "password123";
+		MultipartFile image = null;
+
+		when(passwordEncoder.encode(passwordConfirm)).thenReturn("encodedPassword");
+		when(userRepository.save(any())).thenThrow(new DataAccessException("DB error") {
+		});
+
+		ValidationException exception = assertThrows(ValidationException.class,
+				() -> userService.createAccount(pseudo, email, password, passwordConfirm, image));
+
+		assertTrue(exception.hasError());
+		assertEquals(1, exception.getGlobalErrors().size());
+		assertEquals("Un problème est survenu lors de l'accès à la base de données.",
+				exception.getGlobalErrors().get(0));
+	}
+
 //	Test de updateProfile
 
 	@Test
@@ -515,5 +545,85 @@ public class UserServiceImplTest {
 		assertTrue(ex.getFieldErrors().stream().anyMatch(err -> err.getField().equals("currentPassword")));
 	}
 
-	
+	@Test
+	void updateProfile_throwsEntityNotFound_whenUserDoesNotExist() {
+		User updatedData = new User();
+		updatedData.setUserId(1L);
+
+		when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
+
+		assertThrows(EntityNotFoundException.class,
+				() -> userService.updateProfile(updatedData, "currentPassword", null));
+	}
+
+//  Tests de getAllUsers
+
+	@Test
+	void getAllUsers_returnsListOfUsers() {
+		List<User> mockUsers = new ArrayList<>();
+		mockUsers.add(new User());
+		mockUsers.add(new User());
+
+		when(userRepository.findAll()).thenReturn(mockUsers);
+
+		List<User> result = userService.getAllUsers();
+
+		assertNotNull(result);
+		assertEquals(2, result.size());
+		verify(userRepository, times(1)).findAll();
+	}
+
+	@Test
+    void getAllUsers_returnsEmptyList_whenNoUsers() {
+        when(userRepository.findAll()).thenReturn(new ArrayList<>());
+
+        List<User> result = userService.getAllUsers();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(userRepository, times(1)).findAll();
+    }
+
+//  Tests de updatePassword
+
+    @Test
+    void updatePassword_throwsValidationException_whenPasswordIsBlank() {
+        User user = new User();
+        user.setUserId(1L);
+
+        ValidationException ve = assertThrows(ValidationException.class, () -> {
+            userService.updatePassword(user, "");
+        });
+
+        assertTrue(ve.getFieldErrors().stream()
+                .anyMatch(fe -> fe.getField().equals("currentPassword")));
+    }
+
+    @Test
+    void updatePassword_throwsEntityNotFoundException_whenUserNotFound() {
+        User user = new User();
+        user.setUserId(1L);
+
+        when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> {
+            userService.updatePassword(user, "newPassword");
+        });
+    }
+
+    @Test
+    void updatePassword_setsHashedPassword_whenValid() {
+        User user = new User();
+        user.setUserId(1L);
+        User managedUser = new User();
+        managedUser.setUserId(1L);
+
+        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(managedUser));
+        when(passwordEncoder.encode("newPassword")).thenReturn("hashedPassword");
+
+        userService.updatePassword(user, "newPassword");
+
+        assertEquals("hashedPassword", managedUser.getPassword());
+    }
+
 }

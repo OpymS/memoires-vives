@@ -232,7 +232,6 @@ public class UserServiceImpl implements UserService {
 		try {
 			return userRepository.save(user);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
 			ve.addGlobalError("Un problème est survenu lors de l'accès à la base de données.");
 			throw ve;
 		}
