@@ -181,64 +181,86 @@ public class MemoryServiceImpl implements MemoryService {
 //	Les méthodes privées
 
 	private Specification<Memory> createSpecification(SearchCriteria criteria) {
-		// TODO Gérer la visibilité. Pas critique pour l'instant car tous les souvenirs sont publics dès qu'ils sont publiés.
+		// TODO Gérer la visibilité. Pas critique pour l'instant car tous les souvenirs
+		// sont publics dès qu'ils sont publiés.
 		return (Root<Memory> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
-			if (criteria.getWords() != null && !criteria.getWords().isEmpty()) {
-				List<Predicate> wordPredicates = new ArrayList<>();
-				for (String word : criteria.getWords()) {
-					if (criteria.isTitleOnly()) {
-						wordPredicates.add(cb.like(root.get("title"), "%" + word + "%"));
-
-					} else {
-						Predicate titlePredicate = cb.like(root.get("title"), "%" + word + "%");
-						Predicate descriptionPredicate = cb.like(root.get("description"), "%" + word + "%");
-						wordPredicates.add(cb.or(titlePredicate, descriptionPredicate));
-					}
-				}
-				predicates.add(cb.and(wordPredicates.toArray(new Predicate[0])));
-			}
-
-			if (criteria.getAfter() != null) {
-				predicates.add(cb.greaterThanOrEqualTo(root.get("memoryDate"), criteria.getAfter()));
-			}
-
-			if (criteria.getBefore() != null) {
-				predicates.add(cb.lessThanOrEqualTo(root.get("memoryDate"), criteria.getBefore()));
-			}
-
-			if (criteria.getCategoriesId() != null && !criteria.getCategoriesId().isEmpty()) {
-				List<Predicate> categoriesPredicates = new ArrayList<>();
-				for (long categoryId : criteria.getCategoriesId()) {
-					categoriesPredicates.add(cb.equal(root.get("category").get("categoryId"), categoryId));
-				}
-				predicates.add(cb.or(categoriesPredicates.toArray(new Predicate[0])));
-			}
+			addWordsPredicates(predicates, root, cb, criteria);
+			addDatePredicates(predicates, root, cb, criteria);
+			addCategoryPredicate(predicates, root, cb, criteria);
 
 			User user = userService.getCurrentUser();
-			if (criteria.isOnlyMine() && user != null) {
-				predicates.add(cb.equal(root.get("rememberer").get("userId"), user.getUserId()));
-				if (criteria.getStatus() == 2) {
-					predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
-				}
-
-				if (criteria.getStatus() == 3) {
-					predicates.add(cb.equal(root.get("state"), MemoryState.CREATED));
-				}
-			} else {
-				Predicate published = cb.equal(root.get("state"), MemoryState.PUBLISHED);
-
-				if (user != null) {
-					Predicate mine = cb.equal(root.get("rememberer").get("userId"), user.getUserId());
-					predicates.add(cb.or(published, mine));
-				} else {
-					predicates.add(published);
-				}
-			}
+			addVisibilityPredicates(predicates, root, cb, criteria, user);
 
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
+	}
+
+	private void addWordsPredicates(List<Predicate> predicates, Root<Memory> root, CriteriaBuilder cb,
+			SearchCriteria criteria) {
+		if (criteria.getWords() == null || criteria.getWords().isEmpty()) {
+			return;
+		}
+
+		List<Predicate> wordPredicates = new ArrayList<>();
+		for (String word : criteria.getWords()) {
+			if (criteria.isTitleOnly()) {
+				wordPredicates.add(cb.like(root.get("title"), "%" + word + "%"));
+
+			} else {
+				Predicate titlePredicate = cb.like(root.get("title"), "%" + word + "%");
+				Predicate descriptionPredicate = cb.like(root.get("description"), "%" + word + "%");
+				wordPredicates.add(cb.or(titlePredicate, descriptionPredicate));
+			}
+		}
+		predicates.add(cb.and(wordPredicates.toArray(new Predicate[0])));
+	}
+
+	private void addDatePredicates(List<Predicate> predicates, Root<Memory> root, CriteriaBuilder cb,
+			SearchCriteria criteria) {
+		if (criteria.getAfter() != null) {
+			predicates.add(cb.greaterThanOrEqualTo(root.get("memoryDate"), criteria.getAfter()));
+		}
+
+		if (criteria.getBefore() != null) {
+			predicates.add(cb.lessThanOrEqualTo(root.get("memoryDate"), criteria.getBefore()));
+		}
+	}
+
+	private void addCategoryPredicate(List<Predicate> predicates, Root<Memory> root, CriteriaBuilder cb,
+			SearchCriteria criteria) {
+		if (criteria.getCategoriesId() == null || criteria.getCategoriesId().isEmpty()) {
+			return;
+		}
+		List<Predicate> categoriesPredicates = new ArrayList<>();
+		for (long categoryId : criteria.getCategoriesId()) {
+			categoriesPredicates.add(cb.equal(root.get("category").get("categoryId"), categoryId));
+		}
+		predicates.add(cb.or(categoriesPredicates.toArray(new Predicate[0])));
+	}
+
+	private void addVisibilityPredicates(List<Predicate> predicates, Root<Memory> root, CriteriaBuilder cb,
+			SearchCriteria criteria, User user) {
+		if (criteria.isOnlyMine() && user != null) {
+			predicates.add(cb.equal(root.get("rememberer").get("userId"), user.getUserId()));
+			if (criteria.getStatus() == 2) {
+				predicates.add(cb.equal(root.get("state"), MemoryState.PUBLISHED));
+			}
+
+			if (criteria.getStatus() == 3) {
+				predicates.add(cb.equal(root.get("state"), MemoryState.CREATED));
+			}
+		} else {
+			Predicate published = cb.equal(root.get("state"), MemoryState.PUBLISHED);
+
+			if (user != null) {
+				Predicate mine = cb.equal(root.get("rememberer").get("userId"), user.getUserId());
+				predicates.add(cb.or(published, mine));
+			} else {
+				predicates.add(published);
+			}
+		}
 	}
 
 	private Specification<Memory> getGeographicSpecification(SearchCriteria criteria) {
