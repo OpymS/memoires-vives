@@ -401,7 +401,8 @@ public class MemoryServiceImpl implements MemoryService {
 
 		if (existingLocation.getMemories().size() <= 1) {
 			locationWithUpdate.setLocationId(existingLocation.getLocationId());
-			locationService.saveLocation(locationWithUpdate);
+			Location updatedLocation = locationService.saveLocation(locationWithUpdate);
+			memory.setLocation(updatedLocation);
 		} else if (isDifferent) {
 			Location newLocation = locationService.saveLocation(locationWithUpdate);
 			memory.setLocation(newLocation);
