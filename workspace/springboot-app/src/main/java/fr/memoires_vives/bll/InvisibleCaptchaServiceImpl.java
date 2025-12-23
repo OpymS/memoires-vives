@@ -5,12 +5,12 @@ import org.springframework.stereotype.Service;
 import fr.memoires_vives.component.CaptchaCounter;
 
 @Service
-public class InvisibleCaptchaServiceIpml implements InvisibleCaptchaService {
+public class InvisibleCaptchaServiceImpl implements InvisibleCaptchaService {
 	private final CaptchaCounter counter;
 
 	private static final long MIN_DELAY_MS = 3000;
 
-	public InvisibleCaptchaServiceIpml(CaptchaCounter counter) {
+	public InvisibleCaptchaServiceImpl(CaptchaCounter counter) {
 		this.counter = counter;
 	}
 

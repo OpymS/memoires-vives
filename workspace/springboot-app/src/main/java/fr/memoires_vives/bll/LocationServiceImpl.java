@@ -41,10 +41,10 @@ public class LocationServiceImpl implements LocationService {
 		}
 		
 		while (west < -180) {
-			west += 180;
+			west += 360;
 		}
 		while (east > 180) {
-			east -= 180;
+			east -= 360;
 		}
 		return locationRepository.findInSquare(north, south, east, west);
 	}
