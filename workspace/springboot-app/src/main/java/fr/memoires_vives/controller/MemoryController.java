@@ -90,11 +90,11 @@ public class MemoryController {
 
 	@PostMapping("/modify")
 	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
-			@Valid @ModelAttribute("location") Location location,
+			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		
-		if (bindingResult.hasErrors()) {
+		if (bindingResult.hasErrors() || locationBindingResult.hasErrors()) {
 			return "memory-form";
 		}
 

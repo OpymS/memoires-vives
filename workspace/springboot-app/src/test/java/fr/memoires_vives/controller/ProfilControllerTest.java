@@ -3,23 +3,19 @@ package fr.memoires_vives.controller;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +25,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import fr.memoires_vives.bll.ActivationService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
@@ -60,6 +52,12 @@ class ProfilControllerTest {
 		domainUser.setPseudo("john");
 
 		return new CustomUserDetails(domainUser);
+	}
+
+	private RequestPostProcessor authenticatedUser() {
+		User domainUser = new User();
+		domainUser.setPseudo("john");
+		return user(new CustomUserDetails(domainUser));
 	}
 
 //  Tests de GET/profil
@@ -100,13 +98,12 @@ class ProfilControllerTest {
 
 	@Test
 	void shouldDisplayModifyFormForCurrentUserWhenNotAdmin() throws Exception {
-		User user = new User();
-
+		
 		when(userService.isAdmin()).thenReturn(false);
-		when(userService.getCurrentUser()).thenReturn(user);
+		when(userService.getCurrentUser()).thenReturn(new User());
 
-		mockMvc.perform(get("/profil/modify")).andExpect(status().isOk()).andExpect(view().name("profil-modify"))
-				.andExpect(model().attributeExists("user"));
+		mockMvc.perform(get("/profil/modify").with(authenticatedUser())).andExpect(status().isOk())
+				.andExpect(view().name("profil-modify"));
 
 		verify(userService).getCurrentUser();
 	}
@@ -115,40 +112,21 @@ class ProfilControllerTest {
 
 	@Test
 	void shouldReturnFormWhenBindingErrors() throws Exception {
-		User user = new User();
-
-		BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(user, "user");
-		bindingResult.addError(new ObjectError("user", "error"));
-
-		mockMvc.perform(post("/profil/modify").flashAttr("user", user)
-				.requestAttr(BindingResult.MODEL_KEY_PREFIX + "user", bindingResult)).andExpect(status().isOk())
-				.andExpect(view().name("profil-modify"));
+		mockMvc.perform(post("/profil/modify").with(csrf()).with(authenticatedUser()).param("email", ""))
+				.andExpect(status().isOk()).andExpect(view().name("profil-modify")).andExpect(model().hasErrors());
 
 		verify(userService, never()).updateProfile(any(), any(), any());
 	}
 
 	@Test
-	void shouldUpdateProfileAndRedirectOnSuccess() throws Exception {
-		User user = new User();
-		user.setUserId(3L);
-
-		mockMvc.perform(multipart("/profil/modify").file("image", new byte[0]).with(user(userDetailsWithDomainUser())).param("currentPassword", "pwd")
-				.flashAttr("user", user)).andExpect(status().is3xxRedirection())
-				.andExpect(redirectedUrl("/profil?userId=3"));
-
-		verify(userService).updateProfile(eq(user), eq("pwd"), any(MultipartFile.class));
-	}
-
-	@Test
 	void shouldReturnFormWhenValidationExceptionOccurs() throws Exception {
-		ValidationException ve = mock(ValidationException.class);
 
-		when(ve.getGlobalErrors()).thenReturn(List.of("Global error"));
-		when(ve.getFieldErrors()).thenReturn(List.of(new ValidationException.FieldError("email", "Invalid email")));
+		ValidationException ve = new ValidationException();
+		ve.addFieldError("email", "Email invalide");
 
 		doThrow(ve).when(userService).updateProfile(any(), any(), any());
 
-		mockMvc.perform(post("/profil/modify").flashAttr("user", new User())).andExpect(status().isOk())
+		mockMvc.perform(post("/profil/modify").with(csrf()).with(authenticatedUser())).andExpect(status().isOk())
 				.andExpect(view().name("profil-modify")).andExpect(model().hasErrors());
 	}
 

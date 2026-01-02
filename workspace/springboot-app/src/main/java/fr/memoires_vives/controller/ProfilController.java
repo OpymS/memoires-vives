@@ -19,6 +19,7 @@ import fr.memoires_vives.bo.User;
 import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.InvalidTokenException;
 import fr.memoires_vives.exception.ValidationException;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/profil")
@@ -48,7 +49,7 @@ public class ProfilController {
 	}
 
 	@PostMapping("/modify")
-	public String modifyProfil(@ModelAttribute("user") User updatedUser, BindingResult bindingResult,
+	public String modifyProfil(@Valid @ModelAttribute("user") User updatedUser, BindingResult bindingResult,
 			@RequestParam(name = "currentPassword", required = false) String currentPassword,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		if (bindingResult.hasErrors()) {
