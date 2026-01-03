@@ -51,7 +51,8 @@ public class LoginControllerTest {
                 .param("email", "john@test.com")
                 .param("password", "secret")
                 .param("passwordConfirm", "secret")
-                .param("formTimestamp", "123456789"))
+                .param("formTimestamp", "123456789")
+                .param("website", "un truc"))
             .andExpect(status().isOk())
             .andExpect(view().name("signup"));
 

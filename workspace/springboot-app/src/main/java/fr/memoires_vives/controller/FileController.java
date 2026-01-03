@@ -49,7 +49,7 @@ public class FileController {
 
 	@DeleteMapping("/images/uploadedImages/{uuid}")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<String> deleteImage(@PathVariable String uuid) {
+	public ResponseEntity<String> deleteImage(@PathVariable("uuid") String uuid) {
 		User currentUser = userService.getCurrentUser();
 		Memory memory = memoryService.getMemoryByImage(uuid);
 		fileService.deleteUserFile(currentUser, uuid, memory);

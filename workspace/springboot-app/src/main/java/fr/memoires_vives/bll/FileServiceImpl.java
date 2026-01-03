@@ -88,8 +88,8 @@ public class FileServiceImpl implements FileService {
 
 	public void deleteUserFile(User user, String mediaUUID, Memory memory) {
 
-		boolean isOwner = user.getMediaUUID() != null && user.getMediaUUID().equals(mediaUUID)
-				|| memory.getRememberer().getUserId() == user.getUserId();
+		boolean isOwner = (user.getMediaUUID() != null && user.getMediaUUID().equals(mediaUUID))
+				|| (memory.getRememberer().getUserId() == user.getUserId());
 
 		if (!isOwner) {
 			throw new UnauthorizedActionException("Vous n'avez pas le droit de supprimer cette image");
