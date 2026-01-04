@@ -37,22 +37,22 @@ public class LoginController {
 	@GetMapping("/login")
 	public String login(Model model, HttpSession session) {
 		Object error = session.getAttribute("error");
-	    if (error != null) {
-	        model.addAttribute("error", error);
-	        session.removeAttribute("error");
-	    }
+		if (error != null) {
+			model.addAttribute("error", error);
+			session.removeAttribute("error");
+		}
 
-	    Object loginUser = session.getAttribute("loginUser");
-	    if (loginUser != null) {
-	        model.addAttribute("loginUser", loginUser);
-	        session.removeAttribute("loginUser");
-	    }
-	    
-	    Object resend = session.getAttribute("resendActivation");
-	    if (resend != null) {
-	    	model.addAttribute("resendActivation", true);
-	    	session.removeAttribute("resendActivation");
-	    }
+		Object loginUser = session.getAttribute("loginUser");
+		if (loginUser != null) {
+			model.addAttribute("loginUser", loginUser);
+			session.removeAttribute("loginUser");
+		}
+
+		Object resend = session.getAttribute("resendActivation");
+		if (resend != null) {
+			model.addAttribute("resendActivation", true);
+			session.removeAttribute("resendActivation");
+		}
 		return "login";
 	}
 
@@ -67,13 +67,17 @@ public class LoginController {
 	public String processSignup(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage,
 			@RequestParam(name = "website", required = false) String website,
-			@RequestParam(name = "formTimestamp", required = false) Long formTimestamp) {
+			@RequestParam(name = "formTimestamp", required = false) Long formTimestamp,
+			@RequestParam(name = "accept-conditions", required = false) Boolean acceptConditions) {
 
 		if (captchaService.isBot(website, formTimestamp)) {
 			bindingResult.addError(new ObjectError("globalError", "Requête invalide, veuillez réessayer."));
 			return "signup";
 		}
 
+		if (acceptConditions == null || !acceptConditions) {
+			bindingResult.addError(new ObjectError("globalError", "Veuillez accepter les CGU."));
+		}
 		if (bindingResult.hasErrors()) {
 			return "signup";
 		}

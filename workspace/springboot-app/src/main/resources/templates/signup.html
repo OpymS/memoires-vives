@@ -59,6 +59,12 @@
 					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden">
 				</div>
 				<div th:replace="~{fragments/fragment-captcha :: fragment-captcha}"></div>
+				<div>
+					<label for="accept-conditions" class="font-light text-sm">J'ai pris connaissance des <a
+							th:href="@{/conditions}" class="text-[#7e9076] hover:underline">conditions générales
+							d'utilisations</a></label>
+					<input type="checkbox" name="accept-conditions" id="accept-conditions" class="accent-[#7e9076]">
+				</div>
 			</div>
 
 			<div class="buttons-container">
