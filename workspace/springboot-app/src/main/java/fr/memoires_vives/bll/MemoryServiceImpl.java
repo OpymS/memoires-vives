@@ -98,6 +98,9 @@ public class MemoryServiceImpl implements MemoryService {
 
 	@Override
 	public Memory getMemoryById(Long memoryId) {
+		if (memoryId == null) {
+			throw new EntityNotFoundException("Souvenir introuvable");
+		}
 		Memory memory = memoryRepository.findById(memoryId)
 				.orElseThrow(() -> new EntityNotFoundException("Souvenir introuvable"));
 		assertUserCanSee(memory);

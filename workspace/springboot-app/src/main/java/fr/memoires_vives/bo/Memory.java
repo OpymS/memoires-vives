@@ -35,6 +35,8 @@ public class Memory {
 	@NotBlank
 	@Size(max = 30)
 	private String title;
+	
+	private String slug;
 
 	@Column(nullable = false)
 	private String description;

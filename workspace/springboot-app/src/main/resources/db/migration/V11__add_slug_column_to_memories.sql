@@ -1,0 +1,3 @@
+-- Créé le 04/01/2026 pour le SEO
+ALTER TABLE memories
+ADD slug VARCHAR(270) DEFAULT NULL;

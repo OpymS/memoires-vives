@@ -13,6 +13,7 @@ import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.exception.ValidationException;
+import fr.memoires_vives.utils.SlugUtil;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,6 +74,7 @@ public class MemoryController {
 	public String showMemoryPage(@RequestParam(name = "memoryId", required = false) Long memoryId, Model model) {
 		Memory memoryToDisplay = memoryService.getMemoryById(memoryId);
 		model.addAttribute("memoryToDisplay", memoryToDisplay);
+		System.out.println(SlugUtil.toSlug(memoryToDisplay));
 		return "memory";
 	}
 
