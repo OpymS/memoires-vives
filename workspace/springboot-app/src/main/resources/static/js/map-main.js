@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		cardsContainer.innerHTML = '';
 		memories.forEach((memory) => {
 			const memoryDiv = document.createElement('a');
-			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
+			memoryDiv.href = `/memory/${memory.memoryId}-${memory.slug}`;
 			memoryDiv.className = 'border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw] overflow-hidden duration-200 hover:scale-101';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		memories.forEach(memory => {
 			const marker = L.marker([memory.location.latitude, memory.location.longitude]).addTo(markers);
 			const memoryDiv = document.createElement('a');
-			memoryDiv.href = `/memory?memoryId=${memory.memoryId}`;
+			memoryDiv.href = `/memory/${memory.memoryId}-${memory.slug}`;
 			memoryDiv.className = 'flex flex-row h-[200px] w-[350px] items-center p-2 gap-4';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">

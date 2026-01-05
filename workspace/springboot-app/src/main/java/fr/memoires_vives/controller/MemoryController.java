@@ -6,6 +6,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.MemoryService;
@@ -70,18 +71,37 @@ public class MemoryController {
 
 	}
 
-	@GetMapping
-	public String showMemoryPage(@RequestParam(name = "memoryId", required = false) Long memoryId, Model model) {
+//	@GetMapping
+//	public String showMemoryPageLegacy(@RequestParam(name = "memoryId", required = false) Long memoryId, Model model) {
+//		System.out.println("attention ancienne méthode");
+//		Memory memoryToDisplay = memoryService.getMemoryById(memoryId);
+//		model.addAttribute("memoryToDisplay", memoryToDisplay);
+//		return "memory";
+//	}
+
+	@GetMapping("/{id:\\d+}-{slug}")
+	public String showMemoryPage(@PathVariable("id") Long memoryId, @PathVariable("slug") String slug, Model model) {
+		if (memoryId == 0) {
+			return "index";
+		}
+
 		Memory memoryToDisplay = memoryService.getMemoryById(memoryId);
+		String dbSlug = memoryToDisplay.getSlug();
+
+		if (dbSlug != null && !dbSlug.equals(slug)) {
+			String safeSlug = (dbSlug != null) ? dbSlug : SlugUtil.toSlug(memoryToDisplay);
+			return "redirect:/memory/" + memoryToDisplay.getMemoryId() + "-" + safeSlug;
+		}
+
 		model.addAttribute("memoryToDisplay", memoryToDisplay);
-		System.out.println(SlugUtil.toSlug(memoryToDisplay));
+
 		return "memory";
 	}
 
 	@GetMapping("/modify")
 	public String showModifyMemoryForm(@RequestParam(name = "memoryId", required = true) Long memoryId, Model model) {
 		Memory memory = memoryService.getMemoryForModification(memoryId);
-		
+
 		Location location = memory.getLocation();
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
@@ -95,14 +115,14 @@ public class MemoryController {
 			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
-		
+
 		if (bindingResult.hasErrors() || locationBindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
 		try {
 			memoryService.updateMemory(memory, fileImage, published, location);
-			return "redirect:/memory?memoryId=" + memory.getMemoryId();
+			return "redirect:/memory/" + memory.getMemoryId() + "-" + memory.getSlug();
 		} catch (ValidationException ve) {
 			ve.getGlobalErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);

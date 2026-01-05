@@ -29,7 +29,7 @@
 				<div th:if="${userToDisplay.memories != null and !userToDisplay.memories.empty}">
 					<div th:each="memory : ${userToDisplay.memories}">
 						<a th:if="${memory.state.name() == 'PUBLISHED' || userToDisplay.userId == #authentication.principal.user.userId}"
-							th:href="@{/memory(memoryId=${memory.memoryId})}" th:text="${memory.title}" class="hover:underline"></a>
+							th:href="@{'/memory/' + ${memory.memoryId} + '-' + ${memory.slug}}" th:text="${memory.title}" class="hover:underline"></a>
 					</div>
 				</div>
 				<div th:if="${userToDisplay.memories == null or userToDisplay.memories.empty}">

@@ -30,6 +30,7 @@ import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.FileStorageException;
 import fr.memoires_vives.exception.UnauthorizedActionException;
 import fr.memoires_vives.repositories.MemoryRepository;
+import fr.memoires_vives.utils.SlugUtil;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -141,6 +142,8 @@ public class MemoryServiceImpl implements MemoryService {
 
 		updateMedia(memory, image);
 
+		memory.setSlug(SlugUtil.toSlug(memory));
+		
 		return saveMemory(memory);
 	}
 
@@ -160,6 +163,8 @@ public class MemoryServiceImpl implements MemoryService {
 		updateMedia(existingMemory, newImage);
 
 		updateLocation(existingMemory, locationWithUpdate);
+		
+		existingMemory.setSlug(SlugUtil.toSlug(existingMemory));
 
 		return saveMemory(existingMemory);
 	}

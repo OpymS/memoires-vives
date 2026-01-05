@@ -5,6 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Souvenir - Mémoires vives</title>
+	<link rel="canonical" th:href="@{/memory/{id}-{slug}(id=${memoryToDisplay.memoryId}, slug=${memoryToDisplay.slug})}" />
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
 	<link rel="icon" href="/images/public/favicon.png" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"

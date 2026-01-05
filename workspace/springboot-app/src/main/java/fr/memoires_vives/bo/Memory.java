@@ -95,6 +95,13 @@ public class Memory {
 	public String getTitle() {
 		return title;
 	}
+	
+	/**
+	 * @return the slug
+	 */
+	public String getSlug() {
+		return slug;
+	}
 
 	/**
 	 * @return the description
@@ -185,6 +192,13 @@ public class Memory {
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	/**
+	 * @param slug the slug to set
+	 */
+	public void setSlug(String slug) {
+		this.slug = slug;
 	}
 
 	/**

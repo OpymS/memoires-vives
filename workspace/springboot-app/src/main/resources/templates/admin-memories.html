@@ -15,7 +15,8 @@
 	<div class="flex-grow flex flex-row justify-between">
 		<main class="w-full flex flex-col flex-grow sm:items-center overflow-auto">
 			<div class="flex-grow w-full flex flex-col items-center justify-start">
-				<h1 class="mt-4 mb-2 sm:mt-[80px] text-[#bddab2] text-2xl font-bold">Panneau d'administration des souvenirs
+				<h1 class="mt-4 mb-2 sm:mt-[80px] text-[#bddab2] text-2xl font-bold">Panneau d'administration des
+					souvenirs
 				</h1>
 				<table class="border border-black border-collapse w-full sm:w-9/10">
 					<thead>
@@ -67,7 +68,8 @@
 								<a href="#modal-change-state" class="form-button">Changer le statut</a>
 								<a href="#modal-change-visibility" class="form-button">Changer la visibilité</a>
 								<a href="#modal-delete" class="form-button">Supprimer</a>
-								<a th:href="@{/memory(memoryId=${memory.memoryId})}" class="form-button">Voir</a>
+								<a th:href="@{'/memory/' + ${memory.memoryId} + '-' + ${memory.slug}}"
+									class="form-button">Voir</a>
 							</td>
 						</tr>
 					</tbody>

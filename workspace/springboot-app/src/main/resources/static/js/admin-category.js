@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				memories.forEach(memory => {
 					const line = document.createElement('p');
 					const memoryLink = document.createElement('a');
-					memoryLink.href = `/memory?memoryId=${memory.memoryId}`;
+					memoryLink.href = `/memory/${memory.memoryId}-${memory.slug}`;
 					memoryLink.textContent = memory.title;
 					memoryLink.classList.add('hover:underline');
 					line.append(memoryLink);
