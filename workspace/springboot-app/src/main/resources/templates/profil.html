@@ -4,7 +4,8 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Profil - Mémoires vives</title>
+	<title th:text="'Profil de ' + ${userToDisplay.pseudo} + ' | Mémoires vives'">Profil | Mémoires vives</title>
+	<link rel="canonical" th:href="@{https://memoires-vives.fr/profil?userId={id}(id=${userToDisplay.userId})}"/>
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
 	<link rel="icon" href="/images/public/favicon.png" />
 	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->

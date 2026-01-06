@@ -7,14 +7,16 @@
 	<!--	ajout CRSF token pour méthode POST dans l'appel à l'API-->
 	<meta name="_csrf" th:content="${_csrf.token}">
 	<meta name="_csrf_header" th:content="${_csrf.headerName}">
-	<title>Accueil - Mémoires vives</title>
+	<title>Accueil | Mémoires vives</title>
+	<link rel="canonical" href="https://memoires-vives.fr/"/>
 	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
 	<link rel="icon" href="/images/public/favicon.png" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
 		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 </head>
 
-<body id="body" th:data-authenticated="${#authentication.principal != 'anonymousUser'}" class="min-h-screen flex flex-col">
+<body id="body" th:data-authenticated="${#authentication.principal != 'anonymousUser'}"
+	class="min-h-screen flex flex-col">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
 	<main class="w-full flex-grow flex flex-col items-center">
 		<h1 class="h1-title">Bienvenue sur mémoires vives</h1>
