@@ -35,7 +35,8 @@ public class Memory {
 	@NotBlank
 	@Size(max = 30)
 	private String title;
-	
+
+	@Column(nullable = false)
 	private String slug;
 
 	@Column(nullable = false)
@@ -57,10 +58,10 @@ public class Memory {
 	private Location location;
 
 	@ManyToOne
-	@JoinColumn(name = "category_id", nullable =true)
+	@JoinColumn(name = "category_id", nullable = true)
 	@NotNull
 	private Category category;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	@JsonIgnore
@@ -95,7 +96,7 @@ public class Memory {
 	public String getTitle() {
 		return title;
 	}
-	
+
 	/**
 	 * @return the slug
 	 */
