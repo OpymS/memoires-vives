@@ -19,7 +19,7 @@ import fr.memoires_vives.dto.SearchCriteria;
 @RequestMapping("/api/memory")
 public class MemoryRestController {
 
-	private static final int PAGE_SIZE = 6;
+	private static final int PAGE_SIZE = 12;
 
 	private final MemoryService memoryService;
 

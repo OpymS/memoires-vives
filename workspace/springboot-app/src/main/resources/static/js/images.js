@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const imageInput = document.getElementById('imageInput');
 	const statusDiv = document.getElementById('upload-status');
 	
+	
 	const MAX_FILE_SIZE = 1_999_000;
 	const MAX_DIM = 1400;
 

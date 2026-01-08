@@ -189,14 +189,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 			memoryDiv.className = 'border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw] overflow-hidden duration-200 hover:scale-101';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
-							<img class="absolute rounded-t-lg w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
+							<img class="absolute rounded-t-lg w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}" loading="lazy"/>
 						</div>
 						<h3 class="h3-title mb-2">${memory.title}</h3>
 						<p class="w-full px-1 text-justify">${memory.description}</p>
 				`;
 			} else {
 				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
-						<img class="absolute rounded-t-lg w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="illustration de ${memory.title}" />
+						<img class="absolute rounded-t-lg w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="souvenir sans illustration" loading="lazy"/>
 					</div>
 					<h3 class="h3-title mb-2">${memory.title}</h3>
 					<p class="w-full px-1 font-light text-justify">${memory.description}</p>
@@ -212,9 +212,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const pageLink = document.createElement('span');
 			pageLink.textContent = page;
 			if (page === currentPage) {
-				pageLink.className = 'font-bold text[#7e9076]';
+				pageLink.className = 'font-bold text[#7e9076] cursor-default';
 			} else {
-				pageLink.className = 'font-light text-[#bddab2] hover:text-white hover:bg-[#bddab2] hover:font-bold';
+				pageLink.className = 'font-light text-[#bddab2] cursor-pointer hover:text-white hover:bg-[#bddab2] hover:font-bold';
 				pageLink.addEventListener('click', () => {
 					goToPage(page);
 				});
@@ -233,11 +233,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 			memoryDiv.className = 'flex flex-row h-[200px] w-[350px] items-center p-2 gap-4';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">
-							<img class="w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}"/>
+							<img class="w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}" loading="lazy"/>
 						</div>`;
 			} else {
 				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">
-							<img class="w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="illustration de ${memory.title}"/>
+							<img class="w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="souvenir sans illustration" loading="lazy"/>
 						</div>`;
 			}
 			memoryDiv.innerHTML += `<div class="h-full flex-1 min-w-0 flex flex-col text-black justify-start items-start">

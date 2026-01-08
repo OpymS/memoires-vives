@@ -73,7 +73,7 @@
 							th:alt="'image de profil de ' + ${user.pseudo}" />
 						<img th:if="${user.mediaUUID}==null" id="image"
 							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							src="/images/public/user-placeholder.png" th:alt="'image de profil de ' + ${user.pseudo}" />
+							src="/images/public/user-placeholder.png" th:alt="${user.pseudo} + ' n\'a pas d\'image de profil'" />
 					</label>
 					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden">
 				</div>

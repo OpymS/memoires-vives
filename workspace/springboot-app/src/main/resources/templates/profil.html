@@ -24,7 +24,7 @@
 					th:alt="'image de profil de ' + ${userToDisplay.pseudo}" />
 				<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
 					th:if="${userToDisplay.mediaUUID}==null" src="/images/public/user-placeholder.png"
-					th:alt="'image de profil de ' + ${userToDisplay.pseudo}" />
+					th:alt="${userToDisplay.pseudo} + ' n\'a pas d\'image de profil'" />
 				<div th:if="${userToDisplay.userId == #authentication.principal.user.userId}"
 					th:text="${userToDisplay.email}"></div>
 				<div th:if="${userToDisplay.memories != null and !userToDisplay.memories.empty}">

@@ -55,21 +55,28 @@
 				<!--					</select>-->
 				<!--				</div>-->
 				<div class="image-input mt-2 flex flex-col items-start w-auto">
-					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Choisir
-						l'image associée
-						<img th:if="${memory.mediaUUID}!=null" id="image"
-							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
-							th:alt="'image associée au souvenir ' + ${memory.title}" />
-						<img th:if="${memory.mediaUUID}==null" id="image"
-							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							src="/images/public/memory-placeholder.png"
-							th:alt="'image associée au souvenir ' + ${memory.title}" />
-					</label>
+					<span class="form-label">Choisir l'image associée</span>
+					<div class="flex items-center gap-2">
+						<label for="imageInput"
+							class="cursor-pointer min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] shrink-0 inline-block relative aspect-square">
+							<img id="image" class="rounded-[50%] w-full h-full object-cover"
+								th:src="${memory.mediaUUID != null} ? @{/uploads/{filename}(filename=${memory.mediaUUID})} : @{/images/public/memory-placeholder.png}"
+								th:alt="${memory.mediaUUID != null} ? 'image associée au souvenir ' + ${memory.title} : 'souvenir sans image'" />
+							<!--							<img th:if="${memory.mediaUUID} == null" id="image"-->
+							<!--								class="rounded-[50%] w-full h-full object-cover"-->
+							<!--								src="/images/public/memory-placeholder.png" alt="souvenir sans image" />-->
+						</label>
+						<button type="button" id="removeImageBtn" class="p-2 rounded-full"
+							th:classappend="${memory.mediaUUID == null} ? ' hidden' : ''" title="Supprimer l'image">
+							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
+								alt="supprimer l'image" />
+						</button>
+
+					</div>
 					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden" />
 				</div>
 				<input id="memoryId" th:field="*{memoryId}" type="hidden" />
-				<div class="publish flex items-center gap-2">
+				<div class="publish flex items-center gap-2 mt-4">
 					<label for="publish" class="form-label mb-0 cursor-pointer">Publier</label>
 					<input id="publish" name="publish" type="checkbox"
 						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" class="form-checkbox" />
