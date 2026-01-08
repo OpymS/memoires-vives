@@ -88,6 +88,7 @@ public class MemoryServiceImplWriteTest {
 		m.setTitle("t");
 		m.setDescription("d");
 		m.setMediaUUID(null);
+		m.setMemoryDate(LocalDate.now().minusYears(3L));
 		return m;
 	}
 
@@ -110,6 +111,8 @@ public class MemoryServiceImplWriteTest {
 		User user = makeUser(1L);
 		Location location = makeLocation(1L);
 		Memory memory = new Memory();
+		memory.setMemoryDate(LocalDate.now().minusYears(3L));
+		memory.setTitle("t");
 
 		when(userService.getCurrentUser()).thenReturn(user);
 
@@ -134,6 +137,9 @@ public class MemoryServiceImplWriteTest {
 	void createMemory_shouldApplyUnpublishedState() {
 		Location location = makeLocation(1L);
 		Memory memory = new Memory();
+		memory.setMemoryDate(LocalDate.now().minusYears(3L));
+		memory.setTitle("t");
+		
 		when(userService.getCurrentUser()).thenReturn(new User());
 		when(locationService.saveLocation(location)).thenReturn(location);
 		when(memoryRepository.save(memory)).thenReturn(memory);
