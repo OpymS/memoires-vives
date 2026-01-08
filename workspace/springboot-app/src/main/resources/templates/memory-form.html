@@ -19,8 +19,9 @@
 	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
 		<h1 class="h1-title"
 			th:text="${memory.memoryId == 0 ? 'Partager un nouveau souvenir' : 'Modifier un souvenir'}"></h1>
-		<form th:action="${memory.memoryId == 0} ? @{/memory/new} : @{/memory/modify}" method="POST" th:object="${memory}"
-			enctype="multipart/form-data" id="formWithImage" class="w-full max-w-lg flex flex-col">
+		<form th:action="${memory.memoryId == 0} ? @{/memory/new} : @{/memory/modify}" method="POST"
+			th:object="${memory}" enctype="multipart/form-data" id="formWithImage"
+			class="w-full max-w-lg flex flex-col">
 			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
 			<div class="inputs-container">
 				<div class="title-input">
@@ -93,7 +94,8 @@
 			<div class="buttons-container">
 				<button type="submit" class="button create form-button"
 					th:text="${memory.memoryId == 0 ? 'Créer' : 'Modifier'}"></button>
-				<a th:href="@{'/memory/' + ${memory.memoryId} + '-' + ${memory.slug}}" class="button cancel form-button">Annuler</a>
+				<a th:href="${memory.memoryId == 0} ? @{/} : @{/memory/{id}-{slug} (id=${memory.memoryId}, slug = ${memory.slug})}"
+					class="button cancel form-button">Annuler</a>
 			</div>
 		</form>
 

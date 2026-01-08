@@ -1,5 +1,7 @@
 package fr.memoires_vives.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.MemoryService;
+import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
@@ -34,14 +37,22 @@ public class MemoryController {
 		this.categoryService = categoryService;
 	}
 
+	@ModelAttribute("visibilities")
+	public MemoryVisibility[] visibilities() {
+		return MemoryVisibility.values();
+	}
+
+	@ModelAttribute("categories")
+	public List<Category> categories() {
+		return categoryService.getAllCategories();
+	}
+
 	@GetMapping("/new")
 	public String newMemory(Model model) {
 		Memory memory = new Memory();
 		Location location = new Location();
-		model.addAttribute("visibilities", MemoryVisibility.values());
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
-		model.addAttribute("categories", categoryService.getAllCategories());
 		return "memory-form";
 	}
 
@@ -105,8 +116,6 @@ public class MemoryController {
 		Location location = memory.getLocation();
 		model.addAttribute("memory", memory);
 		model.addAttribute("location", location);
-		model.addAttribute("visibilities", MemoryVisibility.values());
-		model.addAttribute("categories", categoryService.getAllCategories());
 		return "memory-form";
 	}
 
