@@ -19,7 +19,7 @@ public interface MemoryService {
 	Memory getMemoryForModification(long memoryId);
 	Memory getMemoryByImage(String mediaUUID);
 	Memory createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);
-	Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish, Location locationWithUpdate);
+	Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish, Location locationWithUpdate, boolean removeImage);
 	List<Memory> getMemoriesByCategory(Category category);
 	List<Memory> getMemoriesByCategoryForAdmin(long categoryId);
 }

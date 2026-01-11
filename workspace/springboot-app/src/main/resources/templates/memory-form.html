@@ -60,20 +60,20 @@
 						<label for="imageInput"
 							class="cursor-pointer min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] shrink-0 inline-block relative aspect-square">
 							<img id="image" class="rounded-[50%] w-full h-full object-cover"
-								th:src="${memory.mediaUUID != null} ? @{/uploads/{filename}(filename=${memory.mediaUUID})} : @{/images/public/memory-placeholder.png}"
-								th:alt="${memory.mediaUUID != null} ? 'image associée au souvenir ' + ${memory.title} : 'souvenir sans image'" />
-							<!--							<img th:if="${memory.mediaUUID} == null" id="image"-->
-							<!--								class="rounded-[50%] w-full h-full object-cover"-->
-							<!--								src="/images/public/memory-placeholder.png" alt="souvenir sans image" />-->
+								data-placeholder="/images/public/memory-placeholder.png"
+								th:src="${#strings.isEmpty(memory.mediaUUID)} ? @{/images/public/memory-placeholder.png} : @{/uploads/{filename}(filename=${memory.mediaUUID})}"
+								th:alt="${#strings.isEmpty(memory.mediaUUID)} ? 'souvenir sans image' : 'image associée au souvenir ' + ${memory.title}" />
 						</label>
 						<button type="button" id="removeImageBtn" class="p-2 rounded-full"
-							th:classappend="${memory.mediaUUID == null} ? ' hidden' : ''" title="Supprimer l'image">
+							th:classappend="${#strings.isEmpty(memory.mediaUUID)} ? ' hidden' : ''" title="Supprimer l'image">
 							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
 								alt="supprimer l'image" />
 						</button>
 
 					</div>
+					<input type="hidden" th:field="*{mediaUUID}" />
 					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden" />
+					<input type="hidden" name="removeImage" id="removeImage" value="false">
 				</div>
 				<input id="memoryId" th:field="*{memoryId}" type="hidden" />
 				<div class="publish flex items-center gap-2 mt-4">

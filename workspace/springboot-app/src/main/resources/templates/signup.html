@@ -49,14 +49,32 @@
 					</div>
 					<div th:replace="~{fragments/errors/fragment-error :: frag-error(password)}"></div>
 				</div>
+				<!--				<div class="image-input mt-2 flex flex-col items-start w-auto">-->
+				<!--					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Photo de-->
+				<!--						profil-->
+				<!--						<img id="image"-->
+				<!--							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] border border-[#bddab2] hover:border-[#7e9076]"-->
+				<!--							src="" alt="Votre photo…" />-->
+				<!--					</label>-->
+				<!--					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden">-->
+				<!--				</div>-->
 				<div class="image-input mt-2 flex flex-col items-start w-auto">
-					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Photo de
-						profil
-						<img id="image"
-							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] border border-[#bddab2] hover:border-[#7e9076]"
-							src="" alt="Votre photo…" />
-					</label>
-					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden">
+					<span class="form-label">Photo de profil</span>
+					<div class="flex items-center gap-2">
+						<label for="imageInput"
+							class="cursor-pointer min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] shrink-0 inline-block relative aspect-square">
+							<img id="image" class="rounded-[50%] w-full h-full object-cover"
+								data-placeholder="/images/public/user-placeholder.png"
+								src="/images/public/user-placeholder.png" alt="Votre photo…" />
+						</label>
+						<button type="button" id="removeImageBtn" class="p-2 rounded-full hidden"
+							title="Supprimer l'image">
+							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
+								alt="supprimer l'image" />
+						</button>
+
+					</div>
+					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden" />
 				</div>
 				<div th:replace="~{fragments/fragment-captcha :: fragment-captcha}"></div>
 				<div>

@@ -1,6 +1,7 @@
 package fr.memoires_vives.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -69,7 +70,8 @@ public class MemoryControllerTest {
 		mockMvc.perform(post("/memory/modify").with(authenticatedUser()).param("memoryId", "1").param("title", "") // @NotBlank
 				.param("description", "desc").param("memoryDate", "2023-01-01").param("visibility", "PUBLIC")
 				.param("state", "PUBLISHED").param("location.name", "").param("location.latitude", "0")
-				.param("location.longitude", "0")).andExpect(status().isOk()).andExpect(view().name("memory-form"));
+				.param("location.longitude", "0").param("removeImage", "false")).andExpect(status().isOk())
+				.andExpect(view().name("memory-form"));
 
 		verifyNoInteractions(memoryService);
 	}
@@ -79,9 +81,10 @@ public class MemoryControllerTest {
 		ValidationException ve = new ValidationException();
 		ve.addFieldError("title", "Titre invalide");
 
-		doThrow(ve).when(memoryService).updateMemory(any(), any(), any(), any());
+		doThrow(ve).when(memoryService).updateMemory(any(), any(), any(), any(), anyBoolean());
 
-		mockMvc.perform(multipart("/memory/modify").param("memoryId", "42").param("title", "Titre").param("description",
-				"Description")).andExpect(status().isOk()).andExpect(view().name("memory-form"));
+		mockMvc.perform(multipart("/memory/modify").param("memoryId", "42").param("title", "Titre")
+				.param("description", "Description").param("location.name", "").param("removeImage", "false"))
+				.andExpect(status().isOk()).andExpect(view().name("memory-form"));
 	}
 }

@@ -109,14 +109,14 @@ public class UserServiceImpl implements UserService {
 			throw ve;
 		}
 
-		saveProfileImage(user, image, true);
+		saveProfileImage(user, image, false);
 
 		return persistUser(user, ve);
 	}
 
 	@Override
 	@Transactional
-	public User updateProfile(User updatedData, String currentPassword, MultipartFile fileImage) {
+	public User updateProfile(User updatedData, String currentPassword, MultipartFile fileImage, boolean removeImage) {
 		ValidationException ve = new ValidationException();
 
 		User currentUser = getCurrentUser();
@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
 			throw ve;
 		}
 
-		saveProfileImage(userToUpdate, fileImage, false);
+		updateProfileImage(userToUpdate, fileImage, removeImage);
 
 		User saved = persistUser(userToUpdate, ve);
 
@@ -226,6 +226,39 @@ public class UserServiceImpl implements UserService {
 			}
 			// Update : on laisse l'ancienne image
 		}
+	}
+	
+	private void updateProfileImage(User user, MultipartFile newImage, boolean removeImage) {
+
+		boolean hasImage = user.getMediaUUID() != null && !user.getMediaUUID().isBlank();
+
+		if (removeImage && hasImage) {
+			try {
+				fileService.deleteFile(user.getMediaUUID());
+				user.setMediaUUID(null);
+			} catch (FileStorageException e) {
+				// on ne fait rien dans ce cas
+			}
+			return;
+		}
+
+		if (newImage != null && !newImage.isEmpty()) {
+			try {
+				if (hasImage) {
+					fileService.deleteFile(user.getMediaUUID());
+				}
+				user.setMediaUUID(fileService.saveFile(newImage));
+			} catch (FileStorageException e) {
+				if (user.getUserId() == 0) {
+					user.setMediaUUID(null);
+				}
+				// en update, on garde l'ancienne image
+			}
+		}
+		
+		if (!hasImage && (newImage == null || newImage.isEmpty())) {
+	        user.setMediaUUID(null);
+	    }
 	}
 
 	private User persistUser(User user, ValidationException ve) {

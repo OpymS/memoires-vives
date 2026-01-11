@@ -64,18 +64,27 @@
 					</div>
 				</div>
 				<div th:replace="~{fragments/errors/fragment-error :: frag-error(password)}"></div>
+
 				<div class="image-input mt-2 flex flex-col items-start w-auto">
-					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Photo de
-						profil
-						<img th:if="${user.mediaUUID}!=null" id="image"
-							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							th:src="@{/uploads/{filename}(filename=${user.mediaUUID})}"
-							th:alt="'image de profil de ' + ${user.pseudo}" />
-						<img th:if="${user.mediaUUID}==null" id="image"
-							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							src="/images/public/user-placeholder.png" th:alt="${user.pseudo} + ' n\'a pas d\'image de profil'" />
-					</label>
-					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden">
+					<span class="form-label">Photo de profil</span>
+					<div class="flex items-center gap-2">
+						<label for="imageInput"
+							class="cursor-pointer min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] shrink-0 inline-block relative aspect-square">
+							<img id="image" class="rounded-[50%] w-full h-full object-cover"
+								data-placeholder="/images/public/user-placeholder.png"
+								th:src="${#strings.isEmpty(user.mediaUUID)} ? @{/images/public/user-placeholder.png} : @{/uploads/{filename}(filename=${user.mediaUUID})}"
+								th:alt="${#strings.isEmpty(user.mediaUUID)} ? ${user.pseudo} + ' n\'a pas d\'image de profil' : 'image de profil de ' + ${user.pseudo}" />
+						</label>
+						<button type="button" id="removeImageBtn" class="p-2 rounded-full"
+							th:classappend="${#strings.isEmpty(user.mediaUUID)} ? ' hidden' : ''" title="Supprimer l'image">
+							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
+								alt="supprimer l'image" />
+						</button>
+
+					</div>
+					<input type="hidden" th:field="*{mediaUUID}" />
+					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden" />
+					<input type="hidden" name="removeImage" id="removeImage" value="false">
 				</div>
 				<input id="userId" th:field="*{userId}" type="hidden" />
 			</div>

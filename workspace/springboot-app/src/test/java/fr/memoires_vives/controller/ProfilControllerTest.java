@@ -3,6 +3,7 @@ package fr.memoires_vives.controller;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -115,7 +116,7 @@ class ProfilControllerTest {
 		mockMvc.perform(post("/profil/modify").with(csrf()).with(authenticatedUser()).param("email", ""))
 				.andExpect(status().isOk()).andExpect(view().name("profil-modify")).andExpect(model().hasErrors());
 
-		verify(userService, never()).updateProfile(any(), any(), any());
+		verify(userService, never()).updateProfile(any(), any(), any(), anyBoolean());
 	}
 
 	@Test
@@ -124,7 +125,7 @@ class ProfilControllerTest {
 		ValidationException ve = new ValidationException();
 		ve.addFieldError("email", "Email invalide");
 
-		doThrow(ve).when(userService).updateProfile(any(), any(), any());
+		doThrow(ve).when(userService).updateProfile(any(), any(), any(), anyBoolean());
 
 		mockMvc.perform(post("/profil/modify").with(csrf()).with(authenticatedUser())).andExpect(status().isOk())
 				.andExpect(view().name("profil-modify")).andExpect(model().hasErrors());

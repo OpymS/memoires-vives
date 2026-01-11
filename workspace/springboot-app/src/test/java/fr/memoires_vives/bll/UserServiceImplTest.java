@@ -515,7 +515,7 @@ public class UserServiceImplTest {
 		doReturn(false).when(spyUserService).isAdmin();
 
 		assertThrows(UnauthorizedActionException.class,
-				() -> spyUserService.updateProfile(updatedData, "somePassword", null));
+				() -> spyUserService.updateProfile(updatedData, "somePassword", null, false));
 	}
 
 	@Test
@@ -540,7 +540,7 @@ public class UserServiceImplTest {
 		when(passwordEncoder.matches("wrongPassword", currentUser.getPassword())).thenReturn(false);
 
 		ValidationException ex = assertThrows(ValidationException.class,
-				() -> spyUserService.updateProfile(updatedData, "wrongPassword", null));
+				() -> spyUserService.updateProfile(updatedData, "wrongPassword", null, false));
 
 		assertTrue(ex.getFieldErrors().stream().anyMatch(err -> err.getField().equals("currentPassword")));
 	}
@@ -553,7 +553,7 @@ public class UserServiceImplTest {
 		when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
 
 		assertThrows(EntityNotFoundException.class,
-				() -> userService.updateProfile(updatedData, "currentPassword", null));
+				() -> userService.updateProfile(updatedData, "currentPassword", null, false));
 	}
 
 //  Tests de getAllUsers
@@ -586,44 +586,43 @@ public class UserServiceImplTest {
 
 //  Tests de updatePassword
 
-    @Test
-    void updatePassword_throwsValidationException_whenPasswordIsBlank() {
-        User user = new User();
-        user.setUserId(1L);
+	@Test
+	void updatePassword_throwsValidationException_whenPasswordIsBlank() {
+		User user = new User();
+		user.setUserId(1L);
 
-        ValidationException ve = assertThrows(ValidationException.class, () -> {
-            userService.updatePassword(user, "");
-        });
+		ValidationException ve = assertThrows(ValidationException.class, () -> {
+			userService.updatePassword(user, "");
+		});
 
-        assertTrue(ve.getFieldErrors().stream()
-                .anyMatch(fe -> fe.getField().equals("currentPassword")));
-    }
+		assertTrue(ve.getFieldErrors().stream().anyMatch(fe -> fe.getField().equals("currentPassword")));
+	}
 
-    @Test
-    void updatePassword_throwsEntityNotFoundException_whenUserNotFound() {
-        User user = new User();
-        user.setUserId(1L);
+	@Test
+	void updatePassword_throwsEntityNotFoundException_whenUserNotFound() {
+		User user = new User();
+		user.setUserId(1L);
 
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
+		when(userRepository.findByUserId(1L)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> {
-            userService.updatePassword(user, "newPassword");
-        });
-    }
+		assertThrows(EntityNotFoundException.class, () -> {
+			userService.updatePassword(user, "newPassword");
+		});
+	}
 
-    @Test
-    void updatePassword_setsHashedPassword_whenValid() {
-        User user = new User();
-        user.setUserId(1L);
-        User managedUser = new User();
-        managedUser.setUserId(1L);
+	@Test
+	void updatePassword_setsHashedPassword_whenValid() {
+		User user = new User();
+		user.setUserId(1L);
+		User managedUser = new User();
+		managedUser.setUserId(1L);
 
-        when(userRepository.findByUserId(1L)).thenReturn(Optional.of(managedUser));
-        when(passwordEncoder.encode("newPassword")).thenReturn("hashedPassword");
+		when(userRepository.findByUserId(1L)).thenReturn(Optional.of(managedUser));
+		when(passwordEncoder.encode("newPassword")).thenReturn("hashedPassword");
 
-        userService.updatePassword(user, "newPassword");
+		userService.updatePassword(user, "newPassword");
 
-        assertEquals("hashedPassword", managedUser.getPassword());
-    }
+		assertEquals("hashedPassword", managedUser.getPassword());
+	}
 
 }

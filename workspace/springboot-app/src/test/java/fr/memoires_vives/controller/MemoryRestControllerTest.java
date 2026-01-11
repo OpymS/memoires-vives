@@ -74,7 +74,7 @@ public class MemoryRestControllerTest {
 
 		PageRequest pageRequest = pageCaptor.getValue();
 		assertThat(pageRequest.getPageNumber()).isEqualTo(0);
-		assertThat(pageRequest.getPageSize()).isEqualTo(6);
+		assertThat(pageRequest.getPageSize()).isEqualTo(12);
 	}
 
 	@Test

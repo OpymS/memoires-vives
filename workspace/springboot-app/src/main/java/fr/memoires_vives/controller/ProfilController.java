@@ -51,13 +51,14 @@ public class ProfilController {
 	@PostMapping("/modify")
 	public String modifyProfil(@Valid @ModelAttribute("user") User updatedUser, BindingResult bindingResult,
 			@RequestParam(name = "currentPassword", required = false) String currentPassword,
-			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
+			@RequestParam(name = "image", required = false) MultipartFile fileImage,
+			@RequestParam(name = "removeImage", defaultValue = "false") boolean removeImage) {
 		if (bindingResult.hasErrors()) {
 			return "profil-modify";
 		}
 
 		try {
-			userService.updateProfile(updatedUser, currentPassword, fileImage);
+			userService.updateProfile(updatedUser, currentPassword, fileImage, removeImage);
 			return "redirect:/profil?userId=" + updatedUser.getUserId();
 		} catch (ValidationException ve) {
 			ve.getGlobalErrors().forEach(err -> {
@@ -72,9 +73,10 @@ public class ProfilController {
 			return "profil-modify";
 		}
 	}
-	
+
 	@GetMapping("/activation")
-	public String activateUserWithToken(@RequestParam(name="token") String token, Model model, RedirectAttributes redirectAttributes) {
+	public String activateUserWithToken(@RequestParam(name = "token") String token, Model model,
+			RedirectAttributes redirectAttributes) {
 		try {
 			User activatedUser = activationService.activateUser(token);
 			redirectAttributes.addFlashAttribute("message", "Votre compte a été activé. Vous pouvez vous connecter.");
@@ -87,27 +89,27 @@ public class ProfilController {
 	}
 
 	@GetMapping("/activation/resend")
-	public String handleFormResendActivation(@RequestParam(name="username") String username, RedirectAttributes redirectAttributes) {
-	    User user;
-	    
-	    try {
+	public String handleFormResendActivation(@RequestParam(name = "username") String username,
+			RedirectAttributes redirectAttributes) {
+		User user;
+
+		try {
 			user = userService.getUserByPseudo(username);
 		} catch (EntityNotFoundException e) {
 			redirectAttributes.addFlashAttribute("error", e.getMessage());
 			return "redirect:/login";
 		}
 
-	    if (user.isActivated()) {
-	        redirectAttributes.addFlashAttribute("error", "Ce compte est déjà activé.");
-	        return "redirect:/login";
-	    }
+		if (user.isActivated()) {
+			redirectAttributes.addFlashAttribute("error", "Ce compte est déjà activé.");
+			return "redirect:/login";
+		}
 
-	    activationService.regenerateTokenAndSendMail(user);
+		activationService.regenerateTokenAndSendMail(user);
 
-	    redirectAttributes.addFlashAttribute("message",
-	            "Un email d’activation vient de vous être envoyé.");
+		redirectAttributes.addFlashAttribute("message", "Un email d’activation vient de vous être envoyé.");
 
-	    return "redirect:/login";
+		return "redirect:/login";
 	}
-	
+
 }

@@ -2,20 +2,36 @@ document.addEventListener('DOMContentLoaded', () => {
 	const form = document.getElementById('formWithImage');
 	const imageInput = document.getElementById('imageInput');
 	const statusDiv = document.getElementById('upload-status');
-	
-	
+	const image = document.getElementById('image');
+	const removeImgBtn = document.getElementById('removeImageBtn');
+	const isImageRemoved = document.getElementById('removeImage')
+	const mediaName = document.getElementById('mediaUUID');
+
 	const MAX_FILE_SIZE = 1_999_000;
 	const MAX_DIM = 1400;
 
 	imageInput.addEventListener('change', function(e) {
 		const file = e.target.files[0];
+		if (!file) return;
+
 		const reader = new FileReader();
 
 		reader.onload = function(e) {
-			document.getElementById('image').src = e.target.result;
+			image.src = e.target.result;
+			removeImgBtn.classList.remove('hidden');
+			if (isImageRemoved) isImageRemoved.value = 'false';
 		};
 
 		reader.readAsDataURL(file);
+	});
+
+	removeImgBtn.addEventListener('click', () => {
+		imageInput.value = '';
+		image.src = image.dataset.placeholder;
+		image.alt = 'souvenir sans image';
+		if (mediaName) mediaName.value='';
+		if (isImageRemoved) isImageRemoved.value = 'true';
+		removeImgBtn.classList.add('hidden');
 	});
 
 	form.addEventListener('submit', async (e) => {

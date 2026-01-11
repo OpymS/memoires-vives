@@ -13,7 +13,7 @@ public interface UserService {
 	public User getCurrentUser();
 	public User getUserOrCurrent(Long userId);
 	public User createAccount(String pseudo, String email, String password, String passwordConfirm, MultipartFile fileImage);
-	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage);
+	public User updateProfile(User userWithUpdate, String currentPassword, MultipartFile fileImage, boolean removeImage);
 	public List<User> getAllUsers();
 	public boolean isAdmin();
 	public boolean verifyPassword(String rawPassword);
