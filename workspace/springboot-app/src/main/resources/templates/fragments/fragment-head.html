@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="head(title, description, robots, canonical, extraHead)">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title th:text="${title}">Partagez la mémoire locale de votre région | Mémoires vives</title>
+
+	<meta th:if="${description != ''}" name="description" th:content="${description}">
+	<link th:if="${canonical != ''}" rel="canonical" th:href="${canonical}" />
+	<meta th:if="${robots != ''}" name="robots" th:content="${robots ?: 'index, follow'}">
+	<meta name="author" content="Mémoires vives" />
+
+	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}" />
+	<link rel="icon" href="/images/public/favicon.png" />
+
+	<th:block th:if="${extraHead != null}" th:insert="${extraHead}" />
+</head>
+
+</html>

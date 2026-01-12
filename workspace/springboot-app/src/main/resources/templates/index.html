@@ -1,19 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!--	ajout CRSF token pour méthode POST dans l'appel à l'API-->
-	<meta name="_csrf" th:content="${_csrf.token}">
-	<meta name="_csrf_header" th:content="${_csrf.headerName}">
-	<title>Partagez la mémoire locale de votre région | Mémoires vives</title>
-	<link rel="canonical" href="https://memoires-vives.fr/"/>
-	<meta name="robots" content="index, follow">
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<head th:replace="~{fragments/fragment-head :: head(
+	'Partagez la mémoire locale de votre région | Mémoires vives',
+	'Page d’accueil du site',
+	'index, follow',
+	'https://memoires-vives.fr/',
+	~{fragments/fragment-extra-head::indexHead}
+)}">
 </head>
 
 <body id="body" th:data-authenticated="${#authentication.principal != 'anonymousUser'}"

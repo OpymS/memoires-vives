@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Connexion | Mémoires vives</title>
-	<meta name="robots" content="noindex, nofollow">
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
+<head th:replace="~{fragments/fragment-head :: head(
+	'Connexion | Mémoires vives',
+	'',
+	'noindex, nofollow',
+	'',
+	~{}
+)}">
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -17,8 +17,8 @@
 		<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
 		<form th:action="@{/login}" method="post" class="w-full max-w-lg flex flex-col">
 			<label for="username" class="form-label">Nom d'utilisateur:</label>
-			<input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input" th:value="${loginUser}"
-				required />
+			<input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input"
+				th:value="${loginUser}" required />
 
 			<label th:unless="${resendActivation}" for="password" class="form-label">Mot de passe:</label>
 			<div th:unless="${resendActivation}" class="relative w-full">
@@ -37,7 +37,8 @@
 			</div>
 			<div th:if="${error}" th:text="${error}" class="text-red-500 font-light"></div>
 			<div th:if="${resendActivation}">
-				<a th:href="@{/profil/activation/resend(username=${loginUser})}" class="form-button w-full">Renvoyer l'email d'activation</a>
+				<a th:href="@{/profil/activation/resend(username=${loginUser})}" class="form-button w-full">Renvoyer
+					l'email d'activation</a>
 			</div>
 		</form>
 	</main>

@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>400 - Bad Request | Mémoires vives</title>
-	<meta name="robots" content="noindex, nofollow">
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
-	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+<head th:replace="~{fragments/fragment-head :: head(
+	'400 - Bad Request | Mémoires vives',
+	'',
+	'noindex, nofollow',
+	'',
+	~{}
+)}">
 </head>
 
 <body class="min-h-screen flex flex-col">

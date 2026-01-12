@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>À propos | Mémoires vives</title>
-	<meta name="description"
-		content="Mémoires vives est une carte participative des souvenirs : faits historiques, événements culturels ou sportifs, catastrophes naturelles, anecdotes. Contribuez à la mémoire vivante des lieux." />
-	<link rel="canonical" href="https://memoires-vives.fr/about" />
-	<meta name="robots" content="index, follow">
-	<meta name="author" content="Mémoires vives" />
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
+<head th:replace="~{fragments/fragment-head :: head(
+	'À propos | Mémoires vives',
+	'Mémoires vives est une carte participative des souvenirs : faits historiques, événements culturels ou sportifs,
+	 catastrophes naturelles, anecdotes. Contribuez à la mémoire vivante des lieux.',
+	'index, follow',
+	'https://memoires-vives.fr/about',
+	~{}
+)}">
 </head>
 
 <body class="min-h-screen flex flex-col">

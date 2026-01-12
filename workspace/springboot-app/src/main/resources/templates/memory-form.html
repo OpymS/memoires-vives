@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:text="${memory.memoryId == 0 ? 'Nouveau souvenir' : 'Modification d''un souvenir'}+' | Mémoires vives'">
-	</title>
-	<meta name="robots" content="noindex, nofollow">
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
+<head th:replace="~{fragments/fragment-head :: head(
+	${memory.memoryId == 0 ? 'Nouveau souvenir' : 'Modification d’un souvenir'}+' | Mémoires vives',
+	${memory.memoryId == 0 ? 'Création d’un nouveau souvenir' : 'Modification d’un souvenir'},
+	'noindex, nofollow',
+	'',
+	~{fragments/fragment-extra-head::memoryHead}
+)}">
 </head>
 
 <body class="min-h-screen flex flex-col">
