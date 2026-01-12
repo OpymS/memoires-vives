@@ -3,7 +3,7 @@
 
 <head th:replace="~{fragments/fragment-head :: head(
 	${memoryToDisplay.title} + ' | Mémoires vives',
-	'Souvenir',
+	'Souvenir local : ' + ${memoryToDisplay.title} + '. Découvrez une mémoire racontée par la communauté locale.',
 	'index, follow',
 	@{https://memoires-vives.fr/memory/{id}-{slug}(id=${memoryToDisplay.memoryId}, slug=${memoryToDisplay.slug})},
 	~{fragments/fragment-extra-head::memoryHead}

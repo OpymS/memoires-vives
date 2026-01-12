@@ -3,7 +3,7 @@
 
 <head th:replace="~{fragments/fragment-head :: head(
 	'Profil de ' + ${userToDisplay.pseudo} + ' | Mémoires vives',
-	'',
+	'Profil public de ' + ${userToDisplay.pseudo} + ', membre de la communauté Mémoires vives dédiée aux souvenirs locaux.',
 	'index, follow',
 	@{https://memoires-vives.fr/profil?userId={id}(id=${userToDisplay.userId})},
 	~{}
