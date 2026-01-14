@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:text="'Profil de ' + ${userToDisplay.pseudo} + ' | Mémoires vives'">Profil | Mémoires vives</title>
-	<link rel="canonical" th:href="@{https://memoires-vives.fr/profil?userId={id}(id=${userToDisplay.userId})}"/>
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
-	<!--	<link rel="stylesheet" th:href="@{/css/style.css}">-->
+<head th:replace="~{fragments/fragment-head :: head(
+	'Profil de ' + ${userToDisplay.pseudo} + ' | Mémoires vives',
+	'Profil public de ' + ${userToDisplay.pseudo} + ', membre de la communauté Mémoires vives dédiée aux souvenirs locaux.',
+	'index, follow',
+	@{https://memoires-vives.fr/profil?userId={id}(id=${userToDisplay.userId})},
+	~{}
+)}">
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -24,13 +23,14 @@
 					th:alt="'image de profil de ' + ${userToDisplay.pseudo}" />
 				<img class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
 					th:if="${userToDisplay.mediaUUID}==null" src="/images/public/user-placeholder.png"
-					th:alt="'image de profil de ' + ${userToDisplay.pseudo}" />
+					th:alt="${userToDisplay.pseudo} + ' n\'a pas d\'image de profil'" />
 				<div th:if="${userToDisplay.userId == #authentication.principal.user.userId}"
 					th:text="${userToDisplay.email}"></div>
 				<div th:if="${userToDisplay.memories != null and !userToDisplay.memories.empty}">
 					<div th:each="memory : ${userToDisplay.memories}">
 						<a th:if="${memory.state.name() == 'PUBLISHED' || userToDisplay.userId == #authentication.principal.user.userId}"
-							th:href="@{'/memory/' + ${memory.memoryId} + '-' + ${memory.slug}}" th:text="${memory.title}" class="hover:underline"></a>
+							th:href="@{'/memory/' + ${memory.memoryId} + '-' + ${memory.slug}}"
+							th:text="${memory.title}" class="hover:underline"></a>
 					</div>
 				</div>
 				<div th:if="${userToDisplay.memories == null or userToDisplay.memories.empty}">
@@ -45,8 +45,8 @@
 				<!--					Aucun ami à afficher-->
 				<!--				</div>-->
 			</div>
-			<div th:if="${userToDisplay.userId == #authentication.principal.user.userId}"><a
-					th:href="@{/profil/modify}" class="form-button">Modifier</a></div>
+			<div th:if="${userToDisplay.userId == #authentication.principal.user.userId}"><a th:href="@{/profil/modify}"
+					class="form-button">Modifier</a></div>
 		</div>
 	</main>
 	<div th:replace="~{fragments/fragment-footer :: footer}"></div>

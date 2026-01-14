@@ -140,17 +140,17 @@ public class MemoryServiceImpl implements MemoryService {
 		memory.setRememberer(rememberer);
 		Hibernate.initialize(rememberer.getMemories());
 
-		updateMedia(memory, image);
+		updateMedia(memory, image, false);
 
 		memory.setSlug(SlugUtil.toSlug(memory));
-		
+
 		return saveMemory(memory);
 	}
 
 	@Override
 	@Transactional
-	public Memory updateMemory(Memory updatedData, MultipartFile newImage, Boolean publish,
-			Location locationWithUpdate) {
+	public Memory updateMemory(Memory updatedData, MultipartFile newImage, Boolean publish, Location locationWithUpdate,
+			boolean removeImage) {
 
 		Memory existingMemory = fetchExistingMemory(updatedData.getMemoryId());
 
@@ -160,10 +160,10 @@ public class MemoryServiceImpl implements MemoryService {
 
 		updateState(existingMemory, publish);
 
-		updateMedia(existingMemory, newImage);
+		updateMedia(existingMemory, newImage, removeImage);
 
 		updateLocation(existingMemory, locationWithUpdate);
-		
+
 		existingMemory.setSlug(SlugUtil.toSlug(existingMemory));
 
 		return saveMemory(existingMemory);
@@ -191,6 +191,10 @@ public class MemoryServiceImpl implements MemoryService {
 	private Specification<Memory> createSpecification(SearchCriteria criteria) {
 		// TODO Gérer la visibilité. Pas critique pour l'instant car tous les souvenirs
 		// sont publics dès qu'ils sont publiés.
+		if (criteria == null) {
+			return null;
+		}
+		
 		return (Root<Memory> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
@@ -383,21 +387,37 @@ public class MemoryServiceImpl implements MemoryService {
 		memory.setState(shouldPublish ? MemoryState.PUBLISHED : MemoryState.CREATED);
 	}
 
-	private void updateMedia(Memory memory, MultipartFile newImage) {
-		if (newImage == null || newImage.isEmpty()) {
+	private void updateMedia(Memory memory, MultipartFile newImage, boolean removeImage) {
+
+		boolean hasImage = memory.getMediaUUID() != null && !memory.getMediaUUID().isBlank();
+
+		if (removeImage && hasImage) {
+			try {
+				fileService.deleteFile(memory.getMediaUUID());
+				memory.setMediaUUID(null);
+			} catch (FileStorageException e) {
+				// on ne fait rien dans ce cas
+			}
 			return;
 		}
-		try {
-			if (memory.getMemoryId() != 0) {
-				fileService.deleteFile(memory.getMediaUUID());
+
+		if (newImage != null && !newImage.isEmpty()) {
+			try {
+				if (hasImage) {
+					fileService.deleteFile(memory.getMediaUUID());
+				}
+				memory.setMediaUUID(fileService.saveFile(newImage));
+			} catch (FileStorageException e) {
+				if (memory.getMemoryId() == 0) {
+					memory.setMediaUUID(null);
+				}
+				// en update, on garde l'ancienne image
 			}
-			memory.setMediaUUID(fileService.saveFile(newImage));
-		} catch (FileStorageException e) {
-			if (memory.getMemoryId() == 0) {
-				memory.setMediaUUID(null);
-			}
-			// en update, on ne fait rien, on laisse l'ancienne image
 		}
+		
+		if (!hasImage && (newImage == null || newImage.isEmpty())) {
+	        memory.setMediaUUID(null);
+	    }
 	}
 
 	private void updateLocation(Memory memory, Location locationWithUpdate) {

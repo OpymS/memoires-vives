@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:text="${memory.memoryId == 0 ? 'Nouveau souvenir' : 'Modification d''un souvenir'}+' | Mémoires vives'">
-	</title>
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
+<head th:replace="~{fragments/fragment-head :: head(
+	${memory.memoryId == 0 ? 'Nouveau souvenir' : 'Modification d’un souvenir'}+' | Mémoires vives',
+	${memory.memoryId == 0 ? 'Création d’un nouveau souvenir' : 'Modification d’un souvenir'},
+	'noindex, nofollow',
+	'',
+	~{fragments/fragment-extra-head::memoryHead}
+)}">
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -55,21 +52,28 @@
 				<!--					</select>-->
 				<!--				</div>-->
 				<div class="image-input mt-2 flex flex-col items-start w-auto">
-					<label for="imageInput" class="form-label inline-flex items-center gap-2 cursor-pointer">Choisir
-						l'image associée
-						<img th:if="${memory.mediaUUID}!=null" id="image"
-							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
-							th:alt="'image associée au souvenir ' + ${memory.title}" />
-						<img th:if="${memory.mediaUUID}==null" id="image"
-							class="rounded-[50%] min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px]"
-							src="/images/public/memory-placeholder.png"
-							th:alt="'image associée au souvenir ' + ${memory.title}" />
-					</label>
+					<span class="form-label">Choisir l'image associée</span>
+					<div class="flex items-center gap-2">
+						<label for="imageInput"
+							class="cursor-pointer min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] shrink-0 inline-block relative aspect-square">
+							<img id="image" class="rounded-[50%] w-full h-full object-cover"
+								data-placeholder="/images/public/memory-placeholder.png"
+								th:src="${#strings.isEmpty(memory.mediaUUID)} ? @{/images/public/memory-placeholder.png} : @{/uploads/{filename}(filename=${memory.mediaUUID})}"
+								th:alt="${#strings.isEmpty(memory.mediaUUID)} ? 'souvenir sans image' : 'image associée au souvenir ' + ${memory.title}" />
+						</label>
+						<button type="button" id="removeImageBtn" class="p-2 rounded-full cursor-pointer"
+							th:classappend="${#strings.isEmpty(memory.mediaUUID)} ? ' hidden' : ''" title="Supprimer l'image">
+							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
+								alt="supprimer l'image" />
+						</button>
+
+					</div>
+					<input type="hidden" th:field="*{mediaUUID}" />
 					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden" />
+					<input type="hidden" name="removeImage" id="removeImage" value="false">
 				</div>
 				<input id="memoryId" th:field="*{memoryId}" type="hidden" />
-				<div class="publish flex items-center gap-2">
+				<div class="publish flex items-center gap-2 mt-4">
 					<label for="publish" class="form-label mb-0 cursor-pointer">Publier</label>
 					<input id="publish" name="publish" type="checkbox"
 						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" class="form-checkbox" />

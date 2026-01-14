@@ -159,7 +159,7 @@ public class MemoryServiceImplWriteTest {
         updated.setMemoryId(10L);
 
         assertThrows(EntityNotFoundException.class,
-                () -> memoryService.updateMemory(updated, null, false, new Location()));
+                () -> memoryService.updateMemory(updated, null, false, new Location(), false));
 
         verify(userService, never()).getCurrentUser();
         verify(memoryRepository, never()).save(any());
@@ -191,7 +191,7 @@ public class MemoryServiceImplWriteTest {
 
 		when(memoryRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-		Memory result = memoryService.updateMemory(updated, null, false, locationWithUpdate);
+		Memory result = memoryService.updateMemory(updated, null, false, locationWithUpdate, false);
 
 		assertNotNull(result);
 
@@ -236,7 +236,7 @@ public class MemoryServiceImplWriteTest {
 
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-		Memory result = memoryService.updateMemory(updated, null, false, locationWithUpdate);
+		Memory result = memoryService.updateMemory(updated, null, false, locationWithUpdate, false);
 
 		assertEquals("new title", result.getTitle());
 		assertEquals("new desc", result.getDescription());
@@ -262,7 +262,7 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, null, true, location);
+		Memory result = memoryService.updateMemory(updated, null, true, location, false);
 
 		assertEquals(MemoryState.PUBLISHED, result.getState());
 	}
@@ -285,13 +285,13 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, null, false, location);
+		Memory result = memoryService.updateMemory(updated, null, false, location, false);
 
 		assertEquals(MemoryState.CREATED, result.getState());
 	}
 
 	@Test
-	void updateMemory_shouldNotChangeMedia_whenImageNull() {
+	void updateMemory_shouldNotChangeMedia_whenImageNullAndImageNotDeleted() {
 		long memoryId = 1L;
 		long userId = 5L;
 		long locationId = 8L;
@@ -309,13 +309,15 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, null, false, location);
+		Memory result = memoryService.updateMemory(updated, null, false, location, false);
 
 		assertEquals("uuid123", result.getMediaUUID());
 		verify(fileService, never()).deleteFile(any());
 		verify(fileService, never()).saveFile(any());
 	}
 
+	// TODO test dans le cas où l'utilisateur supprime l'image
+	
 	@Test
 	void updateMemory_shouldReplaceMedia_whenNewImageProvided() throws Exception {
 		long memoryId = 1L;
@@ -339,7 +341,7 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, file, false, location);
+		Memory result = memoryService.updateMemory(updated, file, false, location, false);
 
 		verify(fileService).deleteFile("olduuid");
 		verify(fileService).saveFile(file);
@@ -370,7 +372,7 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, file, false, location);
+		Memory result = memoryService.updateMemory(updated, file, false, location, false);
 
 		assertEquals("olduuid", result.getMediaUUID());
 		verify(fileService).deleteFile("olduuid");
@@ -401,7 +403,7 @@ public class MemoryServiceImplWriteTest {
 		Memory updated = new Memory();
 		updated.setMemoryId(memoryId);
 
-		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation);
+		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation, false);
 
 		verify(locationService).saveLocation(updatedLocation);
 		assertEquals(currentLocationId, updatedLocation.getLocationId());
@@ -440,7 +442,7 @@ public class MemoryServiceImplWriteTest {
 		Memory updated = new Memory();
 		updated.setMemoryId(memoryId);
 
-		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation);
+		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation, false);
 
 		assertEquals(savedNewLoc, result.getLocation());
 	}
@@ -475,7 +477,7 @@ public class MemoryServiceImplWriteTest {
 		Memory updated = new Memory();
 		updated.setMemoryId(memoryId);
 
-		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation);
+		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation, false);
 
 		assertEquals(currentLocation, result.getLocation());
 		verify(locationService, never()).saveLocation(any());
@@ -505,6 +507,6 @@ public class MemoryServiceImplWriteTest {
 
 		Location loc = makeLocation(1L);
 
-		assertThrows(DataPersistenceException.class, () -> memoryService.updateMemory(updated, null, false, loc));
+		assertThrows(DataPersistenceException.class, () -> memoryService.updateMemory(updated, null, false, loc, false));
 	}
 }

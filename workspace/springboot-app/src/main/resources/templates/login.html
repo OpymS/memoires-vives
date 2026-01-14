@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Connexion | Mémoires vives</title>
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
+<head th:replace="~{fragments/fragment-head :: head(
+	'Connexion | Mémoires vives',
+	'',
+	'noindex, nofollow',
+	'',
+	~{}
+)}">
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -16,8 +17,8 @@
 		<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
 		<form th:action="@{/login}" method="post" class="w-full max-w-lg flex flex-col">
 			<label for="username" class="form-label">Nom d'utilisateur:</label>
-			<input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input" th:value="${loginUser}"
-				required />
+			<input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input"
+				th:value="${loginUser}" required />
 
 			<label th:unless="${resendActivation}" for="password" class="form-label">Mot de passe:</label>
 			<div th:unless="${resendActivation}" class="relative w-full">
@@ -26,17 +27,18 @@
 				<button type="button"
 					class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
 			</div>
-			<button th:unless="${resendActivation}" type="submit" class="form-button">Se connecter</button>
 			<div th:unless="${resendActivation}">
 				<label for="remember-me" class="font-light text-sm">Se souvenir de moi</label>
 				<input type="checkbox" name="remember-me" id="remember-me" class="accent-[#7e9076]">
 			</div>
+			<button th:unless="${resendActivation}" type="submit" class="form-button">Se connecter</button>
 			<div th:unless="${resendActivation}" class="forgot-password-container w-full mt-4">
 				<a href="/forgot-password" class="py-2 rounded hover:bg-[#bddab2]"> Mot de passe oublié</a>
 			</div>
 			<div th:if="${error}" th:text="${error}" class="text-red-500 font-light"></div>
 			<div th:if="${resendActivation}">
-				<a th:href="@{/profil/activation/resend(username=${loginUser})}" class="form-button w-full">Renvoyer l'email d'activation</a>
+				<a th:href="@{/profil/activation/resend(username=${loginUser})}" class="form-button w-full">Renvoyer
+					l'email d'activation</a>
 			</div>
 		</form>
 	</main>

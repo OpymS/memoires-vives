@@ -123,14 +123,15 @@ public class MemoryController {
 	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
 			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
 			@RequestParam(name = "publish", required = false) Boolean published,
-			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
+			@RequestParam(name = "image", required = false) MultipartFile fileImage,
+			@RequestParam(name = "removeImage", defaultValue = "false") boolean removeImage) {
 
 		if (bindingResult.hasErrors() || locationBindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
 		try {
-			memoryService.updateMemory(memory, fileImage, published, location);
+			memoryService.updateMemory(memory, fileImage, published, location, removeImage);
 			return "redirect:/memory/" + memory.getMemoryId() + "-" + memory.getSlug();
 		} catch (ValidationException ve) {
 			ve.getGlobalErrors().forEach(err -> {

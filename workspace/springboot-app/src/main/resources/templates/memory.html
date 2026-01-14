@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:text="${memoryToDisplay.title} + ' | Mémoires vives'">Souvenir | Mémoires vives</title>
-	<link rel="canonical" th:href="@{https://memoires-vives.fr/memory/{id}-{slug}(id=${memoryToDisplay.memoryId}, slug=${memoryToDisplay.slug})}"/>
-	<link rel="stylesheet" th:href="@{/css/style.build.tailwind.css}">
-	<link rel="icon" href="/images/public/favicon.png" />
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-		integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<head th:replace="~{fragments/fragment-head :: head(
+	${memoryToDisplay.title} + ' | Mémoires vives',
+	'Souvenir local : ' + ${memoryToDisplay.title} + '. Découvrez une mémoire racontée par la communauté locale.',
+	'index, follow',
+	@{https://memoires-vives.fr/memory/{id}-{slug}(id=${memoryToDisplay.memoryId}, slug=${memoryToDisplay.slug})},
+	~{fragments/fragment-extra-head::memoryHead}
+)}">
 </head>
 
 <body class="md:h-screen flex flex-col md:overflow-hidden">
@@ -25,19 +23,19 @@
 					<img class="min-w-[150px] min-h-[150px] max-w-4/5 max-h-2/3"
 						th:if="${memoryToDisplay.mediaUUID}!=null"
 						th:src="@{/uploads/{filename}(filename=${memoryToDisplay.mediaUUID})}"
-						alt="image d'illustration du souvenir" />
+						th:alt="'image illustrant ' + ${memoryToDisplay.title}" fetchpriority="high"/>
 					<img class="min-w-[150px] min-h-[150px] max-w-4/5 max-h-2/3"
 						th:if="${memoryToDisplay.mediaUUID}==null" src="/images/public/memory-placeholder.png"
-						alt="image d'illustration du souvenir" />
+						alt="ce souvenir n'a pas d'image" />
 					<div class="w-3/5 text-center text-sm">
 						Souvenir de <a th:href="@{/profil(userId=${memoryToDisplay.rememberer.userId})}"
 							th:text="${memoryToDisplay.rememberer.pseudo}"
 							class="text-[#7e9076] hover:text-white hover:bg-[#bddab2]"></a> du <span
 							th:text="${#temporals.format(memoryToDisplay.memoryDate, 'dd MMMM yyyy')}"></span>
 					</div>
-					<div th:text="${memoryToDisplay.description}"
+					<p th:text="${memoryToDisplay.description}"
 						class="w-4/5 font-light text-justify mt-4 md:overflow-y-auto">
-					</div>
+					</p>
 				</div>
 				<div
 					th:if="${#authentication.authorities.?[#this.authority == 'ROLE_ANONYMOUS'].isEmpty() and memoryToDisplay.rememberer.userId == #authentication?.principal?.user?.userId}">
