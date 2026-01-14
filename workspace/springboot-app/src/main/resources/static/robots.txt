@@ -1,0 +1,15 @@
+User-agent: *
+# Pages techniques / admin
+Disallow: /admin
+Disallow: /api
+Disallow: /memory/new
+Disallow: /memory/modify
+Disallow: /login
+Disallow: /signup
+Disallow: /forgot-password
+Disallow: /profil/activation
+Disallow: /profil/modify
+Disallow: /memory-form
+
+# Sitemap
+Sitemap: https://memoires-vives.fr/sitemap.xml

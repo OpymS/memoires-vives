@@ -61,7 +61,7 @@
 								th:src="${#strings.isEmpty(memory.mediaUUID)} ? @{/images/public/memory-placeholder.png} : @{/uploads/{filename}(filename=${memory.mediaUUID})}"
 								th:alt="${#strings.isEmpty(memory.mediaUUID)} ? 'souvenir sans image' : 'image associée au souvenir ' + ${memory.title}" />
 						</label>
-						<button type="button" id="removeImageBtn" class="p-2 rounded-full"
+						<button type="button" id="removeImageBtn" class="p-2 rounded-full cursor-pointer"
 							th:classappend="${#strings.isEmpty(memory.mediaUUID)} ? ' hidden' : ''" title="Supprimer l'image">
 							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
 								alt="supprimer l'image" />

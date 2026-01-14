@@ -191,6 +191,10 @@ public class MemoryServiceImpl implements MemoryService {
 	private Specification<Memory> createSpecification(SearchCriteria criteria) {
 		// TODO Gérer la visibilité. Pas critique pour l'instant car tous les souvenirs
 		// sont publics dès qu'ils sont publiés.
+		if (criteria == null) {
+			return null;
+		}
+		
 		return (Root<Memory> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
