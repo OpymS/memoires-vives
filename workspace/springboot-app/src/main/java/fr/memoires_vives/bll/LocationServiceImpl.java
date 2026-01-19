@@ -1,6 +1,7 @@
 package fr.memoires_vives.bll;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,4 +50,17 @@ public class LocationServiceImpl implements LocationService {
 		return locationRepository.findInSquare(north, south, east, west);
 	}
 
+	@Override
+	public Location createFromCoordinates(double latitude, double longitude) {
+		Location location = new Location();
+		location.setName(createLocationName());
+		location.setLatitude(latitude);
+		location.setLongitude(longitude);
+		
+		return location;
+	}
+	
+	private String createLocationName() {
+		return UUID.randomUUID().toString().substring(0, 30);
+	}
 }

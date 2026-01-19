@@ -21,19 +21,21 @@ import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.component.CaptchaCounter;
+import fr.memoires_vives.exception.EntityNotFoundException;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 	private static final int PAGE_SIZE = 500;
-	
+
 	private final UserService userService;
 	private final MemoryService memoryService;
 	private final CategoryService categoryService;
 	private final LocationService locationService;
 	private final CaptchaCounter counter;
-	
-	public AdminController(UserService userService, MemoryService memoryService, CategoryService categoryService, LocationService locationService, CaptchaCounter counter) {
+
+	public AdminController(UserService userService, MemoryService memoryService, CategoryService categoryService,
+			LocationService locationService, CaptchaCounter counter) {
 		this.userService = userService;
 		this.memoryService = memoryService;
 		this.categoryService = categoryService;
@@ -46,51 +48,53 @@ public class AdminController {
 		model.addAttribute("counter", counter.getCount());
 		return "admin";
 	}
-	
+
 	@GetMapping("/users")
 	public String showAdminUsers(Model model) {
 		List<User> users = userService.getAllUsers();
 		model.addAttribute("users", users);
 		return "admin-users";
 	}
-	
+
 	@GetMapping("/memories")
-	public String showAdminMemories(Model model, @RequestParam(name = "currentPage", defaultValue = "1") int currentPage) {
-		Page<Memory> memories = memoryService.findMemories(PageRequest.of(currentPage-1, PAGE_SIZE));
+	public String showAdminMemories(Model model,
+			@RequestParam(name = "currentPage", defaultValue = "1") int currentPage) {
+		Page<Memory> memories = memoryService.findMemories(PageRequest.of(currentPage - 1, PAGE_SIZE));
 		model.addAttribute("memories", memories);
 		return "admin-memories";
 	}
-	
+
 	@GetMapping("/categories")
 	public String showAdminCategories(Model model) {
 		List<Category> categories = categoryService.getAllCategories();
 		model.addAttribute("categories", categories);
 		return "admin-categories";
 	}
-	
+
 	@GetMapping("/locations")
 	public String showAdminLocations(Model model) {
 		List<Location> locations = locationService.getAllLocations();
 		model.addAttribute("locations", locations);
 		return "admin-locations";
 	}
-	
+
 	@GetMapping("/category/new")
 	public String showCategoryForm(Model model) {
 		Category category = new Category();
 		model.addAttribute("category", category);
 		return "category-create";
 	}
-	
+
 	@PostMapping("/category/new")
 	public String postMethodName(@ModelAttribute("category") Category category) {
-		categoryService.createCategory(category);		
+		categoryService.createCategory(category);
 		return "redirect:/admin/categories";
 	}
-	
+
 	@GetMapping("/category/modify")
-	public String showCategoryForm(@RequestParam(name = "categoryId", required=true) long categoryId, Model model) {
-		Category category = categoryService.getCategoryById(categoryId);
+	public String showCategoryForm(@RequestParam(name = "categoryId", required = true) long categoryId, Model model) {
+		Category category = categoryService.getCategoryById(categoryId)
+				.orElseThrow(() -> new EntityNotFoundException("Catégorie introuvable"));
 		model.addAttribute("category", category);
 		return "category-create";
 	}

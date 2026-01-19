@@ -6,17 +6,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	const init = () => {
 		const latitudeInput = document.getElementById('latitude');
 		const longitudeInput = document.getElementById('longitude');
-		const placeNameInput = document.getElementById('locationName');
+		const selectedInput = document.getElementById('locationSelected');
+		//		const placeNameInput = document.getElementById('locationName');
 
 		const latitude = parseFloat(latitudeInput.value) || 0;
 		const longitude = parseFloat(longitudeInput.value) || 0;
-		const placeName = placeNameInput.value;
+		//		const placeName = placeNameInput.value;
 
 		let userLat = 0;
 		let userLong = 0;
 		let newLatitude = latitude;
 		let newLongitude = longitude;
-		let newPlaceName = placeName;
+		let locationSelected = selectedInput.value;
+		//		let newPlaceName = placeName;
 
 		let map;
 		let marker;
@@ -25,15 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 		initModal();
-		initMap(latitude, longitude, placeName);
+		initMap(latitude, longitude);
 
 		function openModal(e) {
 			e.preventDefault();
 			document.getElementById('modal').classList.remove('hidden');
-
-			if (placeName !== '') {
+			if (locationSelected === "true") {
 				if (mapFirstOpening) {
-					marker = createMarker(latitude, longitude, placeName);
+					marker = createMarker(latitude, longitude);
 					mapFirstOpening = false;
 				}
 				map.on('click', moveLocation);
@@ -66,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			document.getElementById('validateLocation').addEventListener('click', validateLocation);
 		}
 
-		function initMap(latitude, longitude, placeName) {
+		function initMap(latitude, longitude) {
 
 			if ("geolocation" in navigator) {
 				navigator.geolocation.getCurrentPosition((userPosition) => {
@@ -88,18 +89,20 @@ document.addEventListener('DOMContentLoaded', () => {
 			}).addTo(map);
 		}
 
-		function createMarker(lat, long, name) {
+		function createMarker(lat, long) {
 			const marker = L.marker([lat, long], { draggable: 'true', autoPan: 'true' }).addTo(map);
-			marker.bindPopup(`<input id="placeNameChange" type="text" value="${name}"/><div>${formatLatitude(lat)} - ${formatLongitude(long)}</div>`);
+			marker.bindPopup(`<div>${formatLatitude(lat)} - ${formatLongitude(long)}</div>`);
 			marker.on('dragend', newLocation);
-			marker.on('popupopen', changeName);
+			//			marker.on('popupopen', changeName);
 			return marker;
 		}
 
 		function addLocation(e) {
 			newLatitude = e.latlng.lat;
 			newLongitude = e.latlng.lng;
-			marker = createMarker(newLatitude, newLongitude, newPlaceName);
+			marker = createMarker(newLatitude, newLongitude);
+			locationSelected = true;
+			selectedInput.value = true;
 			map.off('click', addLocation);
 			map.on('click', moveLocation);
 		}
@@ -112,26 +115,26 @@ document.addEventListener('DOMContentLoaded', () => {
 		function newLocation() {
 			newLatitude = marker.getLatLng().lat;
 			newLongitude = marker.getLatLng().lng;
-			marker.bindPopup(`<input id="placeNameChange" type="text" value="${newPlaceName}" placeholder="Donnez un nom à ce lieu"/><div>${formatLatitude(newLatitude)} - ${formatLongitude(newLongitude)}</div>`);
+			marker.bindPopup(`<div>${formatLatitude(newLatitude)} - ${formatLongitude(newLongitude)}</div>`);
 		}
 
 		function validateLocation(e) {
 			e.preventDefault();
-			if (newPlaceName === '') {
-				giveAName(e);
-			} else {
-				while (newLongitude > 180) {
-					newLongitude -= 360;
-				}
-				while (newLongitude < -180) {
-					newLongitude += 360;
-				}
-				latitudeInput.value = newLatitude;
-				longitudeInput.value = newLongitude;
-				placeNameInput.value = newPlaceName;
-				console.log(placeNameInput.value);
-				closeModal(e, 'modal');
+			//			if (newPlaceName === '') {
+			//				giveAName(e);
+			//			} else {
+			while (newLongitude > 180) {
+				newLongitude -= 360;
 			}
+			while (newLongitude < -180) {
+				newLongitude += 360;
+			}
+			latitudeInput.value = newLatitude;
+			longitudeInput.value = newLongitude;
+//			placeNameInput.value = newPlaceName;
+//			console.log(placeNameInput.value);
+			closeModal(e, 'modal');
+
 		}
 
 		function changeName() {
@@ -172,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		function validate(e) {
 			e.preventDefault();
-			newPlaceName = document.getElementById('modalNameInput').value;
+//			newPlaceName = document.getElementById('modalNameInput').value;
 			closeModal(e, 'modalName');
 			openModal(e);
 			validateLocation(e);

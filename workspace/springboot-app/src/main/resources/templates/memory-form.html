@@ -2,8 +2,8 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{fragments/fragment-head :: head(
-	${memory.memoryId == 0 ? 'Nouveau souvenir' : 'Modification d’un souvenir'}+' | Mémoires vives',
-	${memory.memoryId == 0 ? 'Création d’un nouveau souvenir' : 'Modification d’un souvenir'},
+	${memoryForm.memoryId == 0 ? 'Nouveau souvenir' : 'Modification d’un souvenir'}+' | Mémoires vives',
+	${memoryForm.memoryId == 0 ? 'Création d’un nouveau souvenir' : 'Modification d’un souvenir'},
 	'noindex, nofollow',
 	'',
 	~{fragments/fragment-extra-head::memoryHead}
@@ -15,9 +15,9 @@
 
 	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
 		<h1 class="h1-title"
-			th:text="${memory.memoryId == 0 ? 'Partager un nouveau souvenir' : 'Modifier un souvenir'}"></h1>
-		<form th:action="${memory.memoryId == 0} ? @{/memory/new} : @{/memory/modify}" method="POST"
-			th:object="${memory}" enctype="multipart/form-data" id="formWithImage"
+			th:text="${memoryForm.memoryId == 0 ? 'Partager un nouveau souvenir' : 'Modifier un souvenir'}"></h1>
+		<form th:action="${memoryForm.memoryId == 0} ? @{/memory/new} : @{/memory/modify}" method="POST"
+			th:object="${memoryForm}" enctype="multipart/form-data" id="formWithImage"
 			class="w-full max-w-lg flex flex-col">
 			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
 			<div class="inputs-container">
@@ -34,7 +34,7 @@
 				</div>
 				<div class="category-input">
 					<label for="category" class="form-label">Catégorie </label>
-					<select id="category" name="category" th:field="*{category}" class="form-input">
+					<select id="category" name="category" th:field="*{categoryId}" class="form-input">
 						<option th:each="cat : ${categories}" th:value="${cat.categoryId}" th:text="${cat.name}">
 						</option>
 					</select>
@@ -58,11 +58,11 @@
 							class="cursor-pointer min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] shrink-0 inline-block relative aspect-square">
 							<img id="image" class="rounded-[50%] w-full h-full object-cover"
 								data-placeholder="/images/public/memory-placeholder.png"
-								th:src="${#strings.isEmpty(memory.mediaUUID)} ? @{/images/public/memory-placeholder.png} : @{/uploads/{filename}(filename=${memory.mediaUUID})}"
-								th:alt="${#strings.isEmpty(memory.mediaUUID)} ? 'souvenir sans image' : 'image associée au souvenir ' + ${memory.title}" />
+								th:src="${#strings.isEmpty(memoryForm.mediaUUID)} ? @{/images/public/memory-placeholder.png} : @{/uploads/{filename}(filename=${memoryForm.mediaUUID})}"
+								th:alt="${#strings.isEmpty(memoryForm.mediaUUID)} ? 'souvenir sans image' : 'image associée au souvenir ' + ${memoryForm.title}" />
 						</label>
 						<button type="button" id="removeImageBtn" class="p-2 rounded-full cursor-pointer"
-							th:classappend="${#strings.isEmpty(memory.mediaUUID)} ? ' hidden' : ''" title="Supprimer l'image">
+							th:classappend="${#strings.isEmpty(memoryForm.mediaUUID)} ? ' hidden' : ''" title="Supprimer l'image">
 							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
 								alt="supprimer l'image" />
 						</button>
@@ -78,13 +78,11 @@
 					<input id="publish" name="publish" type="checkbox"
 						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" class="form-checkbox" />
 				</div>
-				<div th:object="${location}">
-					<div class="name-input">
-						<label for="locationName" class="form-label">Lieu</label>
-						<input id="locationName" th:field="*{name}" type="text" placeholder="…"
-							class="border-none mx-2 bg-white font-light" readonly />
-						<button id="openModalBtn" class="form-button"
-							th:text="${memory.memoryId == 0 ?'Choisir un lieu':'Modifier le lieu'}"></button>
+				<div>
+					<div class="location-input">
+						<input type="hidden" id="locationSelected" th:field="*{locationSelected}" />
+						<button id="openModalBtn" type="button" class="form-button"
+							th:text="${memoryForm.memoryId == 0 ?'Choisir un lieu':'Modifier le lieu'}"></button>
 					</div>
 					<div class="latitude-input hidden">
 						<input id="latitude" th:field="*{latitude}" type="text" readonly />
@@ -92,13 +90,14 @@
 					<div class="longitude-input hidden">
 						<input id="longitude" th:field="*{longitude}" type="text" class="hidden" readonly />
 					</div>
+					<div th:replace="~{fragments/errors/fragment-error :: frag-error(locationSelected)}"></div>
 				</div>
 			</div>
 
 			<div class="buttons-container">
 				<button type="submit" class="button create form-button"
-					th:text="${memory.memoryId == 0 ? 'Créer' : 'Modifier'}"></button>
-				<a th:href="${memory.memoryId == 0} ? @{/} : @{/memory/{id}-{slug} (id=${memory.memoryId}, slug = ${memory.slug})}"
+					th:text="${memoryForm.memoryId == 0 ? 'Créer' : 'Modifier'}"></button>
+				<a th:href="${memoryForm.memoryId == 0} ? @{/} : @{/memory/{id}-{slug} (id=${memoryForm.memoryId}, slug = ${memoryForm.slug})}"
 					class="button cancel form-button">Annuler</a>
 			</div>
 		</form>
@@ -116,7 +115,7 @@
 			<button
 				class="js-close-modal px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
 			<h2 id="title-modal" class="h2-title"
-				th:text="${memory.memoryId == 0 ? 'Choisissez un lieu pour votre souvenir' : 'Modifier le lieu de votre souvenir'}">
+				th:text="${memoryForm.memoryId == 0 ? 'Choisissez un lieu pour votre souvenir' : 'Modifier le lieu de votre souvenir'}">
 			</h2>
 			<div id="map" class="h-9/10 w-9/10 mb-4 mx-auto border border-black"></div>
 			<p id="southWest"></p>

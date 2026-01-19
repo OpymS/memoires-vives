@@ -24,11 +24,13 @@ import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.dto.MemoryForm;
 import fr.memoires_vives.dto.SearchCriteria;
 import fr.memoires_vives.exception.DataPersistenceException;
 import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.FileStorageException;
 import fr.memoires_vives.exception.UnauthorizedActionException;
+import fr.memoires_vives.exception.ValidationException;
 import fr.memoires_vives.repositories.MemoryRepository;
 import fr.memoires_vives.utils.SlugUtil;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -124,8 +126,10 @@ public class MemoryServiceImpl implements MemoryService {
 
 	@Override
 	@Transactional
-	public Memory createMemory(Memory memory, MultipartFile image, Boolean published, Location location) {
+	public Memory createMemory(MemoryForm form, MultipartFile image, Boolean published) {
 		User rememberer = userService.getCurrentUser();
+		Memory memory = toMemoryEntity(form);
+		Location location = locationService.createFromCoordinates(form.getLatitude(), form.getLongitude());
 		if (rememberer == null) {
 			throw new UnauthorizedActionException("Vous devez vous connecter pour ajouter un souvenir");
 		}
@@ -179,7 +183,8 @@ public class MemoryServiceImpl implements MemoryService {
 		if (!userService.isAdmin()) {
 			throw new UnauthorizedActionException("Access forbidden");
 		}
-		Category category = categoryService.getCategoryById(categoryId);
+		Category category = categoryService.getCategoryById(categoryId)
+				.orElseThrow(() -> new EntityNotFoundException("Catégorie invalide"));
 		if (category == null) {
 			throw new EntityNotFoundException("Category not found");
 		}
@@ -194,7 +199,7 @@ public class MemoryServiceImpl implements MemoryService {
 		if (criteria == null) {
 			return null;
 		}
-		
+
 		return (Root<Memory> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 
@@ -382,6 +387,24 @@ public class MemoryServiceImpl implements MemoryService {
 		existingMemory.setModificationDate(LocalDateTime.now());
 	}
 
+	private Memory toMemoryEntity(MemoryForm form) {
+		Memory memory = new Memory();
+		memory.setTitle(form.getTitle());
+		memory.setDescription(form.getDescription());
+		memory.setMemoryDate(form.getMemoryDate());
+		memory.setMediaUUID(form.getMediaUUID());
+
+		Category category = categoryService.getCategoryById(form.getCategoryId()).orElseThrow(() -> {
+			ValidationException ve = new ValidationException();
+			ve.addFieldError("category", "Catégorie invalide");
+			return ve;
+		});
+
+		memory.setCategory(category);
+
+		return memory;
+	}
+
 	private void updateState(Memory memory, Boolean publish) {
 		boolean shouldPublish = publish != null && publish;
 		memory.setState(shouldPublish ? MemoryState.PUBLISHED : MemoryState.CREATED);
@@ -414,10 +437,10 @@ public class MemoryServiceImpl implements MemoryService {
 				// en update, on garde l'ancienne image
 			}
 		}
-		
+
 		if (!hasImage && (newImage == null || newImage.isEmpty())) {
-	        memory.setMediaUUID(null);
-	    }
+			memory.setMediaUUID(null);
+		}
 	}
 
 	private void updateLocation(Memory memory, Location locationWithUpdate) {

@@ -1,6 +1,7 @@
 package fr.memoires_vives.bll;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public Category getCategoryById(long categoryId) {
+	public Optional<Category> getCategoryById(long categoryId) {
 		return categoryRepository.findByCategoryId(categoryId);
 	}
 

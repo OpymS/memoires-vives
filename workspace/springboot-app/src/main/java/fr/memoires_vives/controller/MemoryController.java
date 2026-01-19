@@ -16,6 +16,7 @@ import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
+import fr.memoires_vives.dto.MemoryForm;
 import fr.memoires_vives.exception.ValidationException;
 import fr.memoires_vives.utils.SlugUtil;
 import jakarta.validation.Valid;
@@ -49,24 +50,20 @@ public class MemoryController {
 
 	@GetMapping("/new")
 	public String newMemory(Model model) {
-		Memory memory = new Memory();
-		Location location = new Location();
-		model.addAttribute("memory", memory);
-		model.addAttribute("location", location);
+		model.addAttribute("memoryForm", new MemoryForm());
 		return "memory-form";
 	}
 
 	@PostMapping("/new")
-	public String createMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
-			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
+	public String createMemory(@Valid @ModelAttribute("memoryForm") MemoryForm memoryForm, BindingResult bindingResult,
 			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
-		if (bindingResult.hasErrors() || locationBindingResult.hasErrors()) {
+		if (bindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
 		try {
-			memoryService.createMemory(memory, fileImage, published, location);
+			memoryService.createMemory(memoryForm, fileImage, published);
 			return "redirect:/";
 		} catch (ValidationException ve) {
 			ve.getGlobalErrors().forEach(err -> {
@@ -81,14 +78,6 @@ public class MemoryController {
 		}
 
 	}
-
-//	@GetMapping
-//	public String showMemoryPageLegacy(@RequestParam(name = "memoryId", required = false) Long memoryId, Model model) {
-//		System.out.println("attention ancienne méthode");
-//		Memory memoryToDisplay = memoryService.getMemoryById(memoryId);
-//		model.addAttribute("memoryToDisplay", memoryToDisplay);
-//		return "memory";
-//	}
 
 	@GetMapping("/{id:\\d+}-{slug}")
 	public String showMemoryPage(@PathVariable("id") Long memoryId, @PathVariable("slug") String slug, Model model) {
@@ -112,10 +101,8 @@ public class MemoryController {
 	@GetMapping("/modify")
 	public String showModifyMemoryForm(@RequestParam(name = "memoryId", required = true) Long memoryId, Model model) {
 		Memory memory = memoryService.getMemoryForModification(memoryId);
-
-		Location location = memory.getLocation();
-		model.addAttribute("memory", memory);
-		model.addAttribute("location", location);
+		MemoryForm form = MemoryForm.fromMemoryEntity(memory);
+		model.addAttribute("memoryForm", form);
 		return "memory-form";
 	}
 

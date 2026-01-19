@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
+import fr.memoires_vives.dto.MemoryForm;
 import fr.memoires_vives.dto.SearchCriteria;
 
 public interface MemoryService {
@@ -18,7 +19,7 @@ public interface MemoryService {
 	Memory getMemoryById(Long memoryId);
 	Memory getMemoryForModification(long memoryId);
 	Memory getMemoryByImage(String mediaUUID);
-	Memory createMemory(Memory memory, MultipartFile image, Boolean publish, Location location);
+	Memory createMemory(MemoryForm form, MultipartFile image, Boolean publish);
 	Memory updateMemory(Memory memoryWithUpdate, MultipartFile newImage, Boolean publish, Location locationWithUpdate, boolean removeImage);
 	List<Memory> getMemoriesByCategory(Category category);
 	List<Memory> getMemoriesByCategoryForAdmin(long categoryId);

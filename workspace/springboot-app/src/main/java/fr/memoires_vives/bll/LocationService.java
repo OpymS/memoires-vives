@@ -9,4 +9,5 @@ public interface LocationService {
 	Location getById(long locationId);
 	List<Location> getAllLocations();
 	List<Location> getLocationsInSquare(double north, double south, double east, double west);
+	Location createFromCoordinates(double latitude, double longitude);
 }
