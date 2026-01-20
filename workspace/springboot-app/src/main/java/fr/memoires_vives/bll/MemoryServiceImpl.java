@@ -126,7 +126,7 @@ public class MemoryServiceImpl implements MemoryService {
 
 	@Override
 	@Transactional
-	public Memory createMemory(MemoryForm form, MultipartFile image, Boolean published) {
+	public Memory createMemory(MemoryForm form, MultipartFile image) {
 		User rememberer = userService.getCurrentUser();
 		Memory memory = toMemoryEntity(form);
 		Location location = locationService.createFromCoordinates(form.getLatitude(), form.getLongitude());
@@ -136,7 +136,7 @@ public class MemoryServiceImpl implements MemoryService {
 
 		memory.setCreationDate(LocalDateTime.now());
 		updateVisibility(memory);
-		updateState(memory, published);
+		updateState(memory, form.getPublished());
 
 		Location savedLocation = locationService.saveLocation(location);
 		memory.setLocation(savedLocation);
@@ -153,19 +153,22 @@ public class MemoryServiceImpl implements MemoryService {
 
 	@Override
 	@Transactional
-	public Memory updateMemory(Memory updatedData, MultipartFile newImage, Boolean publish, Location locationWithUpdate,
-			boolean removeImage) {
+	public Memory updateMemory(MemoryForm updatedData, MultipartFile newImage, boolean removeImage) {
 
 		Memory existingMemory = fetchExistingMemory(updatedData.getMemoryId());
 
 		assertUserCanModify(existingMemory);
 
-		updateBasicFields(existingMemory, updatedData);
+		Memory updatedMemory = toMemoryEntity(updatedData);
 
-		updateState(existingMemory, publish);
+		updateBasicFields(existingMemory, updatedMemory);
+
+		updateState(existingMemory, updatedData.getPublished());
 
 		updateMedia(existingMemory, newImage, removeImage);
 
+		Location locationWithUpdate = locationService.createFromCoordinates(updatedData.getLatitude(),
+				updatedData.getLongitude());
 		updateLocation(existingMemory, locationWithUpdate);
 
 		existingMemory.setSlug(SlugUtil.toSlug(existingMemory));
@@ -446,8 +449,7 @@ public class MemoryServiceImpl implements MemoryService {
 	private void updateLocation(Memory memory, Location locationWithUpdate) {
 		Location existingLocation = locationService.getById(memory.getLocation().getLocationId());
 
-		boolean isDifferent = !existingLocation.getName().equals(locationWithUpdate.getName())
-				|| Double.compare(existingLocation.getLatitude(), locationWithUpdate.getLatitude()) != 0
+		boolean isDifferent = Double.compare(existingLocation.getLatitude(), locationWithUpdate.getLatitude()) != 0
 				|| Double.compare(existingLocation.getLongitude(), locationWithUpdate.getLongitude()) != 0;
 
 		if (existingLocation.getMemories().size() <= 1) {

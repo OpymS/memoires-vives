@@ -75,8 +75,8 @@
 				<input id="memoryId" th:field="*{memoryId}" type="hidden" />
 				<div class="publish flex items-center gap-2 mt-4">
 					<label for="publish" class="form-label mb-0 cursor-pointer">Publier</label>
-					<input id="publish" name="publish" type="checkbox"
-						th:checked="*{state != null} and *{state.name() == 'PUBLISHED'}" class="form-checkbox" />
+					<input type="checkbox" th:field="*{published}"
+						th:checked="*{published}" class="form-checkbox" />
 				</div>
 				<div>
 					<div class="location-input">
@@ -97,7 +97,8 @@
 			<div class="buttons-container">
 				<button type="submit" class="button create form-button"
 					th:text="${memoryForm.memoryId == 0 ? 'Créer' : 'Modifier'}"></button>
-				<a th:href="${memoryForm.memoryId == 0} ? @{/} : @{/memory/{id}-{slug} (id=${memoryForm.memoryId}, slug = ${memoryForm.slug})}"
+<!--				<a th:href="${memoryForm.memoryId == 0} ? @{/} : @{/memory/{id}-{slug} (id=${memoryForm.memoryId}, slug = ${memoryForm.slug})}"-->
+					<a th:href="${memoryForm.memoryId == 0} ? @{/} : @{/memory/{id} (id=${memoryForm.memoryId})}"
 					class="button cancel form-button">Annuler</a>
 			</div>
 		</form>

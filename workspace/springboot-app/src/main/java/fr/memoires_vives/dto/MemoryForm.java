@@ -31,10 +31,6 @@ public class MemoryForm {
 
 	private String mediaUUID;
 
-	private MemoryState state;
-
-	private String slug;
-
 	private Double latitude;
 
 	private Double longitude;
@@ -84,20 +80,6 @@ public class MemoryForm {
 	 */
 	public String getMediaUUID() {
 		return mediaUUID;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public MemoryState getState() {
-		return state;
-	}
-
-	/**
-	 * @return the slug
-	 */
-	public String getSlug() {
-		return slug;
 	}
 
 	/**
@@ -171,20 +153,6 @@ public class MemoryForm {
 	}
 
 	/**
-	 * @param state the state to set
-	 */
-	public void setState(MemoryState state) {
-		this.state = state;
-	}
-
-	/**
-	 * @param slug the slug to set
-	 */
-	public void setSlug(String slug) {
-		this.slug = slug;
-	}
-
-	/**
 	 * @param latitude the latitude to set
 	 */
 	public void setLatitude(Double latitude) {
@@ -211,7 +179,7 @@ public class MemoryForm {
 	public void setPublished(Boolean published) {
 		this.published = published;
 	}
-	
+
 	public static MemoryForm fromMemoryEntity(Memory memory) {
 		MemoryForm form = new MemoryForm();
 		form.setMemoryId(memory.getMemoryId());
@@ -220,8 +188,6 @@ public class MemoryForm {
 		form.setMemoryDate(memory.getMemoryDate());
 		form.setCategoryId(memory.getCategory().getCategoryId());
 		form.setMediaUUID(memory.getMediaUUID());
-		form.setState(memory.getState());
-		form.setSlug(memory.getSlug());
 		Location location = memory.getLocation();
 		if (location != null) {
 			form.setLatitude(location.getLatitude());
@@ -229,7 +195,7 @@ public class MemoryForm {
 			form.setLocationSelected(true);
 		}
 		form.setPublished(memory.getState() == MemoryState.PUBLISHED ? true : false);
-		
+
 		return form;
 	}
 }

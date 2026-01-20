@@ -2,6 +2,9 @@ package fr.memoires_vives.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bo.Category;
-import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.dto.MemoryForm;
@@ -56,15 +58,14 @@ public class MemoryController {
 
 	@PostMapping("/new")
 	public String createMemory(@Valid @ModelAttribute("memoryForm") MemoryForm memoryForm, BindingResult bindingResult,
-			@RequestParam(name = "publish", required = false) Boolean published,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage) {
 		if (bindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
 		try {
-			memoryService.createMemory(memoryForm, fileImage, published);
-			return "redirect:/";
+			Memory memory = memoryService.createMemory(memoryForm, fileImage);
+			return "redirect:/memory/" + memory.getMemoryId() + "-" + memory.getSlug();
 		} catch (ValidationException ve) {
 			ve.getGlobalErrors().forEach(err -> {
 				ObjectError error = new ObjectError("globalError", err);
@@ -98,6 +99,14 @@ public class MemoryController {
 		return "memory";
 	}
 
+	@GetMapping("/{id:\\d+}")
+	public ResponseEntity<Void> redirectToCanonical(@PathVariable("id") Long memoryId) {
+		Memory memory = memoryService.getMemoryById(memoryId);
+		String dbSlug = memory.getSlug();
+		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+				.header(HttpHeaders.LOCATION, "/memory/" + memoryId + "-" + dbSlug).build();
+	}
+
 	@GetMapping("/modify")
 	public String showModifyMemoryForm(@RequestParam(name = "memoryId", required = true) Long memoryId, Model model) {
 		Memory memory = memoryService.getMemoryForModification(memoryId);
@@ -107,18 +116,16 @@ public class MemoryController {
 	}
 
 	@PostMapping("/modify")
-	public String modifyMemory(@Valid @ModelAttribute("memory") Memory memory, BindingResult bindingResult,
-			@Valid @ModelAttribute("location") Location location, BindingResult locationBindingResult,
-			@RequestParam(name = "publish", required = false) Boolean published,
+	public String modifyMemory(@Valid @ModelAttribute("memoryForm") MemoryForm form, BindingResult bindingResult,
 			@RequestParam(name = "image", required = false) MultipartFile fileImage,
 			@RequestParam(name = "removeImage", defaultValue = "false") boolean removeImage) {
 
-		if (bindingResult.hasErrors() || locationBindingResult.hasErrors()) {
+		if (bindingResult.hasErrors()) {
 			return "memory-form";
 		}
 
 		try {
-			memoryService.updateMemory(memory, fileImage, published, location, removeImage);
+			Memory memory = memoryService.updateMemory(form, fileImage, removeImage);
 			return "redirect:/memory/" + memory.getMemoryId() + "-" + memory.getSlug();
 		} catch (ValidationException ve) {
 			ve.getGlobalErrors().forEach(err -> {
