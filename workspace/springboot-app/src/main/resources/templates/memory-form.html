@@ -62,7 +62,8 @@
 								th:alt="${#strings.isEmpty(memoryForm.mediaUUID)} ? 'souvenir sans image' : 'image associée au souvenir ' + ${memoryForm.title}" />
 						</label>
 						<button type="button" id="removeImageBtn" class="p-2 rounded-full cursor-pointer"
-							th:classappend="${#strings.isEmpty(memoryForm.mediaUUID)} ? ' hidden' : ''" title="Supprimer l'image">
+							th:classappend="${#strings.isEmpty(memoryForm.mediaUUID)} ? ' hidden' : ''"
+							title="Supprimer l'image">
 							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
 								alt="supprimer l'image" />
 						</button>
@@ -75,21 +76,22 @@
 				<input id="memoryId" th:field="*{memoryId}" type="hidden" />
 				<div class="publish flex items-center gap-2 mt-4">
 					<label for="publish" class="form-label mb-0 cursor-pointer">Publier</label>
-					<input type="checkbox" th:field="*{published}"
-						th:checked="*{published}" class="form-checkbox" />
+					<input type="checkbox" th:field="*{published}" th:checked="*{published}" class="form-checkbox" />
 				</div>
 				<div>
-					<div class="location-input">
+					<div class="location-input flex flex-row gap-3">
 						<input type="hidden" id="locationSelected" th:field="*{locationSelected}" />
 						<button id="openModalBtn" type="button" class="form-button"
 							th:text="${memoryForm.memoryId == 0 ?'Choisir un lieu':'Modifier le lieu'}"></button>
+						<div id="locationStatus" class="text-sm flex flex-col justify-center items-center">
+							<th:block th:if="${memoryForm.locationSelected}">
+								Position définie<br>
+								<span th:text="*{latitude} + ', ' + *{longitude}"></span>
+							</th:block>
+						</div>
 					</div>
-					<div class="latitude-input hidden">
-						<input id="latitude" th:field="*{latitude}" type="text" readonly />
-					</div>
-					<div class="longitude-input hidden">
-						<input id="longitude" th:field="*{longitude}" type="text" class="hidden" readonly />
-					</div>
+					<input id="latitude" th:field="*{latitude}" type="hidden" readonly />
+					<input id="longitude" th:field="*{longitude}" type="hidden" readonly />
 					<div th:replace="~{fragments/errors/fragment-error :: frag-error(locationSelected)}"></div>
 				</div>
 			</div>
@@ -97,8 +99,7 @@
 			<div class="buttons-container">
 				<button type="submit" class="button create form-button"
 					th:text="${memoryForm.memoryId == 0 ? 'Créer' : 'Modifier'}"></button>
-<!--				<a th:href="${memoryForm.memoryId == 0} ? @{/} : @{/memory/{id}-{slug} (id=${memoryForm.memoryId}, slug = ${memoryForm.slug})}"-->
-					<a th:href="${memoryForm.memoryId == 0} ? @{/} : @{/memory/{id} (id=${memoryForm.memoryId})}"
+				<a th:href="${memoryForm.memoryId == 0} ? @{/} : @{/memory/{id} (id=${memoryForm.memoryId})}"
 					class="button cancel form-button">Annuler</a>
 			</div>
 		</form>
@@ -124,18 +125,7 @@
 			<button id="validateLocation" class="form-button">Valider</button>
 		</div>
 	</aside>
-	<aside id="modalName" class="fixed inset-0 flex items-center justify-center hidden z-50">
-		<div class="overlay absolute w-full h-full bg-gray-500/25 js-close-modalName"></div>
-		<div
-			class="w-3/5 min-w-xs h-1/4 min-h-[300px] p-7 bg-white rounded absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-			<button
-				class="js-close-modalName px-2 py-1 rounded text-lg absolute top-2.5 right-2.5 bg-[#e892a2] text-white font-black hover:opacity-80">X</button>
-			<h21 id="title-modalName" class="h2-title">Donnez un nom au lieu de votre souvenir
-			</h21>
-			<input id="modalNameInput" type="text" placeholder="Un nom pour votre lieu…" class="form-input" />
-			<button id="validateLocationName" class="disabled-button" disabled>Valider</button>
-		</div>
-	</aside>
+
 	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

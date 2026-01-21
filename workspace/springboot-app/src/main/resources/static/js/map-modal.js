@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		const latitudeInput = document.getElementById('latitude');
 		const longitudeInput = document.getElementById('longitude');
 		const selectedInput = document.getElementById('locationSelected');
+		const locationStatus = document.getElementById('locationStatus');
+		const openModBtn = document.getElementById('openModalBtn');
 		//		const placeNameInput = document.getElementById('locationName');
 
 		const latitude = parseFloat(latitudeInput.value) || 0;
@@ -131,6 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 			latitudeInput.value = newLatitude;
 			longitudeInput.value = newLongitude;
+			openModBtn.innerHTML = 'Modifier le lieu';
+			locationStatus.innerHTML = `Position définie<br><span>${newLatitude.toFixed(4)}, ${newLongitude.toFixed(4)}</span>`; 
 //			placeNameInput.value = newPlaceName;
 //			console.log(placeNameInput.value);
 			closeModal(e, 'modal');

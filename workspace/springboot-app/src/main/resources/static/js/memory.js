@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const latContainer = document.getElementById('latitude');
 	const longContainer = document.getElementById('longitude');
 
-	const locationName = document.getElementById('locationName').dataset.location_name;
+//	const locationName = document.getElementById('locationName').dataset.location_name;
 	const latitude = latContainer.dataset.latitude;
 	const longitude = longContainer.dataset.longitude;
 
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}).addTo(map);
 	 const marker = L.marker([latitude, longitude]);
 	 marker.addTo(map);
-	 marker.bindPopup(`<div class="flex flex-col align-center"><h5 class="text-center"> ${locationName}</h5><div class="text-center font-light">${formatedLatitude} - ${formatedLongitude}</div></div>`);
+	 marker.bindPopup(`<div class="flex flex-col align-center"><div class="text-center font-light">${formatedLatitude} - ${formatedLongitude}</div></div>`);
 	 
 	 setTimeout(() => map.invalidateSize(), 200);
 });
