@@ -128,11 +128,11 @@ public class MemoryServiceImpl implements MemoryService {
 	@Transactional
 	public Memory createMemory(MemoryForm form, MultipartFile image) {
 		User rememberer = userService.getCurrentUser();
-		Memory memory = toMemoryEntity(form);
-		Location location = locationService.createFromCoordinates(form.getLatitude(), form.getLongitude());
 		if (rememberer == null) {
 			throw new UnauthorizedActionException("Vous devez vous connecter pour ajouter un souvenir");
 		}
+		Memory memory = toMemoryEntity(form);
+		Location location = locationService.createFromCoordinates(form.getLatitude(), form.getLongitude());
 
 		memory.setCreationDate(LocalDateTime.now());
 		updateVisibility(memory);

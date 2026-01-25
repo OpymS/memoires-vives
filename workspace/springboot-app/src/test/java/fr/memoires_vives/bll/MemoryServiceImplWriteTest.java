@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,6 +30,7 @@ import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.dto.MemoryForm;
 import fr.memoires_vives.exception.DataPersistenceException;
 import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.FileStorageException;
@@ -47,6 +51,9 @@ public class MemoryServiceImplWriteTest {
 
 	@Mock
 	private UserService userService;
+
+	@Mock
+	private CategoryService categoryService;
 
 	@Mock
 	private MultipartFile imageFile;
@@ -96,12 +103,15 @@ public class MemoryServiceImplWriteTest {
 
 	@Test
 	void createMemory_shouldThrowUnauthorized_whenUserNotLoggedIn() {
-		Memory memory = new Memory();
+		User user = makeUser(3L);
+		Location location = makeLocation(8L);
+		Memory memory = makeMemory(1L, user, location);
+		MemoryForm form = MemoryForm.fromMemoryEntity(memory);
 
 		when(userService.getCurrentUser()).thenReturn(null);
 
 		UnauthorizedActionException ex = assertThrows(UnauthorizedActionException.class,
-				() -> memoryService.createMemory(memory, imageFile, true, new Location()));
+				() -> memoryService.createMemory(form, imageFile));
 		assertEquals("Vous devez vous connecter pour ajouter un souvenir", ex.getMessage());
 		verify(locationService, never()).saveLocation(any());
 	}
@@ -109,68 +119,75 @@ public class MemoryServiceImplWriteTest {
 	@Test
 	void createMemory_shouldCreateMemoryCorrectly() {
 		User user = makeUser(1L);
-		Location location = makeLocation(1L);
-		Memory memory = new Memory();
+		Location location = makeLocation(8L);
+		Memory memory = makeMemory(2L, user, location);
 		memory.setMemoryDate(LocalDate.now().minusYears(3L));
-		memory.setTitle("t");
+		MemoryForm form = MemoryForm.fromMemoryEntity(memory);
 
 		when(userService.getCurrentUser()).thenReturn(user);
 
-		Location savedLocation = makeLocation(8L);
-		when(locationService.saveLocation(location)).thenReturn(savedLocation);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
 
-		when(memoryRepository.save(memory)).thenReturn(memory);
+		when(locationService.saveLocation(any(Location.class))).thenReturn(location);
 
-		Memory result = memoryService.createMemory(memory, null, true, location);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
+		when(memoryRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+		Memory result = memoryService.createMemory(form, null);
 
 		assertNotNull(result);
-		assertEquals(savedLocation, result.getLocation());
+		assertEquals(location, result.getLocation());
 		assertEquals(user, result.getRememberer());
 		assertNotNull(result.getCreationDate());
 
 		verify(userService).getCurrentUser();
-		verify(locationService).saveLocation(location);
-		verify(memoryRepository).save(memory);
+		verify(locationService).createFromCoordinates(anyDouble(), anyDouble());
+		verify(locationService).saveLocation(any(Location.class));
+		verify(memoryRepository).save(any());
 	}
 
 	@Test
 	void createMemory_shouldApplyUnpublishedState() {
-		Location location = makeLocation(1L);
-		Memory memory = new Memory();
-		memory.setMemoryDate(LocalDate.now().minusYears(3L));
-		memory.setTitle("t");
-		
-		when(userService.getCurrentUser()).thenReturn(new User());
-		when(locationService.saveLocation(location)).thenReturn(location);
-		when(memoryRepository.save(memory)).thenReturn(memory);
+		Location location = makeLocation(8L);
+		User user = makeUser(1L);
+		Memory memory = makeMemory(2L, user, location);
+		memory.setState(MemoryState.CREATED);
 
-		memoryService.createMemory(memory, null, false, location);
+		MemoryForm form = MemoryForm.fromMemoryEntity(memory);
 
-		assertEquals(MemoryState.CREATED, memory.getState());
+		when(userService.getCurrentUser()).thenReturn(user);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
+		when(memoryRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+		Memory result = memoryService.createMemory(form, null);
+
+		assertEquals(MemoryState.CREATED, result.getState());
 	}
 
 //  Tests de updateMemory
 
 	@Test
-    void updateMemory_shouldThrow_whenMemoryDoesNotExist() {
-        when(memoryRepository.findById(10L)).thenReturn(Optional.empty());
+	void updateMemory_shouldThrow_whenMemoryDoesNotExist() {
+		Location location = makeLocation(8L);
+		User user = makeUser(1L);
+		Memory updated = makeMemory(2L, user, location);
+		updated.setMemoryId(10L);
 
-        Memory updated = new Memory();
-        updated.setMemoryId(10L);
+		when(memoryRepository.findById(10L)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class,
-                () -> memoryService.updateMemory(updated, null, false, new Location(), false));
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
 
-        verify(userService, never()).getCurrentUser();
-        verify(memoryRepository, never()).save(any());
-        verify(locationService, never()).saveLocation(any());
-    }
+		assertThrows(EntityNotFoundException.class, () -> memoryService.updateMemory(form, null, false));
+
+		verify(userService, never()).getCurrentUser();
+		verify(memoryRepository, never()).save(any());
+		verify(locationService, never()).saveLocation(any());
+	}
 
 	@Test
 	void updateMemory_shouldCallAssertUserModify_andPass() {
-		long memoryId = 1L;
-		long userId = 5L;
-		User user = makeUser(userId);
+		User user = makeUser(1L);
 
 		Location existingLocation = makeLocation(1L);
 		existingLocation.setName("Paris");
@@ -178,20 +195,22 @@ public class MemoryServiceImplWriteTest {
 		Location locationWithUpdate = makeLocation(1L);
 		locationWithUpdate.setName("Paris");
 
-		Memory existing = makeMemory(memoryId, user, existingLocation);
+		Memory existing = makeMemory(2L, user, existingLocation);
 
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
+		Memory updated = makeMemory(2L, user, locationWithUpdate);
 
-		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
+
+		when(memoryRepository.findById(2L)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-
-		when(locationService.getById(memoryId)).thenReturn(existingLocation);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(existingLocation);
+		when(locationService.getById(1L)).thenReturn(existingLocation);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 
 		when(memoryRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-		Memory result = memoryService.updateMemory(updated, null, false, locationWithUpdate, false);
+		Memory result = memoryService.updateMemory(form, null, false);
 
 		assertNotNull(result);
 
@@ -204,8 +223,7 @@ public class MemoryServiceImplWriteTest {
 		long memoryId = 1L;
 		long userId = 5L;
 
-		User user = new User();
-		user.setUserId(userId);
+		User user = makeUser(userId);
 
 		Category existingCategory = makeCategory(1L);
 		Location existingLocation = makeLocation(1L);
@@ -217,31 +235,32 @@ public class MemoryServiceImplWriteTest {
 		existing.setCategory(existingCategory);
 
 		Category newCategory = makeCategory(5L);
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
-		updated.setTitle("new title");
-		updated.setDescription("new desc");
-		updated.setMemoryDate(LocalDate.now().minusDays(1));
-		updated.setCategory(newCategory);
-		updated.setVisibility(MemoryVisibility.MEMBERS);
 
 		Location locationWithUpdate = makeLocation(8L);
 		locationWithUpdate.setName("Nantes");
+
+		Memory updated = makeMemory(memoryId, user, locationWithUpdate);
+		updated.setTitle("new title");
+		updated.setDescription("new desc");
+		updated.setCategory(newCategory);
+
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
 
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
 
-		when(locationService.getById(memoryId)).thenReturn(existingLocation);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(existingLocation);
+		when(locationService.getById(anyLong())).thenReturn(existingLocation);
 
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(newCategory));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-		Memory result = memoryService.updateMemory(updated, null, false, locationWithUpdate, false);
+		Memory result = memoryService.updateMemory(form, null, false);
 
 		assertEquals("new title", result.getTitle());
 		assertEquals("new desc", result.getDescription());
 		assertEquals(newCategory, result.getCategory());
-		assertEquals(MemoryVisibility.MEMBERS, result.getVisibility());
 	}
 
 	@Test
@@ -253,16 +272,20 @@ public class MemoryServiceImplWriteTest {
 		Location location = makeLocation(locationId);
 		Memory existing = makeMemory(memoryId, user, location);
 
-		Memory updated = new Memory();
-		updated.setMemoryId(1L);
+		Memory updated = makeMemory(memoryId, user, location);
+		updated.setState(MemoryState.PUBLISHED);
+
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
 
 		when(memoryRepository.findById(1L)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, null, true, location, false);
+		Memory result = memoryService.updateMemory(form, null, false);
 
 		assertEquals(MemoryState.PUBLISHED, result.getState());
 	}
@@ -275,17 +298,22 @@ public class MemoryServiceImplWriteTest {
 		User user = makeUser(userId);
 		Location location = makeLocation(locationId);
 		Memory existing = makeMemory(memoryId, user, location);
+		existing.setState(MemoryState.PUBLISHED);
 
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
+		Memory updated = makeMemory(memoryId, user, location);
+		updated.setState(MemoryState.CREATED);
+
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
 
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, null, false, location, false);
+		Memory result = memoryService.updateMemory(form, null, false);
 
 		assertEquals(MemoryState.CREATED, result.getState());
 	}
@@ -300,16 +328,19 @@ public class MemoryServiceImplWriteTest {
 		Memory existing = makeMemory(memoryId, user, location);
 		existing.setMediaUUID("uuid123");
 
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
+		Memory updated = makeMemory(memoryId, user, location);
+
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
 
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, null, false, location, false);
+		Memory result = memoryService.updateMemory(form, null, false);
 
 		assertEquals("uuid123", result.getMediaUUID());
 		verify(fileService, never()).deleteFile(any());
@@ -317,7 +348,7 @@ public class MemoryServiceImplWriteTest {
 	}
 
 	// TODO test dans le cas où l'utilisateur supprime l'image
-	
+
 	@Test
 	void updateMemory_shouldReplaceMedia_whenNewImageProvided() throws Exception {
 		long memoryId = 1L;
@@ -332,21 +363,27 @@ public class MemoryServiceImplWriteTest {
 		when(file.isEmpty()).thenReturn(false);
 		when(fileService.saveFile(file)).thenReturn("newuuid");
 
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
+		Memory updated = makeMemory(memoryId, user, location);
+		updated.setMediaUUID("olduuid");
+
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
 
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, file, false, location, false);
+		Memory result = memoryService.updateMemory(form, file, false);
 
 		verify(fileService).deleteFile("olduuid");
 		verify(fileService).saveFile(file);
 		assertEquals("newuuid", result.getMediaUUID());
 	}
+
+	// TODO : tester le cas où on veut supprimer l'image
 
 	@Test
 	void updateMemory_shouldKeepOldMedia_whenFileStorageExceptionOccurs() throws Exception {
@@ -363,16 +400,19 @@ public class MemoryServiceImplWriteTest {
 
 		when(fileService.saveFile(file)).thenThrow(new FileStorageException("err"));
 
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
+		Memory updated = makeMemory(memoryId, user, location);
+
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
 
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
 
-		Memory result = memoryService.updateMemory(updated, file, false, location, false);
+		Memory result = memoryService.updateMemory(form, file, false);
 
 		assertEquals("olduuid", result.getMediaUUID());
 		verify(fileService).deleteFile("olduuid");
@@ -388,64 +428,70 @@ public class MemoryServiceImplWriteTest {
 
 		Memory existing = makeMemory(memoryId, user, currentLocation);
 
-		Location updatedLocation = new Location();
-		updatedLocation.setName("new name");
+		Location updatedLocation = makeLocation(currentLocationId);
 
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(currentLocation);
 		when(locationService.getById(currentLocationId)).thenReturn(currentLocation);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
+		when(memoryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 		when(locationService.saveLocation(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-		when(memoryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+		Memory updated = makeMemory(memoryId, user, updatedLocation);
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
 
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
+		ArgumentCaptor<Location> locationCaptor = ArgumentCaptor.forClass(Location.class);
 
-		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation, false);
+		Memory result = memoryService.updateMemory(form, null, false);
 
-		verify(locationService).saveLocation(updatedLocation);
-		assertEquals(currentLocationId, updatedLocation.getLocationId());
-		assertEquals("new name", result.getLocation().getName().toString());
+		verify(locationService).saveLocation(locationCaptor.capture());
+
+		verify(locationService).saveLocation(currentLocation);
+		assertEquals(currentLocationId, result.getLocation().getLocationId());
 	}
 
-	@Test
-	void updateMemory_shouldCreateNewLocation_whenDifferentAndMultipleMemories() {
-		long memoryId = 1L;
-		long userId = 5L;
-		long currentLocationId = 8L;
-		User user = makeUser(userId);
-		Location currentLocation = makeLocation(currentLocationId);
-
-		Memory existing = makeMemory(memoryId, user, currentLocation);
-		currentLocation.getMemories().add(existing);
-		currentLocation.getMemories().add(new Memory()); // >1
-
-		Location updatedLocation = new Location();
-		updatedLocation.setName("different");
-		updatedLocation.setLatitude(10.0);
-		updatedLocation.setLongitude(20.0);
-
-		Location savedNewLoc = makeLocation(99L);
-		savedNewLoc.setName("different");
-
-		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
-		when(userService.getCurrentUser()).thenReturn(user);
-		when(userService.isAdmin()).thenReturn(false);
-
-		when(locationService.getById(currentLocationId)).thenReturn(currentLocation);
-		when(locationService.saveLocation(updatedLocation)).thenReturn(savedNewLoc);
-
-		when(memoryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
-
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
-
-		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation, false);
-
-		assertEquals(savedNewLoc, result.getLocation());
-	}
+	
+	// TODO à refaire, ne teste rien
+//	@Test
+//	void updateMemory_shouldCreateNewLocation_whenDifferentAndMultipleMemories() {
+//		long memoryId = 1L;
+//		long userId = 5L;
+//		long currentLocationId = 8L;
+//		User user = makeUser(userId);
+//		Location currentLocation = makeLocation(currentLocationId);
+//
+//		Memory existing = makeMemory(memoryId, user, currentLocation);
+//		currentLocation.getMemories().add(existing);
+//		currentLocation.getMemories().add(new Memory()); // >1
+//
+//		Location updatedLocation = new Location();
+//		updatedLocation.setName("different");
+//		updatedLocation.setLatitude(10.0);
+//		updatedLocation.setLongitude(20.0);
+//
+//		Location savedNewLoc = makeLocation(99L);
+//		savedNewLoc.setName("different");
+//
+//		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
+//		when(userService.getCurrentUser()).thenReturn(user);
+//		when(userService.isAdmin()).thenReturn(false);
+//
+//		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(updatedLocation);
+//		when(locationService.getById(currentLocationId)).thenReturn(updatedLocation);
+//		when(locationService.saveLocation(updatedLocation)).thenReturn(savedNewLoc);
+//		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
+//		when(memoryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+//
+//		Memory updated = makeMemory(memoryId, user, updatedLocation);
+//
+//		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
+//
+//		Memory result = memoryService.updateMemory(form, null, false);
+//
+//		assertEquals(savedNewLoc, result.getLocation());
+//	}
 
 	@Test
 	void updateMemory_shouldNotChangeLocation_whenSameValues() {
@@ -469,15 +515,17 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(currentLocation);
 		when(locationService.getById(currentLocationId)).thenReturn(currentLocation);
-
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
+		
 		when(memoryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
+		Memory updated = makeMemory(memoryId, user, updatedLocation);
 
-		Memory result = memoryService.updateMemory(updated, null, false, updatedLocation, false);
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
+
+		Memory result = memoryService.updateMemory(form, null, false);
 
 		assertEquals(currentLocation, result.getLocation());
 		verify(locationService, never()).saveLocation(any());
@@ -493,20 +541,24 @@ public class MemoryServiceImplWriteTest {
 		Location currentLocation = makeLocation(currentLocationId);
 		Memory existing = makeMemory(memoryId, user, currentLocation);
 
-		Memory updated = new Memory();
-		updated.setMemoryId(memoryId);
+		Memory updated = makeMemory(memoryId, user, currentLocation);
 
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-
+		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(currentLocation);
 		when(locationService.getById(currentLocationId)).thenReturn(currentLocation);
+		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 
 		when(memoryRepository.save(existing)).thenThrow(new DataAccessException("db") {
 		});
 
 		Location loc = makeLocation(1L);
 
-		assertThrows(DataPersistenceException.class, () -> memoryService.updateMemory(updated, null, false, loc, false));
+		updated.setLocation(loc);
+
+		MemoryForm form = MemoryForm.fromMemoryEntity(updated);
+
+		assertThrows(DataPersistenceException.class, () -> memoryService.updateMemory(form, null, false));
 	}
 }

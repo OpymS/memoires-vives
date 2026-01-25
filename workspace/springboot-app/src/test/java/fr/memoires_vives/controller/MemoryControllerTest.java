@@ -57,7 +57,7 @@ public class MemoryControllerTest {
 		ve.addGlobalError("Erreur globale");
 		ve.addFieldError("title", "Titre invalide");
 
-		doThrow(ve).when(memoryService).createMemory(any(), any(), any(), any());
+		doThrow(ve).when(memoryService).createMemory(any(), any());
 
 		mockMvc.perform(multipart("/memory/new").param("title", "Titre").param("description", "Description"))
 				.andExpect(status().isOk()).andExpect(view().name("memory-form"));
@@ -81,7 +81,7 @@ public class MemoryControllerTest {
 		ValidationException ve = new ValidationException();
 		ve.addFieldError("title", "Titre invalide");
 
-		doThrow(ve).when(memoryService).updateMemory(any(), any(), any(), any(), anyBoolean());
+		doThrow(ve).when(memoryService).updateMemory(any(), any(), anyBoolean());
 
 		mockMvc.perform(multipart("/memory/modify").param("memoryId", "42").param("title", "Titre")
 				.param("description", "Description").param("location.name", "").param("removeImage", "false"))

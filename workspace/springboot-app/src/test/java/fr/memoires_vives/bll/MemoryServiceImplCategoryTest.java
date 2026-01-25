@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -80,12 +82,12 @@ public class MemoryServiceImplCategoryTest {
 		long categoryId = 1L;
 
 		when(userService.isAdmin()).thenReturn(true);
-		when(categoryService.getCategoryById(categoryId)).thenReturn(null);
+		when(categoryService.getCategoryById(categoryId)).thenReturn(Optional.empty());
 
 		EntityNotFoundException ex = assertThrows(EntityNotFoundException.class,
 				() -> memoryService.getMemoriesByCategoryForAdmin(categoryId));
 
-		assertEquals("Category not found", ex.getMessage());
+		assertEquals("Catégorie invalide", ex.getMessage());
 		verify(userService).isAdmin();
 		verify(categoryService).getCategoryById(categoryId);
 		verifyNoMoreInteractions(userService, categoryService, memoryRepository);
@@ -101,7 +103,7 @@ public class MemoryServiceImplCategoryTest {
 		List<Memory> expected = Arrays.asList(new Memory(), new Memory());
 
 		when(userService.isAdmin()).thenReturn(true);
-		when(categoryService.getCategoryById(categoryId)).thenReturn(category);
+		when(categoryService.getCategoryById(categoryId)).thenReturn(Optional.of(category));
 		when(memoryRepository.findByCategoryId(categoryId)).thenReturn(expected);
 
 		List<Memory> result = memoryService.getMemoriesByCategoryForAdmin(categoryId);
