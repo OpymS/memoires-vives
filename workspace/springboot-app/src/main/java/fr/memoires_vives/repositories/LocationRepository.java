@@ -1,5 +1,6 @@
 package fr.memoires_vives.repositories;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,9 +12,9 @@ import fr.memoires_vives.bo.Location;
 public interface LocationRepository extends JpaRepository<Location, Long> {
 	Location findByLocationId(long locationId);
 
-	@Query("SELECT l FROM Location l WHERE (l.latitude <= :north AND l.latitude >= :south) " + 
-	"AND ((:west < :east AND l.longitude <= :east AND l.longitude >= :west) "+
-			"OR (:west > :east AND (l.longitude <= :east OR l.longitude >= :west)))")
-	List<Location> findInSquare(@Param("north") double north, @Param("south") double south, @Param("east") double east,
-			@Param("west") double west);
+	@Query("SELECT l FROM Location l WHERE (l.latitude <= :north AND l.latitude >= :south) "
+			+ "AND ((:west < :east AND l.longitude <= :east AND l.longitude >= :west) "
+			+ "OR (:west > :east AND (l.longitude <= :east OR l.longitude >= :west)))")
+	List<Location> findInSquare(@Param("north") BigDecimal north, @Param("south") BigDecimal south,
+			@Param("east") BigDecimal east, @Param("west") BigDecimal west);
 }

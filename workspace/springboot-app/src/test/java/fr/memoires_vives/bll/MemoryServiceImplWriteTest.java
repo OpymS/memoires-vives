@@ -11,6 +11,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -77,8 +78,8 @@ public class MemoryServiceImplWriteTest {
 		Location l = new Location();
 		l.setLocationId(id);
 		l.setName("loc-" + (id == null ? "null" : id));
-		l.setLatitude(10.0);
-		l.setLongitude(20.0);
+		l.setLatitude(BigDecimal.valueOf(10.0));
+		l.setLongitude(BigDecimal.valueOf(20.0));
 		l.setMemories(new ArrayList<>());
 		return l;
 	}
@@ -501,16 +502,16 @@ public class MemoryServiceImplWriteTest {
 		User user = makeUser(userId);
 		Location currentLocation = makeLocation(currentLocationId);
 		currentLocation.setName("same");
-		currentLocation.setLatitude(1.0);
-		currentLocation.setLongitude(2.0);
+		currentLocation.setLatitude(BigDecimal.valueOf(1.0));
+		currentLocation.setLongitude(BigDecimal.valueOf(2.0));
 		Memory existing = makeMemory(memoryId, user, currentLocation);
 		currentLocation.getMemories().add(existing);
 		currentLocation.getMemories().add(new Memory()); // >1
 
 		Location updatedLocation = new Location();
 		updatedLocation.setName("same");
-		updatedLocation.setLatitude(1.0);
-		updatedLocation.setLongitude(2.0);
+		updatedLocation.setLatitude(BigDecimal.valueOf(1.0));
+		updatedLocation.setLongitude(BigDecimal.valueOf(2.0));
 
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);

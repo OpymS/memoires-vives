@@ -449,8 +449,8 @@ public class MemoryServiceImpl implements MemoryService {
 	private void updateLocation(Memory memory, Location locationWithUpdate) {
 		Location existingLocation = locationService.getById(memory.getLocation().getLocationId());
 
-		boolean isDifferent = Double.compare(existingLocation.getLatitude(), locationWithUpdate.getLatitude()) != 0
-				|| Double.compare(existingLocation.getLongitude(), locationWithUpdate.getLongitude()) != 0;
+		boolean isDifferent = existingLocation.getLatitude().compareTo(locationWithUpdate.getLatitude()) != 0
+				|| existingLocation.getLongitude().compareTo(locationWithUpdate.getLongitude()) != 0;
 
 		if (existingLocation.getMemories().size() <= 1) {
 			locationWithUpdate.setLocationId(existingLocation.getLocationId());

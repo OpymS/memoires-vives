@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -54,8 +55,8 @@ public class MemoryServiceImplReadBasicTest {
 		Location l = new Location();
 		l.setLocationId(id);
 		l.setName("loc-" + (id == null ? "null" : id));
-		l.setLatitude(10.0);
-		l.setLongitude(20.0);
+		l.setLatitude(BigDecimal.valueOf(10.0));
+		l.setLongitude(BigDecimal.valueOf(20.0));
 		l.setMemories(new ArrayList<>());
 		return l;
 	}

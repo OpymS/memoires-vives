@@ -190,8 +190,8 @@ public class MemoryForm {
 		form.setMediaUUID(memory.getMediaUUID());
 		Location location = memory.getLocation();
 		if (location != null) {
-			form.setLatitude(location.getLatitude());
-			form.setLongitude(location.getLongitude());
+			form.setLatitude(location.getLatitude().doubleValue());
+			form.setLongitude(location.getLongitude().doubleValue());
 			form.setLocationSelected(true);
 		}
 		form.setPublished(memory.getState() == MemoryState.PUBLISHED ? true : false);

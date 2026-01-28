@@ -1,5 +1,6 @@
 package fr.memoires_vives.bo;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,34 +22,43 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "locations")
 public class Location {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long locationId;
-	
+
 	@Column(nullable = false)
 	@NotBlank
 	@Size(max = 30)
 	private String name;
-	
-	@Column(nullable = false)
+
+	@Column(nullable = false, precision = 9, scale = 6)
 	@DecimalMin("-90.0")
 	@DecimalMax("90.0")
-	private double latitude;
-	
-	@Column(nullable = false)
+	private BigDecimal latitude;
+
+	@Column(nullable = false, precision = 9, scale = 6)
 	@DecimalMin("-180.0")
 	@DecimalMax("180.0")
-	private double longitude;
-	
+	private BigDecimal longitude;
+
+	@Column(length = 100)
+	private String country;
+
+	@Column(length = 100)
+	private String city;
+
+	@Column(length = 5)
+	private String countryCode;
+
 	@OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Memory> memories = new ArrayList<Memory>();
-	
+
 	public Location() {
 	}
 
-	public Location(int locationId, String name, double latitude, double longitude) {
+	public Location(int locationId, String name, BigDecimal latitude, BigDecimal longitude) {
 		this.locationId = locationId;
 		this.name = name;
 		this.latitude = latitude;
@@ -72,17 +82,38 @@ public class Location {
 	/**
 	 * @return the latitude
 	 */
-	public double getLatitude() {
+	public BigDecimal getLatitude() {
 		return latitude;
 	}
 
 	/**
 	 * @return the longitude
 	 */
-	public double getLongitude() {
+	public BigDecimal getLongitude() {
 		return longitude;
 	}
-	
+
+	/**
+	 * @return the country
+	 */
+	public String getCountry() {
+		return country;
+	}
+
+	/**
+	 * @return the city
+	 */
+	public String getCity() {
+		return city;
+	}
+
+	/**
+	 * @return the countryCode
+	 */
+	public String getCountryCode() {
+		return countryCode;
+	}
+
 	/**
 	 * @return the memories
 	 */
@@ -107,15 +138,36 @@ public class Location {
 	/**
 	 * @param latitude the latitude to set
 	 */
-	public void setLatitude(double latitude) {
+	public void setLatitude(BigDecimal latitude) {
 		this.latitude = latitude;
 	}
 
 	/**
 	 * @param longitude the longitude to set
 	 */
-	public void setLongitude(double longitude) {
+	public void setLongitude(BigDecimal longitude) {
 		this.longitude = longitude;
+	}
+
+	/**
+	 * @param country the country to set
+	 */
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	/**
+	 * @param city the city to set
+	 */
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	/**
+	 * @param countryCode the countryCode to set
+	 */
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
 	}
 
 	/**

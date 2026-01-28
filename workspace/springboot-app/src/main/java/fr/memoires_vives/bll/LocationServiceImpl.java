@@ -1,5 +1,6 @@
 package fr.memoires_vives.bll;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,26 +41,27 @@ public class LocationServiceImpl implements LocationService {
 			east = 180;
 			west = -180;
 		}
-		
+
 		while (west < -180) {
 			west += 360;
 		}
 		while (east > 180) {
 			east -= 360;
 		}
-		return locationRepository.findInSquare(north, south, east, west);
+		return locationRepository.findInSquare(BigDecimal.valueOf(north), BigDecimal.valueOf(south),
+				BigDecimal.valueOf(east), BigDecimal.valueOf(west));
 	}
 
 	@Override
 	public Location createFromCoordinates(double latitude, double longitude) {
 		Location location = new Location();
 		location.setName(createLocationName());
-		location.setLatitude(latitude);
-		location.setLongitude(longitude);
-		
+		location.setLatitude(BigDecimal.valueOf(latitude));
+		location.setLongitude(BigDecimal.valueOf(longitude));
+
 		return location;
 	}
-	
+
 	private String createLocationName() {
 		return UUID.randomUUID().toString().substring(0, 30);
 	}

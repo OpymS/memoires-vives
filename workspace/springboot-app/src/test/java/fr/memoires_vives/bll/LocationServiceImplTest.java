@@ -6,10 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -139,72 +143,128 @@ public class LocationServiceImplTest {
 
 	@Test
 	void getLocationsInSquare_shouldCallRepositoryWithSameValues_whenNormal() {
-		double north = 50, south = 40, east = 10, west = 0;
+		double northD = 50;
+		double southD = 40;
+		double eastD = 10;
+		double westD = 0;
+
+		BigDecimal north = BigDecimal.valueOf(northD);
+		BigDecimal south = BigDecimal.valueOf(southD);
+		BigDecimal east = BigDecimal.valueOf(eastD);
+		BigDecimal west = BigDecimal.valueOf(westD);
+
 		List<Location> expected = Arrays.asList(new Location());
 
-		when(locationRepository.findInSquare(north, south, east, west)).thenReturn(expected);
+		when(locationRepository.findInSquare(argThat(b -> b.compareTo(north) == 0),
+				argThat(b -> b.compareTo(south) == 0), argThat(b -> b.compareTo(east) == 0),
+				argThat(b -> b.compareTo(west) == 0))).thenReturn(expected);
 
-		List<Location> result = locationService.getLocationsInSquare(north, south, east, west);
+		List<Location> result = locationService.getLocationsInSquare(northD, southD, eastD, westD);
 
-		assertSame(expected, result);
-		verify(locationRepository).findInSquare(north, south, east, west);
+		assertSame(expected, result, "Le résultat doit être celui renvoyé par le repository");
+
+		verify(locationRepository).findInSquare(argThat(b -> b.compareTo(north) == 0),
+				argThat(b -> b.compareTo(south) == 0), argThat(b -> b.compareTo(east) == 0),
+				argThat(b -> b.compareTo(west) == 0));
 	}
 
 	@Test
 	void getLocationsInSquare_shouldNormalize_whenWidthExceeds300() {
-		double north = 50, south = 40, east = 200, west = -150;
+		double northD = 50;
+		double southD = 40;
+		double eastD = 200; // à normaliser
+		double westD = -150;
+
+		BigDecimal north = BigDecimal.valueOf(50);
+		BigDecimal south = BigDecimal.valueOf(40);
+		BigDecimal east = BigDecimal.valueOf(180);
+		BigDecimal west = BigDecimal.valueOf(-180);
+
 		List<Location> expected = Arrays.asList(new Location());
 
-		when(locationRepository.findInSquare(50, 40, 180, -180)).thenReturn(expected);
+		when(locationRepository.findInSquare(argThat(b -> b.compareTo(north) == 0),
+				argThat(b -> b.compareTo(south) == 0), argThat(b -> b.compareTo(east) == 0),
+				argThat(b -> b.compareTo(west) == 0))).thenReturn(expected);
 
-		List<Location> result = locationService.getLocationsInSquare(north, south, east, west);
+		List<Location> result = locationService.getLocationsInSquare(northD, southD, eastD, westD);
 
-		assertSame(expected, result);
-		verify(locationRepository).findInSquare(50, 40, 180, -180);
+		assertSame(expected, result, "Le résultat doit être celui renvoyé par le repository");
+
+		verify(locationRepository).findInSquare(argThat(b -> b.compareTo(north) == 0),
+				argThat(b -> b.compareTo(south) == 0), argThat(b -> b.compareTo(east) == 0),
+				argThat(b -> b.compareTo(west) == 0));
 	}
 
 	@Test
 	void getLocationsInSquare_shouldNormalizeWest_whenLessThanMinus180() {
-		double north = 50, south = 40, west = -400, east = -150;
+		double northD = 50;
+		double southD = 40;
+		double westD = -400; // à normaliser
+		double eastD = -150;
+
+		BigDecimal north = BigDecimal.valueOf(northD);
+		BigDecimal south = BigDecimal.valueOf(southD);
+		BigDecimal east = BigDecimal.valueOf(eastD);
+
+		BigDecimal normalizedWest = BigDecimal.valueOf(-40);
 
 		List<Location> expected = Arrays.asList(new Location());
+		when(locationRepository.findInSquare(eq(north), eq(south), eq(east),
+				argThat(b -> b.compareTo(normalizedWest) == 0))).thenReturn(expected);
 
-		double normalizedWest = -40;
+		List<Location> result = locationService.getLocationsInSquare(northD, southD, eastD, westD);
 
-		when(locationRepository.findInSquare(north, south, east, normalizedWest)).thenReturn(expected);
+		assertSame(expected, result, "Le résultat doit être celui renvoyé par le repository");
 
-		List<Location> result = locationService.getLocationsInSquare(north, south, east, west);
-
-		assertSame(expected, result);
-		verify(locationRepository).findInSquare(north, south, east, normalizedWest);
+		verify(locationRepository).findInSquare(eq(north), eq(south), eq(east),
+				argThat(b -> b.compareTo(normalizedWest) == 0));
 	}
 
 	@Test
 	void getLocationsInSquare_shouldNormalizeEast_whenGreaterThan180() {
-		double north = 50, south = 40, east = 200, west = 10;
+		double northD = 50;
+		double southD = 40;
+		double eastD = 200;
+		double westD = 10;
+
+		BigDecimal north = BigDecimal.valueOf(50);
+		BigDecimal south = BigDecimal.valueOf(40);
+		BigDecimal east = BigDecimal.valueOf(-160);
+		BigDecimal west = BigDecimal.valueOf(10);
 
 		List<Location> expected = Arrays.asList(new Location());
 
-		double normalizedEast = -160;
+		when(locationRepository.findInSquare(argThat(b -> b.compareTo(north) == 0),
+				argThat(b -> b.compareTo(south) == 0), argThat(b -> b.compareTo(east) == 0),
+				argThat(b -> b.compareTo(west) == 0))).thenReturn(expected);
 
-		when(locationRepository.findInSquare(north, south, normalizedEast, west)).thenReturn(expected);
+		List<Location> result = locationService.getLocationsInSquare(northD, southD, eastD, westD);
 
-		List<Location> result = locationService.getLocationsInSquare(north, south, east, west);
+		assertSame(expected, result, "Le résultat doit être celui renvoyé par le repository");
 
-		assertSame(expected, result);
-		verify(locationRepository).findInSquare(north, south, normalizedEast, west);
+		verify(locationRepository).findInSquare(argThat(b -> b.compareTo(north) == 0),
+				argThat(b -> b.compareTo(south) == 0), argThat(b -> b.compareTo(east) == 0),
+				argThat(b -> b.compareTo(west) == 0));
 	}
 
 	@Test
 	void getLocationsInSquare_shouldPropagateException_fromRepository() {
-		double north = 50, south = 40, east = 10, west = 0;
+		BigDecimal north = BigDecimal.valueOf(50);
+		BigDecimal south = BigDecimal.valueOf(40);
+		BigDecimal east = BigDecimal.valueOf(10);
+		BigDecimal west = BigDecimal.valueOf(0);
 
-		when(locationRepository.findInSquare(north, south, east, west)).thenThrow(new RuntimeException("DB error"));
+		when(locationRepository.findInSquare(any(BigDecimal.class), any(BigDecimal.class), any(BigDecimal.class),
+				any(BigDecimal.class))).thenThrow(new RuntimeException("DB error"));
 
 		RuntimeException ex = assertThrows(RuntimeException.class,
-				() -> locationService.getLocationsInSquare(north, south, east, west));
+				() -> locationService.getLocationsInSquare(north.doubleValue(), south.doubleValue(), east.doubleValue(),
+						west.doubleValue()));
 
 		assertEquals("DB error", ex.getMessage());
-		verify(locationRepository).findInSquare(north, south, east, west);
+
+		verify(locationRepository).findInSquare(any(BigDecimal.class), any(BigDecimal.class), any(BigDecimal.class),
+				any(BigDecimal.class));
 	}
+
 }
