@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -127,7 +126,7 @@ public class MemoryServiceImplWriteTest {
 
 		when(userService.getCurrentUser()).thenReturn(user);
 
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class))).thenReturn(location);
 
 		when(locationService.saveLocation(any(Location.class))).thenReturn(location);
 
@@ -142,7 +141,7 @@ public class MemoryServiceImplWriteTest {
 		assertNotNull(result.getCreationDate());
 
 		verify(userService).getCurrentUser();
-		verify(locationService).createFromCoordinates(anyDouble(), anyDouble());
+		verify(locationService).createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class));
 		verify(locationService).saveLocation(any(Location.class));
 		verify(memoryRepository).save(any());
 	}
@@ -157,7 +156,7 @@ public class MemoryServiceImplWriteTest {
 		MemoryForm form = MemoryForm.fromMemoryEntity(memory);
 
 		when(userService.getCurrentUser()).thenReturn(user);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class))).thenReturn(location);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
@@ -205,7 +204,8 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(2L)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(existingLocation);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class)))
+				.thenReturn(existingLocation);
 		when(locationService.getById(1L)).thenReturn(existingLocation);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 
@@ -251,7 +251,8 @@ public class MemoryServiceImplWriteTest {
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
 
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(existingLocation);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class)))
+				.thenReturn(existingLocation);
 		when(locationService.getById(anyLong())).thenReturn(existingLocation);
 
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(newCategory));
@@ -281,7 +282,7 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(1L)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class))).thenReturn(location);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
@@ -309,7 +310,7 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class))).thenReturn(location);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
@@ -336,7 +337,7 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class))).thenReturn(location);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
@@ -372,7 +373,7 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class))).thenReturn(location);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
@@ -408,7 +409,7 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(location);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class))).thenReturn(location);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 		when(locationService.getById(locationId)).thenReturn(location);
@@ -434,7 +435,8 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(currentLocation);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class)))
+				.thenReturn(currentLocation);
 		when(locationService.getById(currentLocationId)).thenReturn(currentLocation);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 		when(memoryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
@@ -453,7 +455,6 @@ public class MemoryServiceImplWriteTest {
 		assertEquals(currentLocationId, result.getLocation().getLocationId());
 	}
 
-	
 	// TODO à refaire, ne teste rien
 //	@Test
 //	void updateMemory_shouldCreateNewLocation_whenDifferentAndMultipleMemories() {
@@ -516,10 +517,11 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(currentLocation);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class)))
+				.thenReturn(currentLocation);
 		when(locationService.getById(currentLocationId)).thenReturn(currentLocation);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
-		
+
 		when(memoryRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
 		Memory updated = makeMemory(memoryId, user, updatedLocation);
@@ -547,7 +549,8 @@ public class MemoryServiceImplWriteTest {
 		when(memoryRepository.findById(memoryId)).thenReturn(Optional.of(existing));
 		when(userService.getCurrentUser()).thenReturn(user);
 		when(userService.isAdmin()).thenReturn(false);
-		when(locationService.createFromCoordinates(anyDouble(), anyDouble())).thenReturn(currentLocation);
+		when(locationService.createFromCoordinates(any(BigDecimal.class), any(BigDecimal.class)))
+				.thenReturn(currentLocation);
 		when(locationService.getById(currentLocationId)).thenReturn(currentLocation);
 		when(categoryService.getCategoryById(anyLong())).thenReturn(Optional.of(makeCategory(1L)));
 

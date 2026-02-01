@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const latContainer = document.getElementById('latitude');
 	const longContainer = document.getElementById('longitude');
 
-//	const locationName = document.getElementById('locationName').dataset.location_name;
+	const locationName = document.getElementById('locationName').dataset.location_name;
+	const country = document.getElementById('locationCountry').dataset.location_country;
+	const city = document.getElementById('locationCity').dataset.location_city;
 	const latitude = latContainer.dataset.latitude;
 	const longitude = longContainer.dataset.longitude;
 
@@ -25,9 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		maxZoom: 20,
 		attribution: 'données © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 	}).addTo(map);
-	 const marker = L.marker([latitude, longitude]);
-	 marker.addTo(map);
-	 marker.bindPopup(`<div class="flex flex-col align-center"><div class="text-center font-light">${formatedLatitude} - ${formatedLongitude}</div></div>`);
-	 
-	 setTimeout(() => map.invalidateSize(), 200);
+	const marker = L.marker([latitude, longitude]);
+	marker.addTo(map);
+	marker.bindPopup(`<div class="flex flex-col align-center"><h5 class="text-center"> ${locationName}</h5><h6 class="text-center">${city} - ${country}</h6><div class="text-center font-light">${formatedLatitude} - ${formatedLongitude}</div></div>`);
+
+	setTimeout(() => map.invalidateSize(), 200);
 });

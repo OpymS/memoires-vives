@@ -1,7 +1,10 @@
 -- Créé le 27/01/2026 pour gérer le reverse geocoding et améliorer la précision du positionnement
+-- Modifié le 01/02/2026 pour ajouter un slug pour city et pour country
 ALTER TABLE locations
 ADD COLUMN country VARCHAR(100),
+ADD COLUMN country_slug VARCHAR(100),
 ADD COLUMN city VARCHAR(100),
+ADD COLUMN city_slug VARCHAR(100),
 ADD COLUMN country_code VARCHAR(5),
 MODIFY latitude DECIMAL(9,6) NOT NULL,
 MODIFY longitude DECIMAL(9,6) NOT NULL;

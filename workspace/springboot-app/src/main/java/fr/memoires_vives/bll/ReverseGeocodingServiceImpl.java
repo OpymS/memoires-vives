@@ -51,6 +51,7 @@ public class ReverseGeocodingServiceImpl implements ReverseGeocodingService {
 				.queryParam("lat", latitude.toPlainString())
 				.queryParam("lon", longitude.toPlainString())
 				.queryParam("addressdetails", 1)
+				.queryParam("accept-language", "en")
 				.build()
 				.toUri();
 
@@ -87,14 +88,14 @@ public class ReverseGeocodingServiceImpl implements ReverseGeocodingService {
 
 	    String country = (String) address.get("country");
 	    String countryCode = (String) address.get("country_code");
-	    System.out.println(displayName);
 
 		String city = firstNotNull(
 				(String) address.get("city"),
 				(String) address.get("town"),
 				(String) address.get("village"),
 				(String) address.get("municipality"),
-				(String) address.get("hamlet")
+				(String) address.get("hamlet"),
+				(String) address.get("county")
 				);
 
 		return new GeocodingResult(displayName, city, country, countryCode != null ? countryCode.toUpperCase() : null);
@@ -109,6 +110,4 @@ public class ReverseGeocodingServiceImpl implements ReverseGeocodingService {
 		}
 		return null;
 	}
-
-
 }

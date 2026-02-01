@@ -46,7 +46,13 @@ public class Location {
 	private String country;
 
 	@Column(length = 100)
+	private String countrySlug;
+
+	@Column(length = 100)
 	private String city;
+
+	@Column(length = 100)
+	private String citySlug;
 
 	@Column(length = 5)
 	private String countryCode;
@@ -101,10 +107,24 @@ public class Location {
 	}
 
 	/**
+	 * @return the countrySlug
+	 */
+	public String getCountrySlug() {
+		return countrySlug;
+	}
+
+	/**
 	 * @return the city
 	 */
 	public String getCity() {
 		return city;
+	}
+
+	/**
+	 * @return the citySlug
+	 */
+	public String getCitySlug() {
+		return citySlug;
 	}
 
 	/**
@@ -157,10 +177,24 @@ public class Location {
 	}
 
 	/**
+	 * @param countrySlug the countrySlug to set
+	 */
+	public void setCountrySlug(String countrySlug) {
+		this.countrySlug = countrySlug;
+	}
+
+	/**
 	 * @param city the city to set
 	 */
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	/**
+	 * @param citySlug the citySlug to set
+	 */
+	public void setCitySlug(String citySlug) {
+		this.citySlug = citySlug;
 	}
 
 	/**

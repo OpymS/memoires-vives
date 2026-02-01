@@ -1,11 +1,14 @@
 package fr.memoires_vives.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -31,9 +34,13 @@ public class MemoryForm {
 
 	private String mediaUUID;
 
-	private Double latitude;
+	@NotNull(message = "Vous devez choisir un lieu sur la carte")
+	@DecimalMin(value = "-90.0", message = "Coordonnées incorrectes")
+	@DecimalMax(value = "90.0", message = "Coordonnées incorrectes")
+	private BigDecimal latitude;
 
-	private Double longitude;
+	@NotNull(message = "Vous devez choisir un lieu sur la carte")
+	private BigDecimal longitude;
 
 	@AssertTrue(message = "Vous devez choisir un lieu sur la carte")
 	private Boolean locationSelected = false;
@@ -85,14 +92,14 @@ public class MemoryForm {
 	/**
 	 * @return the latitude
 	 */
-	public Double getLatitude() {
+	public BigDecimal getLatitude() {
 		return latitude;
 	}
 
 	/**
 	 * @return the longitude
 	 */
-	public Double getLongitude() {
+	public BigDecimal getLongitude() {
 		return longitude;
 	}
 
@@ -155,14 +162,14 @@ public class MemoryForm {
 	/**
 	 * @param latitude the latitude to set
 	 */
-	public void setLatitude(Double latitude) {
+	public void setLatitude(BigDecimal latitude) {
 		this.latitude = latitude;
 	}
 
 	/**
 	 * @param longitude the longitude to set
 	 */
-	public void setLongitude(Double longitude) {
+	public void setLongitude(BigDecimal longitude) {
 		this.longitude = longitude;
 	}
 
@@ -190,8 +197,8 @@ public class MemoryForm {
 		form.setMediaUUID(memory.getMediaUUID());
 		Location location = memory.getLocation();
 		if (location != null) {
-			form.setLatitude(location.getLatitude().doubleValue());
-			form.setLongitude(location.getLongitude().doubleValue());
+			form.setLatitude(location.getLatitude());
+			form.setLongitude(location.getLongitude());
 			form.setLocationSelected(true);
 		}
 		form.setPublished(memory.getState() == MemoryState.PUBLISHED ? true : false);
