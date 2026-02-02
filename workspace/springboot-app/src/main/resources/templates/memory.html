@@ -5,7 +5,7 @@
 	${memoryToDisplay.title} + ' | Mémoires vives',
 	'Souvenir local : ' + ${memoryToDisplay.title} + '. Découvrez une mémoire racontée par la communauté locale.',
 	'index, follow',
-	@{https://memoires-vives.fr/memory/{id}-{slug}(id=${memoryToDisplay.memoryId}, slug=${memoryToDisplay.slug})},
+	${canonicalUrl},
 	~{fragments/fragment-extra-head::memoryHead}
 )}">
 </head>
@@ -49,11 +49,15 @@
 				<div id="locationName" th:data-location_name="${memoryToDisplay.location.name}"></div>
 				<div id="locationCity" th:data-location_city="${memoryToDisplay.location.city}"></div>
 				<div id="locationCountry" th:data-location_country="${memoryToDisplay.location.country}"></div>
+				<div th:text="${memoryToDisplay.location.name}" class="font-semibold"></div>
+				<div th:if="${memoryToDisplay.location.country}!=null">
+					<span th:text="${memoryToDisplay.location.country}"></span>
+					<span th:if="${memoryToDisplay.location.city}!=null" th:text="' - ' + ${memoryToDisplay.location.city}"></span></div>
 				<div>Latitude : <span id="latitude" th:data-latitude="${memoryToDisplay.location.latitude}"></span> -
 					Longitude :
 					<span id="longitude" th:data-longitude="${memoryToDisplay.location.longitude}"></span>
 				</div>
-				<div id="map" class="h-9/10 w-9/10"></div>
+				<div id="map" class="h-8/10 w-9/10"></div>
 			</div>
 		</div>
 	</main>

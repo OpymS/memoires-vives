@@ -77,10 +77,6 @@ public class LocationServiceImpl implements LocationService {
 		location.setCountrySlug(SlugUtil.toSlug(result.getCountry()));
 		location.setCountryCode(result.getCountryCode());
 
-		System.out.println(location.getCity() + " " + location.getCitySlug() + " - " + location.getCountry() + " "
-				+ location.getCountrySlug());
-		System.out.println(location.getCitySlug() + " - " + location.getCountrySlug());
-
 		return location;
 	}
 

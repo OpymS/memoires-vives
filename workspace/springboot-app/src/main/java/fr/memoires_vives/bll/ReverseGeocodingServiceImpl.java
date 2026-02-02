@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,8 +37,13 @@ public class ReverseGeocodingServiceImpl implements ReverseGeocodingService {
 	}
 
 	@Override
+	@Cacheable(
+			value = "reverseGeocoding",
+			key = "#p0.setScale(4, T(java.math.RoundingMode).HALF_UP) + ',' + #p1.setScale(4, T(java.math.RoundingMode).HALF_UP)"
+	)
 	public GeocodingResult reverseGeocode(BigDecimal latitude, BigDecimal longitude) {
 
+		System.out.println("APPEL NOMINATIM pour " + latitude + "," + longitude);
 		if (latitude == null || longitude == null) {
 			throw new IllegalArgumentException("Latitude et longitude ne peuvent pas être nulles");
 		}

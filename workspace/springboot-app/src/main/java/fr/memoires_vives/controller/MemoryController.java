@@ -2,9 +2,6 @@ package fr.memoires_vives.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,12 +12,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.MemoryService;
+import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryVisibility;
 import fr.memoires_vives.dto.MemoryForm;
 import fr.memoires_vives.exception.ValidationException;
-import fr.memoires_vives.utils.SlugUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,10 +33,12 @@ public class MemoryController {
 
 	private final MemoryService memoryService;
 	private final CategoryService categoryService;
+	private final MemoryUrlService memoryUrlService;
 
-	public MemoryController(MemoryService memoryService, CategoryService categoryService) {
+	public MemoryController(MemoryService memoryService, CategoryService categoryService, MemoryUrlService memoryUrlService) {
 		this.memoryService = memoryService;
 		this.categoryService = categoryService;
+		this.memoryUrlService = memoryUrlService;
 	}
 
 	@ModelAttribute("visibilities")
@@ -80,31 +81,34 @@ public class MemoryController {
 
 	}
 
-	@GetMapping("/{id:\\d+}-{slug}")
-	public String showMemoryPage(@PathVariable("id") Long memoryId, @PathVariable("slug") String slug, Model model) {
-		if (memoryId == 0) {
-			return "index";
-		}
-
+	@GetMapping({
+		"/{id:\\d+}",
+		"/{id:\\d+}-{slug}",
+		"/{countrySlug}/{id:\\d+}-{slug}",
+		"/{countrySlug}/{id:\\d+}",
+		"/{countrySlug}/{citySlug}/{id:\\d+}-{slug}",
+		"/{countrySlug}/{citySlug}/{id:\\d+}"
+	})
+	public String showMemory(@PathVariable(value = "id") Long memoryId,
+			@PathVariable(value = "slug", required = false) String slug,
+			@PathVariable(value = "countrySlug", required = false) String countrySlug,
+			@PathVariable(value = "citySlug", required = false) String citySlug,
+			HttpServletRequest request, HttpServletResponse response, Model model) {
+		
 		Memory memoryToDisplay = memoryService.getMemoryById(memoryId);
-		String dbSlug = memoryToDisplay.getSlug();
-
-		if (dbSlug != null && !dbSlug.equals(slug)) {
-			String safeSlug = (dbSlug != null) ? dbSlug : SlugUtil.toSlug(memoryToDisplay);
-			return "redirect:/memory/" + memoryToDisplay.getMemoryId() + "-" + safeSlug;
+		
+		String canonical = memoryUrlService.buildCanonicalUrl(memoryToDisplay);
+		String requestedPath = request.getRequestURI();
+		
+		if (!requestedPath.equals(canonical)) {
+			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+			response.setHeader("Location", canonical);
+			return null;
 		}
 
 		model.addAttribute("memoryToDisplay", memoryToDisplay);
-
+		model.addAttribute("canonicalUrl", canonical);
 		return "memory";
-	}
-
-	@GetMapping("/{id:\\d+}")
-	public ResponseEntity<Void> redirectToCanonical(@PathVariable("id") Long memoryId) {
-		Memory memory = memoryService.getMemoryById(memoryId);
-		String dbSlug = memory.getSlug();
-		return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-				.header(HttpHeaders.LOCATION, "/memory/" + memoryId + "-" + dbSlug).build();
 	}
 
 	@GetMapping("/modify")

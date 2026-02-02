@@ -39,7 +39,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr class="border border-black h-[35px]" th:each="memory:${memories}">
+						<tr class="border border-black h-[35px]" th:each="memory:${memories.content}">
 							<td class="border border-black px-2" th:text="${memory.memoryId}"></td>
 							<td class="border border-black px-2" th:text="${memory.title}"></td>
 							<td class="border border-black px-2" th:text="${memory.description}"></td>
