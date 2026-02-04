@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.LocationService;
 import fr.memoires_vives.bll.MemoryService;
+import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.component.CaptchaCounter;
+import fr.memoires_vives.dto.MemoryView;
 import fr.memoires_vives.exception.EntityNotFoundException;
 
 @Controller
@@ -33,14 +35,16 @@ public class AdminController {
 	private final CategoryService categoryService;
 	private final LocationService locationService;
 	private final CaptchaCounter counter;
+	private final MemoryUrlService memoryUrlService;
 
 	public AdminController(UserService userService, MemoryService memoryService, CategoryService categoryService,
-			LocationService locationService, CaptchaCounter counter) {
+			LocationService locationService, CaptchaCounter counter, MemoryUrlService memoryUrlService) {
 		this.userService = userService;
 		this.memoryService = memoryService;
 		this.categoryService = categoryService;
 		this.locationService = locationService;
 		this.counter = counter;
+		this.memoryUrlService = memoryUrlService;
 	}
 
 	@GetMapping
@@ -60,7 +64,8 @@ public class AdminController {
 	public String showAdminMemories(Model model,
 			@RequestParam(name = "currentPage", defaultValue = "1") int currentPage) {
 		Page<Memory> memories = memoryService.findMemories(PageRequest.of(currentPage - 1, PAGE_SIZE));
-		model.addAttribute("memories", memories);
+		Page<MemoryView> views = memories.map(m -> new MemoryView(m, memoryUrlService.buildCanonicalUrl(m)));
+		model.addAttribute("views", views);
 		return "admin-memories";
 	}
 

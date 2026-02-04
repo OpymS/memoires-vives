@@ -12,68 +12,68 @@
 
 <body class="min-h-screen flex flex-col">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
-	<div class="flex-grow flex flex-row justify-between">
-		<main class="w-full flex flex-col flex-grow sm:items-center overflow-auto">
-			<div class="flex-grow w-full flex flex-col items-center justify-start">
+	<div class="flex-grow flex flex-row w-full overflow-hidden">
+		<main class="flex-1 min-w-0 flex flex-col overflow-auto">
+			<div class="flex-grow w-full max-w-full px-4 flex flex-col items-center justify-start">
 				<h1 class="mt-4 mb-2 sm:mt-[80px] text-[#bddab2] text-2xl font-bold">Panneau d'administration des
 					souvenirs
 				</h1>
-				<table class="border border-black border-collapse w-full sm:w-9/10">
-					<thead>
-						<tr class="border border-black font-bold">
-							<th class="border border-black">Id</th>
-							<th class="border border-black">titre</th>
-							<th class="border border-black">description</th>
-							<th class="border border-black">auteur</th>
-							<th class="border border-black">catégorie</th>
-							<th class="hidden sm:table-cell">image</th>
-							<th class="border border-black">date du souvenir</th>
-							<th class="border border-black">date de création</th>
-							<th class="border border-black">date de modification</th>
-							<th class="border border-black">lieu</th>
-							<th class="border border-black">latitude</th>
-							<th class="border border-black">longitude</th>
-							<th class="border border-black">état</th>
-							<th class="border border-black">visibilité</th>
-							<th class="border border-black">actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr class="border border-black h-[35px]" th:each="memory:${memories.content}">
-							<td class="border border-black px-2" th:text="${memory.memoryId}"></td>
-							<td class="border border-black px-2" th:text="${memory.title}"></td>
-							<td class="border border-black px-2" th:text="${memory.description}"></td>
-							<td class="border border-black px-2"><a
-									th:href="@{profil(userId=${memory.rememberer.userId})}"
-									th:text="${memory.rememberer.pseudo}"></a></td>
-							<td class="border border-black px-2" th:text="${memory.category.name}"></td>
-							<td class="hidden sm:table-cell sm:border sm:border-black">
-								<img class="rounded-[50%] w-[30px] h-[30px] m-auto"
-									th:unless="${memory.mediaUUID}==null"
-									th:src="@{/uploads/{filename}(filename=${memory.mediaUUID})}"
-									alt="image lié au souvenir" />
-							</td>
-							<td class="border border-black px-2"
-								th:text="${#temporals.format(memory.memoryDate, 'dd/MM/yyyy')}"></td>
-							<td class="border border-black px-2"
-								th:text="${#temporals.format(memory.creationDate,'dd/MM/yyyy hh:mm:ss')}"></td>
-							<td class="border border-black px-2"
-								th:text="${#temporals.format(memory.modificationDate,'dd/MM/yyyy hh:mm:ss')}"></td>
-							<td class="border border-black px-2" th:text="${memory.location.name}"></td>
-							<td class="border border-black px-2" th:text="${memory.location.latitude}"></td>
-							<td class="border border-black px-2" th:text="${memory.location.longitude}"></td>
-							<td class="border border-black px-2" th:text="${memory.state.name}"></td>
-							<td class="border border-black px-2" th:text="${memory.visibility.name}"></td>
-							<td class="space-x-2 flex flex-row">
-								<a href="#modal-change-state" class="form-button">Changer le statut</a>
-								<a href="#modal-change-visibility" class="form-button">Changer la visibilité</a>
-								<a href="#modal-delete" class="form-button">Supprimer</a>
-								<a th:href="@{'/memory/' + ${memory.memoryId} + '-' + ${memory.slug}}"
-									class="form-button">Voir</a>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="w-full overflow-x-auto">
+					<table class="border border-black border-collapse w-full sm:w-9/10">
+						<thead>
+							<tr class="border border-black font-bold">
+								<th class="border border-black">Id</th>
+								<th class="border border-black">titre</th>
+								<th class="border border-black">description</th>
+								<th class="border border-black">auteur</th>
+								<th class="border border-black">catégorie</th>
+								<th class="hidden sm:table-cell">image</th>
+								<th class="border border-black">date du souvenir</th>
+								<th class="border border-black">date de création</th>
+								<th class="border border-black">date de modification</th>
+								<th class="border border-black">lieu</th>
+								<th class="border border-black">latitude</th>
+								<th class="border border-black">longitude</th>
+								<th class="border border-black">état</th>
+								<th class="border border-black">visibilité</th>
+								<th class="border border-black">actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr class="border border-black h-[35px] overflow-hidden" th:each="view:${views.content}"
+								th:object="${view.memory}">
+								<td class="border border-black px-2" th:text="*{memoryId}"></td>
+								<td class="border border-black px-2" th:text="*{title}"></td>
+								<td class="border border-black px-2"> <div class="h-[35px] overflow-hidden" th:text="*{description}"> </div></td>
+								<td class="border border-black px-2"><a th:href="@{profil(userId=*{rememberer.userId})}"
+										th:text="*{rememberer.pseudo}"></a></td>
+								<td class="border border-black px-2" th:text="${view.memory.category.name}"></td>
+								<td class="hidden sm:table-cell sm:border sm:border-black">
+									<img class="rounded-[50%] w-[30px] h-[30px] m-auto" th:unless="*{mediaUUID}==null"
+										th:src="@{/uploads/{filename}(filename=*{mediaUUID})}"
+										alt="image lié au souvenir" />
+								</td>
+								<td class="border border-black px-2"
+									th:text="*{#temporals.format(memoryDate, 'dd/MM/yyyy')}"></td>
+								<td class="border border-black px-2"
+									th:text="*{#temporals.format(creationDate,'dd/MM/yyyy hh:mm:ss')}"></td>
+								<td class="border border-black px-2"
+									th:text="*{#temporals.format(modificationDate,'dd/MM/yyyy hh:mm:ss')}"></td>
+								<td class="border border-black px-2" th:text="*{location.name}"></td>
+								<td class="border border-black px-2" th:text="*{location.latitude}"></td>
+								<td class="border border-black px-2" th:text="*{location.longitude}"></td>
+								<td class="border border-black px-2" th:text="*{state.name}"></td>
+								<td class="border border-black px-2" th:text="*{visibility.name}"></td>
+								<td class="space-x-2 flex flex-row">
+									<a th:href="@{${view.canonicalUrl}}" class="form-button">Voir</a>
+									<a href="#modal-change-state" class="form-button">Changer le statut</a>
+									<a href="#modal-change-visibility" class="form-button">Changer la visibilité</a>
+									<a href="#modal-delete" class="form-button">Supprimer</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 			<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 		</main>
