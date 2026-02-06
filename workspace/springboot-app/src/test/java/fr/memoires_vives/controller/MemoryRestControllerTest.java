@@ -24,8 +24,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.memoires_vives.bll.MemoryService;
+import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bo.Memory;
+import fr.memoires_vives.dto.MemoryView;
 import fr.memoires_vives.dto.SearchCriteria;
+import fr.memoires_vives.mapper.MemoryViewMapper;
 
 @WebMvcTest(MemoryRestController.class)
 public class MemoryRestControllerTest {
@@ -35,19 +38,27 @@ public class MemoryRestControllerTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+    private MemoryViewMapper memoryViewMapper;
 
 	@MockitoBean
 	private MemoryService memoryService;
+
+	@MockitoBean
+	private MemoryUrlService memoryUrlService;
 
 	@Test
 	@WithMockUser
 	void shouldReturnPageOfMemoriesForGridEndpoint() throws Exception {
 		SearchCriteria criteria = new SearchCriteria();
 
-		Page<Memory> page = new PageImpl<>(List.of(new Memory()), PageRequest.of(0, 6), 1);
+		Memory memory = new Memory();
+		Page<Memory> page = new PageImpl<>(List.of(memory), PageRequest.of(0, 6), 1);
 
 		when(memoryService.findMemoriesWithCriteria(any(PageRequest.class), any(SearchCriteria.class)))
 				.thenReturn(page);
+		when(memoryUrlService.buildCanonicalUrl(any(Memory.class))).thenReturn("https://example.com/memory/1");
 
 		mockMvc.perform(post("/api/memory/grid").with(csrf()).param("pageNumber", "1")
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(criteria)))

@@ -24,6 +24,7 @@ import fr.memoires_vives.bo.User;
 import fr.memoires_vives.component.CaptchaCounter;
 import fr.memoires_vives.dto.MemoryView;
 import fr.memoires_vives.exception.EntityNotFoundException;
+import fr.memoires_vives.mapper.MemoryViewMapper;
 
 @Controller
 @RequestMapping("/admin")
@@ -35,16 +36,16 @@ public class AdminController {
 	private final CategoryService categoryService;
 	private final LocationService locationService;
 	private final CaptchaCounter counter;
-	private final MemoryUrlService memoryUrlService;
+	private final MemoryViewMapper memoryViewMapper;
 
 	public AdminController(UserService userService, MemoryService memoryService, CategoryService categoryService,
-			LocationService locationService, CaptchaCounter counter, MemoryUrlService memoryUrlService) {
+			LocationService locationService, CaptchaCounter counter, MemoryUrlService memoryUrlService, MemoryViewMapper memoryViewMapper) {
 		this.userService = userService;
 		this.memoryService = memoryService;
 		this.categoryService = categoryService;
 		this.locationService = locationService;
 		this.counter = counter;
-		this.memoryUrlService = memoryUrlService;
+		this.memoryViewMapper = memoryViewMapper;
 	}
 
 	@GetMapping
@@ -64,7 +65,7 @@ public class AdminController {
 	public String showAdminMemories(Model model,
 			@RequestParam(name = "currentPage", defaultValue = "1") int currentPage) {
 		Page<Memory> memories = memoryService.findMemories(PageRequest.of(currentPage - 1, PAGE_SIZE));
-		Page<MemoryView> views = memories.map(m -> new MemoryView(m, memoryUrlService.buildCanonicalUrl(m)));
+		Page<MemoryView> views = memories.map(memoryViewMapper::toView);
 		model.addAttribute("views", views);
 		return "admin-memories";
 	}

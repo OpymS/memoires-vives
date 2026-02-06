@@ -43,7 +43,7 @@ public class ReverseGeocodingServiceImpl implements ReverseGeocodingService {
 	)
 	public GeocodingResult reverseGeocode(BigDecimal latitude, BigDecimal longitude) {
 
-		System.out.println("APPEL NOMINATIM pour " + latitude + "," + longitude);
+//		System.out.println("APPEL NOMINATIM pour " + latitude + "," + longitude);
 		if (latitude == null || longitude == null) {
 			throw new IllegalArgumentException("Latitude et longitude ne peuvent pas être nulles");
 		}
@@ -61,7 +61,7 @@ public class ReverseGeocodingServiceImpl implements ReverseGeocodingService {
 				.build()
 				.toUri();
 
-		System.out.println(uri);
+//		System.out.println(uri);
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(HttpHeaders.USER_AGENT, userAgent);
 		headers.setAccept(List.of(MediaType.APPLICATION_JSON));

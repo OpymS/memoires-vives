@@ -17,4 +17,6 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 			+ "OR (:west > :east AND (l.longitude <= :east OR l.longitude >= :west)))")
 	List<Location> findInSquare(@Param("north") BigDecimal north, @Param("south") BigDecimal south,
 			@Param("east") BigDecimal east, @Param("west") BigDecimal west);
+
+	List<Location> findByCountryIsNull();
 }

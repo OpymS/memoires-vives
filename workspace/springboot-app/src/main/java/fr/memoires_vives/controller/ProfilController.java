@@ -1,5 +1,7 @@
 package fr.memoires_vives.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,11 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fr.memoires_vives.bll.ActivationService;
+import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
+import fr.memoires_vives.dto.MemoryView;
 import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.InvalidTokenException;
 import fr.memoires_vives.exception.ValidationException;
+import fr.memoires_vives.mapper.MemoryViewMapper;
 import jakarta.validation.Valid;
 
 @Controller
@@ -26,16 +31,20 @@ import jakarta.validation.Valid;
 public class ProfilController {
 	private final UserService userService;
 	private final ActivationService activationService;
+	private final MemoryViewMapper memoryViewMapper;
 
-	public ProfilController(UserService userService, ActivationService activationService) {
+	public ProfilController(UserService userService, ActivationService activationService, MemoryUrlService memoryUrlService, MemoryViewMapper memoryViewMapper) {
 		this.userService = userService;
 		this.activationService = activationService;
+		this.memoryViewMapper = memoryViewMapper;
 	}
 
 	@GetMapping
 	public String showProfilPage(@RequestParam(name = "userId", required = false) Long userId, Model model) {
 		User userToDisplay = userService.getUserOrCurrent(userId);
 		userToDisplay.setPassword(null);
+		List<MemoryView> views = userToDisplay.getMemories().stream().map(memoryViewMapper::toView).toList();
+		model.addAttribute("views", views);
 		model.addAttribute("userToDisplay", userToDisplay);
 		return "profil";
 	}

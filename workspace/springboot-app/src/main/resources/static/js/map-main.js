@@ -110,9 +110,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 			stockCriterias();
 			currentPage = 1;
 			const serverResponse = await fetchMemories();
-			const memories = serverResponse.content;
+			const views = serverResponse.content;
 			const lastPageNumber = serverResponse.totalPages;
-			updateGrid(memories);
+			updateGrid(views);
 			updatePaginationControl(lastPageNumber);
 		} else {
 			setTimeout(() => map.invalidateSize(), 200);
@@ -149,8 +149,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 			if (!response.ok) {
 				throw new Error(response.status === 403 ? 'Problème.' : 'An error occurred.');
 			}
-			const memories = await response.json();
-			return memories;
+			const views = await response.json();
+			return views;
 		} catch (error) {
 			console.error('Error:', error);
 			return [];
@@ -173,19 +173,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 			if (!response.ok) {
 				throw new Error(response.status === 403 ? 'Problème.' : 'An error occurred.');
 			}
-			const memories = await response.json();
-			return memories;
+			const views = await response.json();
+			return views;
 		} catch (error) {
 			console.error('Error:', error);
 			return [];
 		}
 	}
 
-	function updateGrid(memories) {
+	function updateGrid(views) {
 		cardsContainer.innerHTML = '';
-		memories.forEach((memory) => {
+		views.forEach((view) => {
+			const memory= view.memory;
 			const memoryDiv = document.createElement('a');
-			memoryDiv.href = `/memory/${memory.memoryId}-${memory.slug}`;
+			memoryDiv.href = view.canonicalUrl;
 			memoryDiv.className = 'border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw] overflow-hidden duration-200 hover:scale-101';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
@@ -224,12 +225,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
 	}
 
-	function updateMap(memories) {
+	function updateMap(views) {
 		markers.clearLayers();
-		memories.forEach(memory => {
+		views.forEach(view => {
+			const memory = view.memory;
 			const marker = L.marker([memory.location.latitude, memory.location.longitude]).addTo(markers);
 			const memoryDiv = document.createElement('a');
-			memoryDiv.href = `/memory/${memory.memoryId}-${memory.slug}`;
+			memoryDiv.href = view.canonicalUrl;
 			memoryDiv.className = 'flex flex-row h-[200px] w-[350px] items-center p-2 gap-4';
 			if (memory.mediaUUID) {
 				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">
@@ -253,9 +255,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 	async function goToPage(pageNumber) {
 		currentPage = pageNumber;
 		const serverResponse = await fetchMemories(pageNumber);
-		const memories = serverResponse.content;
+		const views = serverResponse.content;
 		const lastPageNumber = serverResponse.totalPages;
-		updateGrid(memories);
+		updateGrid(views);
 		updatePaginationControl(lastPageNumber);
 		stockCriterias();
 	}
