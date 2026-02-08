@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.repositories.MemoryRepository;
 
@@ -14,9 +15,12 @@ public class SitemapController {
 	private String baseUrl;
 
 	private final MemoryRepository memoryRepository;
+	
+	private final MemoryUrlService memoryUrlService;
 
-	public SitemapController(MemoryRepository memoryRepository) {
+	public SitemapController(MemoryRepository memoryRepository, MemoryUrlService memoryUrlService) {
 		this.memoryRepository = memoryRepository;
+		this.memoryUrlService = memoryUrlService;
 	}
 
 	@GetMapping(value = "/sitemap.xml", produces = "application/xml")
@@ -36,18 +40,19 @@ public class SitemapController {
 				""".formatted(baseUrl));
 
 		memoryRepository.findAllByState(MemoryState.PUBLISHED).forEach(memory -> {
+			String canonicalUrl = baseUrl + memoryUrlService.buildCanonicalUrl(memory);
 
 			LocalDate lastMod = memory.getModificationDate() != null ? memory.getModificationDate().toLocalDate()
 					: memory.getCreationDate().toLocalDate();
 
 			xml.append("""
 					    <url>
-					        <loc>%s/memory/%d-%s</loc>
+					        <loc>%s</loc>
 					        <lastmod>%s</lastmod>
 					        <changefreq>monthly</changefreq>
 					        <priority>0.8</priority>
 					    </url>
-					""".formatted(baseUrl, memory.getMemoryId(), memory.getSlug(), lastMod));
+					""".formatted(canonicalUrl, lastMod));
 		});
 
 		xml.append("</urlset>");
