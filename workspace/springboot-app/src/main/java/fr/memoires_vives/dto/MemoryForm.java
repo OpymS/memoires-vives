@@ -19,7 +19,7 @@ public class MemoryForm {
 	private Long memoryId = 0L;
 
 	@NotBlank
-	@Size(max = 30)
+	@Size(max = 255)
 	private String title;
 
 	@NotBlank

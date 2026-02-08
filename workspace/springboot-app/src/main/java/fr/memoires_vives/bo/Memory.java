@@ -33,7 +33,7 @@ public class Memory {
 
 	@Column(nullable = false)
 	@NotBlank
-	@Size(max = 30)
+	@Size(max = 255)
 	private String title;
 
 	@Column(nullable = false)
