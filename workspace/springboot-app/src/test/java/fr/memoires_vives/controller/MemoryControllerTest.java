@@ -14,18 +14,22 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.MemoryService;
+import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.exception.ValidationException;
+import fr.memoires_vives.mapper.MemoryViewMapper;
 import fr.memoires_vives.security.CustomUserDetails;
 
 @WebMvcTest(MemoryController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@Import(MemoryViewMapper.class)
 public class MemoryControllerTest {
 
 	@Autowired
@@ -36,6 +40,9 @@ public class MemoryControllerTest {
 
 	@MockitoBean
 	private CategoryService categoryService;
+	
+	@MockitoBean
+	private MemoryUrlService memoryUrlService;
 
 	private RequestPostProcessor authenticatedUser() {
 		User domainUser = new User();

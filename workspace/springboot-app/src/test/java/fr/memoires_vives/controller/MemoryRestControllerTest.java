@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,11 +27,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bo.Memory;
-import fr.memoires_vives.dto.MemoryView;
 import fr.memoires_vives.dto.SearchCriteria;
 import fr.memoires_vives.mapper.MemoryViewMapper;
 
 @WebMvcTest(MemoryRestController.class)
+@Import(MemoryViewMapper.class)
 public class MemoryRestControllerTest {
 
 	@Autowired
@@ -38,9 +39,6 @@ public class MemoryRestControllerTest {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
-	@Autowired
-    private MemoryViewMapper memoryViewMapper;
 
 	@MockitoBean
 	private MemoryService memoryService;

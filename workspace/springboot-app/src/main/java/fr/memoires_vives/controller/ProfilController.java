@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fr.memoires_vives.bll.ActivationService;
-import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.dto.MemoryView;
@@ -33,7 +32,7 @@ public class ProfilController {
 	private final ActivationService activationService;
 	private final MemoryViewMapper memoryViewMapper;
 
-	public ProfilController(UserService userService, ActivationService activationService, MemoryUrlService memoryUrlService, MemoryViewMapper memoryViewMapper) {
+	public ProfilController(UserService userService, ActivationService activationService, MemoryViewMapper memoryViewMapper) {
 		this.userService = userService;
 		this.activationService = activationService;
 		this.memoryViewMapper = memoryViewMapper;

@@ -18,9 +18,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -28,14 +32,18 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import fr.memoires_vives.bll.ActivationService;
+import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bll.UserService;
+import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.InvalidTokenException;
 import fr.memoires_vives.exception.ValidationException;
+import fr.memoires_vives.mapper.MemoryViewMapper;
 import fr.memoires_vives.security.CustomUserDetails;
 
 @WebMvcTest(ProfilController.class)
+@Import(MemoryViewMapper.class)
 @WithMockUser
 class ProfilControllerTest {
 
@@ -47,6 +55,9 @@ class ProfilControllerTest {
 
 	@MockitoBean
 	private ActivationService activationService;
+	
+	@MockitoBean
+	private MemoryUrlService memoryUrlService;
 
 	private UserDetails userDetailsWithDomainUser() {
 		User domainUser = new User();
@@ -68,6 +79,8 @@ class ProfilControllerTest {
 		User user = new User();
 		user.setUserId(1L);
 		user.setPassword("secret");
+		List<Memory> memories = new ArrayList<Memory>();
+		user.setMemories(memories);
 
 		when(userService.getUserOrCurrent(1L)).thenReturn(user);
 

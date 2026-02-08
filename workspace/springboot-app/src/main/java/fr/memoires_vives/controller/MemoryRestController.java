@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.memoires_vives.bll.MemoryService;
-import fr.memoires_vives.bll.MemoryUrlService;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.dto.MemoryView;
 import fr.memoires_vives.dto.SearchCriteria;
@@ -27,8 +26,7 @@ public class MemoryRestController {
 	private final MemoryService memoryService;
 	private final MemoryViewMapper memoryViewMapper;
 
-	public MemoryRestController(MemoryService memoryService, MemoryUrlService memoryUrlService,
-			MemoryViewMapper memoryViewMapper) {
+	public MemoryRestController(MemoryService memoryService, MemoryViewMapper memoryViewMapper) {
 		this.memoryService = memoryService;
 		this.memoryViewMapper = memoryViewMapper;
 	}
