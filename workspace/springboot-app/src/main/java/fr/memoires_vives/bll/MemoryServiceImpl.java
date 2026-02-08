@@ -209,6 +209,7 @@ public class MemoryServiceImpl implements MemoryService {
 			addWordsPredicates(predicates, root, cb, criteria);
 			addDatePredicates(predicates, root, cb, criteria);
 			addCategoryPredicate(predicates, root, cb, criteria);
+			addGeographicalPredicate(predicates, root, cb, criteria);
 
 			User user = userService.getCurrentUser();
 			addVisibilityPredicates(predicates, root, cb, criteria, user);
@@ -283,6 +284,14 @@ public class MemoryServiceImpl implements MemoryService {
 		}
 	}
 
+	private void addGeographicalPredicate(List<Predicate> predicates, Root<Memory> root, CriteriaBuilder cb,
+			SearchCriteria criteria) {
+		if (criteria.getCountrySlug() == null || criteria.getCountrySlug().isEmpty()) {
+			return;
+		}
+		predicates.add(cb.equal(root.get("location").get("countrySlug"), criteria.getCountrySlug()));
+	}
+	
 	private Specification<Memory> getGeographicSpecification(SearchCriteria criteria) {
 		double north = criteria.getNorth();
 		double south = criteria.getSouth();

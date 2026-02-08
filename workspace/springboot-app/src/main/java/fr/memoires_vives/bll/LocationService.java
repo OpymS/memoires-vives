@@ -2,6 +2,7 @@ package fr.memoires_vives.bll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import fr.memoires_vives.bo.Location;
 
@@ -15,4 +16,6 @@ public interface LocationService {
 	List<Location> getLocationsInSquare(double north, double south, double east, double west);
 
 	Location createFromCoordinates(BigDecimal latitude, BigDecimal longitude);
+	
+	Optional<String> resolveCountryLabel(String countrySlug);
 }

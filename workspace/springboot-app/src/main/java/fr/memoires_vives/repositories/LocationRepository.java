@@ -19,4 +19,7 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 			@Param("east") BigDecimal east, @Param("west") BigDecimal west);
 
 	List<Location> findByCountryIsNull();
+
+	@Query("SELECT l.country FROM Location l WHERE l.countrySlug = :countrySlug AND l.country IS NOT NULL GROUP BY l.country ORDER BY COUNT(l) DESC")
+	List<String> findCountryByFrequency(@Param("countrySlug") String countrySlug);
 }

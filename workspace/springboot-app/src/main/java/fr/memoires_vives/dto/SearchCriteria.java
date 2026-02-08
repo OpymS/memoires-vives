@@ -15,6 +15,8 @@ public class SearchCriteria {
 	private double south;
 	private double east;
 	private double west;
+	private String countrySlug;
+	private String citySlug;
 	
 	
 	public SearchCriteria() {
@@ -98,6 +100,20 @@ public class SearchCriteria {
 	}
 
 	/**
+	 * @return the countrySlug
+	 */
+	public String getCountrySlug() {
+		return countrySlug;
+	}
+
+	/**
+	 * @return the citySlug
+	 */
+	public String getCitySlug() {
+		return citySlug;
+	}
+
+	/**
 	 * @param words the words to set
 	 */
 	public void setWords(List<String> words) {
@@ -172,6 +188,20 @@ public class SearchCriteria {
 	 */
 	public void setWest(double west) {
 		this.west = west;
+	}
+
+	/**
+	 * @param countrySlug the countrySlug to set
+	 */
+	public void setCountrySlug(String countrySlug) {
+		this.countrySlug = countrySlug;
+	}
+
+	/**
+	 * @param citySlug the citySlug to set
+	 */
+	public void setCitySlug(String citySlug) {
+		this.citySlug = citySlug;
 	}
 
 	@Override

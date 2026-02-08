@@ -2,6 +2,7 @@ package fr.memoires_vives.bll;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -94,6 +95,11 @@ public class LocationServiceImpl implements LocationService {
 		return name.substring(0, Math.min(name.length(), 30));
 	}
 
+	@Override
+	public Optional<String> resolveCountryLabel(String countrySlug) {
+		return locationRepository.findCountryByFrequency(countrySlug).stream().findFirst();
+	}
+	
 // Les méthodes privées
 
 	private BigDecimal normalizeLongitude(BigDecimal longitude) {
@@ -110,4 +116,5 @@ public class LocationServiceImpl implements LocationService {
 		}
 		return result;
 	}
+
 }
