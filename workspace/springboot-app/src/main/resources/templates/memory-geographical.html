@@ -2,7 +2,7 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{fragments/fragment-head :: head(
-	'Partagez la mémoire locale de votre région | Mémoires vives',
+	'Partagez la mémoire locale de votre région - ' + ${country} + '| Mémoires vives',
 	'Découvrez et partagez des souvenirs locaux de ' + ${country},
 	'index, follow',
 	${canonicalUrl},
@@ -14,7 +14,23 @@
 	class="min-h-screen flex flex-col">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
 	<main class="w-full flex-grow flex flex-col items-center">
-		<h1 class="h1-title">Souvenirs de <span th:text="${country}"></span></h1>
+		<nav class="w-full flex justify-start" aria-label="breadcrumb">
+			<ol class="flex flex-wrap items-center text-sm text-gray-600">
+				<li class="flex items-center">
+					<a th:href="@{/}">Accueil</a> 
+				</li>
+				<li class="flex items-center">
+					<span class="mx-2 text-gray-400">/</span>
+					<a th:href="@{/memories/{countrySlug} (countrySlug=${countrySlug})}" th:text="${country}"></a>
+				</li>
+				<li class="flex items-center" th:unless="${city == null}">
+					<span class="mx-2 text-gray-400">/</span>
+					<span th:text="${city}"></span>
+				</li>	
+			</ol>
+		</nav>
+		<h1 class="h1-title">Souvenirs de <span th:unless="${city == null}" th:text="${city} + ' - '"></span><span
+				th:text="${country}"></span></h1>
 		<div id="filters-container"
 			class="bg-[#bddab2] border border-[#7e9076] text-black rounded-lg w-full lg:w-4/5 h-auto mt-4 flex flex-col items-center gap-2 px-4 pb-4">
 			<div class="mt-3 flex sm:pb-2 flex-row gap-10 w-full justify-end">
@@ -23,7 +39,8 @@
 					class="bg-white border border-[#7e9076] rounded hover:opacity-60 cursor-pointer w-[30px] h-[30px] text-xl hover:bg-[#7e9076] focus:border-[#7e9076] focus:outline-none focus:ring focus:ring-[#7e9076]">&olarr;</button>
 			</div>
 			<div class="flex flex-col md:flex-row md:flex-wrap justify-between gap-6 w-full">
-				<input type="hidden" id="country-input" th:value="${countrySlug}"/>
+				<input type="hidden" id="country-input" th:value="${countrySlug}" />
+				<input type="hidden" id="city-input" th:value="${citySlug}" />
 				<div id="key-word-container" class="flex flex-col h-[50px] justify-between">
 					<div>
 						<label for="key-word-input" class="form-label">Recherche par mots clés</label>
@@ -70,9 +87,8 @@
 		</div>
 		<div id="grid-container" class="w-full md:w-4/5">
 			<div id="cards-container" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3 my-6 w-full">
-				
-				<a th:each="view : ${views.content}"
-					th:href="@{${view.canonicalUrl}}" class="border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw]
+
+				<a th:each="view : ${views.content}" th:href="@{${view.canonicalUrl}}" class="border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw]
           overflow-hidden duration-200 hover:scale-101" th:object="${view.memory}">
 
 					<div class="relative w-full pb-[100%] border-b">
@@ -98,7 +114,7 @@
 		</div>
 	</main>
 	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
-	
+
 	<script src="/js/country.js"></script>
 </body>
 

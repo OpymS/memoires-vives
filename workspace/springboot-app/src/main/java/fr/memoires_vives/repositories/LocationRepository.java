@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import fr.memoires_vives.bo.Location;
+import fr.memoires_vives.bo.MemoryState;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
 	Location findByLocationId(long locationId);
@@ -22,4 +23,15 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
 	@Query("SELECT l.country FROM Location l WHERE l.countrySlug = :countrySlug AND l.country IS NOT NULL GROUP BY l.country ORDER BY COUNT(l) DESC")
 	List<String> findCountryByFrequency(@Param("countrySlug") String countrySlug);
+
+	@Query("SELECT l.city FROM Location l WHERE l.countrySlug = :countrySlug AND l.country IS NOT NULL AND l.citySlug = :citySlug AND l.city IS NOT NULL GROUP BY l.city ORDER BY COUNT(l) DESC")
+	List<String> findCityByFrequency(@Param("citySlug") String citySlug, @Param("countrySlug") String countrySlug);
+
+	@Query("SELECT DISTINCT l.countrySlug FROM Memory m JOIN m.location l WHERE m.state=:state AND l.countrySlug IS NOT NULL")
+	List<String> findAllCountrySlugsWithPublishedMemories(@Param("state") MemoryState state);
+
+	@Query("SELECT DISTINCT l.citySlug FROM Memory m JOIN m.location l WHERE m.state = :state AND l.countrySlug = :countrySlug AND l.citySlug IS NOT NULL")
+	List<String> findAllCitySlugsByCountryWithPublishedMemories(@Param("state") MemoryState state,
+			@Param("countrySlug") String countrySlug);
+
 }

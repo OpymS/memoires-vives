@@ -16,6 +16,12 @@ public interface LocationService {
 	List<Location> getLocationsInSquare(double north, double south, double east, double west);
 
 	Location createFromCoordinates(BigDecimal latitude, BigDecimal longitude);
-	
+
 	Optional<String> resolveCountryLabel(String countrySlug);
+
+	Optional<String> resolveCityLabel(String citySlug, String countrySlug);
+	
+	List<String> getCountrySlugs();
+	
+	List<String> getCitySlugsByCountry(String countrySlug);
 }

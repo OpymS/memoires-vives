@@ -57,7 +57,7 @@ public class ReverseGeocodingServiceImpl implements ReverseGeocodingService {
 				.queryParam("lat", latitude.toPlainString())
 				.queryParam("lon", longitude.toPlainString())
 				.queryParam("addressdetails", 1)
-				.queryParam("accept-language", "en")
+				.queryParam("accept-language", "fr")
 				.build()
 				.toUri();
 

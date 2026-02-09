@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.memoires_vives.bo.Location;
+import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.dto.GeocodingResult;
 import fr.memoires_vives.exception.GeocodingException;
 import fr.memoires_vives.repositories.LocationRepository;
@@ -100,6 +101,21 @@ public class LocationServiceImpl implements LocationService {
 		return locationRepository.findCountryByFrequency(countrySlug).stream().findFirst();
 	}
 	
+	@Override
+	public Optional<String> resolveCityLabel(String citySlug, String countrySlug) {
+		return locationRepository.findCityByFrequency(citySlug, countrySlug).stream().findFirst();
+	}
+	
+	@Override
+	public List<String> getCountrySlugs() {
+		return locationRepository.findAllCountrySlugsWithPublishedMemories(MemoryState.PUBLISHED);
+	}
+	
+	@Override
+	public List<String> getCitySlugsByCountry(String countrySlug) {
+		return locationRepository.findAllCitySlugsByCountryWithPublishedMemories(MemoryState.PUBLISHED, countrySlug);
+	}
+	
 // Les méthodes privées
 
 	private BigDecimal normalizeLongitude(BigDecimal longitude) {
@@ -116,5 +132,4 @@ public class LocationServiceImpl implements LocationService {
 		}
 		return result;
 	}
-
 }

@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const statusInput = document.getElementById('status');
 	const resetButton = document.getElementById('reset');
 	const country = document.getElementById('country-input').value;
+	const city = document.getElementById('city-input').value;
 
 	const pageControl = document.getElementById('pagination-control');
 
@@ -32,6 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		east: 1,
 		west: -1,
 		countrySlug: country,
+		citySlug: city,
 	};
 
 

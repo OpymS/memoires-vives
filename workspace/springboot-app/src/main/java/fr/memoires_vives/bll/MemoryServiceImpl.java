@@ -290,6 +290,9 @@ public class MemoryServiceImpl implements MemoryService {
 			return;
 		}
 		predicates.add(cb.equal(root.get("location").get("countrySlug"), criteria.getCountrySlug()));
+		if (criteria.getCitySlug() != null && !criteria.getCitySlug().isEmpty()) {
+			predicates.add(cb.equal(root.get("location").get("citySlug"), criteria.getCitySlug()));
+		}
 	}
 	
 	private Specification<Memory> getGeographicSpecification(SearchCriteria criteria) {
