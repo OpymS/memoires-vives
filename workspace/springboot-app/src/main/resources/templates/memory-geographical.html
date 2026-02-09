@@ -17,7 +17,7 @@
 		<nav class="w-full flex justify-start" aria-label="breadcrumb">
 			<ol class="flex flex-wrap items-center text-sm text-gray-600">
 				<li class="flex items-center">
-					<a th:href="@{/}">Accueil</a> 
+					<a th:href="@{/}">Accueil</a>
 				</li>
 				<li class="flex items-center">
 					<span class="mx-2 text-gray-400">/</span>
@@ -26,7 +26,7 @@
 				<li class="flex items-center" th:unless="${city == null}">
 					<span class="mx-2 text-gray-400">/</span>
 					<span th:text="${city}"></span>
-				</li>	
+				</li>
 			</ol>
 		</nav>
 		<h1 class="h1-title">Souvenirs de <span th:unless="${city == null}" th:text="${city} + ' - '"></span><span
