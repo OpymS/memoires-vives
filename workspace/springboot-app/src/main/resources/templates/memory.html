@@ -45,19 +45,44 @@
 
 			</div>
 			<div id="map-container"
-				class="border border-[#7e9076] w-full h-[50vh] md:h-full md:w-1/2 flex flex-col items-center gap-2">
-				<div id="locationName" th:data-location_name="${memoryToDisplay.location.name}"></div>
-				<div id="locationCity" th:data-location_city="${memoryToDisplay.location.city}"></div>
-				<div id="locationCountry" th:data-location_country="${memoryToDisplay.location.country}"></div>
-				<div th:text="${memoryToDisplay.location.name}" class="font-semibold"></div>
-				<div th:if="${memoryToDisplay.location.country}!=null">
-					<span th:text="${memoryToDisplay.location.country}"></span>
-					<span th:if="${memoryToDisplay.location.city}!=null" th:text="' - ' + ${memoryToDisplay.location.city}"></span></div>
-				<div>Latitude : <span id="latitude" th:data-latitude="${memoryToDisplay.location.latitude}"></span> -
-					Longitude :
-					<span id="longitude" th:data-longitude="${memoryToDisplay.location.longitude}"></span>
+				class="border border-[#7e9076] w-full h-[50vh] md:h-full md:w-1/2 flex flex-col justify-between items-center gap-2 py-2">
+				<div class="w-full flex flex-col items-center gap-1">
+					<div id="locationName" th:data-location_name="${memoryToDisplay.location.name}"></div>
+					<div id="locationCity" th:data-location_city="${memoryToDisplay.location.city}"></div>
+					<div id="locationCountry" th:data-location_country="${memoryToDisplay.location.country}"></div>
+					<div th:text="${memoryToDisplay.location.name}" class="font-semibold"></div>
+					<div th:if="${memoryToDisplay.location.country}!=null">
+						<span th:text="${memoryToDisplay.location.country}"></span>
+						<span th:if="${memoryToDisplay.location.city}!=null"
+							th:text="' - ' + ${memoryToDisplay.location.city}"></span>
+					</div>
+					<div>Latitude : <span id="latitude" th:data-latitude="${memoryToDisplay.location.latitude}"></span> -
+						Longitude :
+						<span id="longitude" th:data-longitude="${memoryToDisplay.location.longitude}"></span>
+					</div>					
 				</div>
 				<div id="map" class="h-8/10 w-9/10"></div>
+				<nav class="w-full flex justify-start px-2" aria-label="breadcrumb">
+					<ol class="flex flex-wrap items-center text-sm text-gray-600">
+						<li class="flex items-center">
+							<a th:href="@{/}" class="hover:underline">Accueil</a>
+						</li>
+						<li class="flex items-center" th:unless="${memoryToDisplay.location.country == null}">
+							<span class="mx-2 text-gray-400">/</span>
+							<a th:href="@{/memories/{countrySlug} (countrySlug=${memoryToDisplay.location.countrySlug})}"
+								th:text="${memoryToDisplay.location.country}" class="hover:underline"></a>
+						</li>
+						<li class="flex items-center" th:unless="${memoryToDisplay.location.city == null}">
+							<span class="mx-2 text-gray-400">/</span>
+							<a th:href="@{/memories/{countrySlug}/{citySlug} (countrySlug=${memoryToDisplay.location.countrySlug}, citySlug=${memoryToDisplay.location.citySlug})}" 
+							th:text="${memoryToDisplay.location.city}" class="hover:underline"></a>
+						</li>
+						<li class="flex items-center">
+							<span class="mx-2 text-gray-400">/</span>
+							<span th:text="${memoryToDisplay.title}"></span>
+						</li>
+					</ol>
+				</nav>
 			</div>
 		</div>
 	</main>

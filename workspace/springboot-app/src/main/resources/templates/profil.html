@@ -28,9 +28,6 @@
 					th:text="${userToDisplay.email}"></div>
 				<div th:if="${views != null and !views.empty}">
 					<div th:each="view : ${views}">
-						<!--						<a th:if="${memory.state.name() == 'PUBLISHED' || userToDisplay.userId == #authentication.principal.user.userId}"-->
-						<!--							th:href="@{'/memory/' + ${memory.memoryId} + '-' + ${memory.slug}}"-->
-						<!--							th:text="${memory.title}" class="hover:underline"></a>-->
 						<a th:if="${view.memory.state.name() == 'PUBLISHED'}"
 							th:href="@{${view.canonicalUrl}}"
 							th:text="${view.memory.title}" class="hover:underline"></a>

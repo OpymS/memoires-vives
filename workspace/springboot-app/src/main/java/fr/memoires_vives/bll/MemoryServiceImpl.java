@@ -13,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +34,9 @@ import fr.memoires_vives.repositories.MemoryRepository;
 import fr.memoires_vives.utils.SlugUtil;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
@@ -83,8 +85,7 @@ public class MemoryServiceImpl implements MemoryService {
 	public Page<Memory> findMemoriesWithCriteria(Pageable pageable, SearchCriteria searchCriteria) {
 		Specification<Memory> specification = createSpecification(searchCriteria);
 
-		Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
-				Sort.by(Sort.Direction.DESC, "memoryId"));
+		Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
 
 		return memoryRepository.findAll(specification, sortedPageable);
 	}
@@ -214,6 +215,8 @@ public class MemoryServiceImpl implements MemoryService {
 			User user = userService.getCurrentUser();
 			addVisibilityPredicates(predicates, root, cb, criteria, user);
 
+			sortMemories(query, root, cb, criteria);
+
 			return cb.and(predicates.toArray(new Predicate[0]));
 		};
 	}
@@ -284,6 +287,58 @@ public class MemoryServiceImpl implements MemoryService {
 		}
 	}
 
+	private void sortMemories(CriteriaQuery<?> query, Root<Memory> root, CriteriaBuilder cb, SearchCriteria criteria) {
+		String sortField;
+
+		switch (criteria.getSortCriteria()) {
+		case 0:
+			sortField = "memoryId";
+			break;
+		case 1:
+			sortField = "title";
+			break;
+		case 2:
+			sortField = "memoryDate";
+			break;
+		case 3:
+			sortField = "modificationDate";
+			break;
+		case 4:
+			sortField = "category";
+			break;
+		case 5:
+			sortField = "rememberer";
+			break;
+		default:
+			sortField = "memoryId";
+
+		}
+
+		boolean isAsc = criteria.getSortDirection() == 0;
+
+		if ("modificationDate".equals(sortField)) {
+
+			Expression<LocalDateTime> dateExpression = cb.<LocalDateTime>coalesce(root.get("modificationDate"),
+					root.get("creationDate"));
+
+			query.orderBy(isAsc ? cb.asc(dateExpression) : cb.desc(dateExpression));
+
+		} else if ("category".equals(sortField)) {
+
+			Join<Memory, Category> categoryJoin = root.join("category", JoinType.LEFT);
+
+			query.orderBy(isAsc ? cb.asc(categoryJoin.get("name")) : cb.desc(categoryJoin.get("name")));
+		} else if ("rememberer".equals(sortField)) {
+
+			Join<Memory, Category> categoryJoin = root.join("rememberer", JoinType.LEFT);
+
+			query.orderBy(isAsc ? cb.asc(categoryJoin.get("pseudo")) : cb.desc(categoryJoin.get("pseudo")));
+		} else {
+
+			query.orderBy(isAsc ? cb.asc(root.get(sortField)) : cb.desc(root.get(sortField)));
+		}
+	}
+
 	private void addGeographicalPredicate(List<Predicate> predicates, Root<Memory> root, CriteriaBuilder cb,
 			SearchCriteria criteria) {
 		if (criteria.getCountrySlug() == null || criteria.getCountrySlug().isEmpty()) {
@@ -294,7 +349,7 @@ public class MemoryServiceImpl implements MemoryService {
 			predicates.add(cb.equal(root.get("location").get("citySlug"), criteria.getCitySlug()));
 		}
 	}
-	
+
 	private Specification<Memory> getGeographicSpecification(SearchCriteria criteria) {
 		double north = criteria.getNorth();
 		double south = criteria.getSouth();

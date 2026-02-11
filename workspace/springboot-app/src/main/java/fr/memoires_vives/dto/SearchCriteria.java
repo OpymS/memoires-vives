@@ -17,6 +17,8 @@ public class SearchCriteria {
 	private double west;
 	private String countrySlug;
 	private String citySlug;
+	private int sortCriteria;
+	private int sortDirection;
 	
 	
 	public SearchCriteria() {
@@ -114,6 +116,20 @@ public class SearchCriteria {
 	}
 
 	/**
+	 * @return the sortCriteria
+	 */
+	public int getSortCriteria() {
+		return sortCriteria;
+	}
+
+	/**
+	 * @return the sortDirection
+	 */
+	public int getSortDirection() {
+		return sortDirection;
+	}
+
+	/**
 	 * @param words the words to set
 	 */
 	public void setWords(List<String> words) {
@@ -202,6 +218,20 @@ public class SearchCriteria {
 	 */
 	public void setCitySlug(String citySlug) {
 		this.citySlug = citySlug;
+	}
+
+	/**
+	 * @param sortCriteria the sortCriteria to set
+	 */
+	public void setSortCriteria(int sortCriteria) {
+		this.sortCriteria = sortCriteria;
+	}
+
+	/**
+	 * @param sortDirection the sortDirection to set
+	 */
+	public void setSortDirection(int sortDirection) {
+		this.sortDirection = sortDirection;
 	}
 
 	@Override

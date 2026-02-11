@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const statusContainer = document.getElementById('status-container');
 	const statusInput = document.getElementById('status');
 	const resetButton = document.getElementById('reset');
+	
+	const sortContainer = document.getElementById('sort-container');
+	const sortDirectionContainer = document.getElementById('sort-direction-container');
+	const sortCriteriaInput = document.getElementById('sort-criteria');
+	const sortDirectionInput = document.getElementById('sort-direction');
 
 	const pageControl = document.getElementById('pagination-control');
 
@@ -33,7 +38,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 		north: 1.0,
 		south: -1.0,
 		east: 1,
-		west: -1
+		west: -1,
+		sortCriteria: 0,
+		sortDirection: 0,
 	};
 
 	let userLatitude = 0;
@@ -47,6 +54,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	let markers;
 	let mapInited = false;
 	let storedCoordinates = false;
+	let sortCriteria = 0;
+	let sortDirection = 0;
 
 	await init();
 
@@ -65,6 +74,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 		categoriesInput.addEventListener('change', categoriesProcess);
 
 		myMemoriesCheck.addEventListener('change', myMemoriesOnly);
+		
+		sortCriteriaInput.addEventListener('change', sortMemories);
+		sortDirectionInput.addEventListener('change', changeSortingDirection);
 
 		resetButton.addEventListener('click', async function(e) {
 			e.preventDefault();
@@ -94,6 +106,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			gridButton.classList.toggle("bg-white/50");
 			gridButton.classList.toggle("border-y-2");
 			gridButton.classList.toggle("border-l-2");
+			sortContainer.classList.toggle("hidden");
 			selectedMode = selectedMode === 'grid' ? 'map' : 'grid';
 			if (clicked === 'map' && !mapInited) {
 				await initMap();
@@ -284,6 +297,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 			criterias.categoriesId = parsedCriterias.categoriesId;
 			criterias.onlyMine = parsedCriterias.onlyMine;
 			criterias.status = parsedCriterias.status;
+			criterias.sortCriteria = parsedCriterias.sortCriteria;
+			criterias.sortDirection = parsedCriterias.sortDirection;
 		}
 
 		const storedCenter = localStorage.getItem('center');
@@ -366,6 +381,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 		criterias.before = this.value;
 		await updateMemories();
 	}
+	
+	async function sortMemories() {
+		criterias.sortCriteria = this.value;
+		if (this.value == 0){
+			sortDirectionContainer.classList.add("hidden");
+		} else {
+			sortDirectionContainer.classList.remove("hidden");
+		}
+		await updateMemories();
+	}
+	
+	async function changeSortingDirection() {
+		criterias.sortDirection = this.value;
+		console.log(criterias);
+		await updateMemories();
+	}
 
 	async function categoriesProcess() {
 		const selectedCategories = [];
@@ -409,6 +440,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 			statusContainer.classList.add('hidden');
 			statusInput.value = 1;
 		}
+		
+		sortCriteriaInput.value = criterias.sortCriteria;
+		if (sortCriteriaInput.value == 0){
+			sortDirectionContainer.classList.add("hidden");
+		} else {
+			sortDirectionContainer.classList.remove("hidden");
+			sortDirectionInput.value = criterias.sortDirection;
+		}
 	}
 
 	async function resetCriterias() {
@@ -423,6 +462,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 		criterias.south = -1.0;
 		criterias.east = 1.0;
 		criterias.west = -1.0;
+		criterias.sortCriteria = 0;
+		criterias.sortDirection = 0;
 
 
 		center = [userLatitude, userLongitude];
