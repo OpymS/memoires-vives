@@ -83,6 +83,7 @@ class ProfilControllerTest {
 		user.setMemories(memories);
 
 		when(userService.getUserOrCurrent(1L)).thenReturn(user);
+		when(userService.getCurrentUser()).thenReturn(user);
 
 		mockMvc.perform(get("/profil").with(user(userDetailsWithDomainUser())).param("userId", "1"))
 				.andExpect(status().isOk()).andExpect(view().name("profil"))
