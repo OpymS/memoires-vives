@@ -2,6 +2,8 @@ package fr.memoires_vives.controller;
 
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +25,7 @@ import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.InvalidTokenException;
 import fr.memoires_vives.exception.ValidationException;
 import fr.memoires_vives.mapper.MemoryViewMapper;
+import fr.memoires_vives.security.CustomUserDetails;
 import jakarta.validation.Valid;
 
 @Controller
@@ -31,8 +34,9 @@ public class ProfilController {
 	private final UserService userService;
 	private final ActivationService activationService;
 	private final MemoryViewMapper memoryViewMapper;
-
-	public ProfilController(UserService userService, ActivationService activationService, MemoryViewMapper memoryViewMapper) {
+	
+	public ProfilController(UserService userService, ActivationService activationService,
+			MemoryViewMapper memoryViewMapper) {
 		this.userService = userService;
 		this.activationService = activationService;
 		this.memoryViewMapper = memoryViewMapper;
@@ -43,6 +47,15 @@ public class ProfilController {
 		User userToDisplay = userService.getUserOrCurrent(userId);
 		userToDisplay.setPassword(null);
 		List<MemoryView> views = userToDisplay.getMemories().stream().map(memoryViewMapper::toView).toList();
+		
+		boolean isOwner = false;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User authenticatedUser = userService.getCurrentUser();
+		if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof CustomUserDetails userDetails) {
+			isOwner = authenticatedUser.getUserId() == userId;
+		}
+		model.addAttribute("isOwner", isOwner);
+		
 		model.addAttribute("views", views);
 		model.addAttribute("userToDisplay", userToDisplay);
 		return "profil";

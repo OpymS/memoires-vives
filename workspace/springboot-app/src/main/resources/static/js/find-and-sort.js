@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', async () => {
 	const csrfToken = document.querySelector("meta[name='_csrf']").getAttribute("content");
 	const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+	const page = document.body.dataset.page;
 
-	const gridButton = document.getElementById('grid-button');
-	const mapButton = document.getElementById('map-button');
-	const mapContainer = document.getElementById('map-container');
+	let gridButton;
+	let mapButton;
+	let mapContainer;
+	let sortContainer;
 	const gridContainer = document.getElementById('grid-container');
 	const cardsContainer = document.getElementById('cards-container');
 	const myMemoriesContainer = document.getElementById('my-memories-container');
@@ -17,13 +19,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 	const statusContainer = document.getElementById('status-container');
 	const statusInput = document.getElementById('status');
 	const resetButton = document.getElementById('reset');
-	
-	const sortContainer = document.getElementById('sort-container');
+	let country;
+	let city;
+
 	const sortDirectionContainer = document.getElementById('sort-direction-container');
 	const sortCriteriaInput = document.getElementById('sort-criteria');
 	const sortDirectionInput = document.getElementById('sort-direction');
 
 	const pageControl = document.getElementById('pagination-control');
+
 
 	const isAuthenticated = JSON.parse(document.body.getAttribute('data-authenticated'));
 
@@ -43,25 +47,39 @@ document.addEventListener('DOMContentLoaded', async () => {
 		sortDirection: 0,
 	};
 
+	if (page === 'geographical') {
+		country = document.getElementById('country-input').value;
+		city = document.getElementById('city-input').value;
+		criterias.countrySlug = country;
+		criterias.citySlug = city;
+	} else if (page === 'home') {
+		gridButton = document.getElementById('grid-button');
+		mapButton = document.getElementById('map-button');
+		mapContainer = document.getElementById('map-container');
+		sortContainer = document.getElementById('sort-container');
+
+	}
+
+
+	let selectedMode = 'grid';
+	let currentPage = 1;
+
 	let userLatitude = 0;
 	let userLongitude = 0;
 	let center = [userLatitude, userLongitude];
 	let zoom = 6;
-
-	let selectedMode = 'grid';
-	let currentPage = 1;
 	let map;
 	let markers;
 	let mapInited = false;
 	let storedCoordinates = false;
-	let sortCriteria = 0;
-	let sortDirection = 0;
-
+	
 	await init();
 
 	async function init() {
-		gridButton.addEventListener('click', (e) => { toggleMode('grid') });
-		mapButton.addEventListener('click', (e) => { toggleMode('map') });
+		if (page === 'home') {
+			gridButton.addEventListener('click', (e) => { toggleMode('grid') });
+			mapButton.addEventListener('click', (e) => { toggleMode('map') });
+		}
 
 		keyWordsInput.addEventListener('blur', keyWordsProcess);
 		titleOnlyCheck.addEventListener('change', titleOnlyProcess);
@@ -74,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		categoriesInput.addEventListener('change', categoriesProcess);
 
 		myMemoriesCheck.addEventListener('change', myMemoriesOnly);
-		
+
 		sortCriteriaInput.addEventListener('change', sortMemories);
 		sortDirectionInput.addEventListener('change', changeSortingDirection);
 
@@ -88,10 +106,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 		} else {
 			myMemoriesContainer.classList.add('hidden');
 		}
-
-		await destockCriterias();
+		if (page === 'home') {
+			await destockCriterias();
+		}
 		updateFilters();
-		await toggleMode(selectedMode);
+		if (page === 'home') {
+			await toggleMode(selectedMode);
+		}
 
 		updateMemories();
 	}
@@ -120,7 +141,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	async function updateMemories() {
 		if (selectedMode === 'grid') {
-			stockCriterias();
+			if (page === 'home'){
+				stockCriterias();
+			}
 			currentPage = 1;
 			const serverResponse = await fetchMemories();
 			const views = serverResponse.content;
@@ -197,7 +220,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	function updateGrid(views) {
 		cardsContainer.innerHTML = '';
 		views.forEach((view) => {
-			const memory= view.memory;
+			const memory = view.memory;
 			const memoryDiv = document.createElement('a');
 			memoryDiv.href = view.canonicalUrl;
 			memoryDiv.className = 'border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw] overflow-hidden duration-200 hover:scale-101';
@@ -272,7 +295,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const lastPageNumber = serverResponse.totalPages;
 		updateGrid(views);
 		updatePaginationControl(lastPageNumber);
-		stockCriterias();
+		if (page === 'home'){
+			stockCriterias();
+		}
 	}
 
 	function stockCriterias() {
@@ -381,20 +406,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 		criterias.before = this.value;
 		await updateMemories();
 	}
-	
+
 	async function sortMemories() {
 		criterias.sortCriteria = this.value;
-		if (this.value == 0){
+		if (this.value == 0) {
 			sortDirectionContainer.classList.add("hidden");
 		} else {
 			sortDirectionContainer.classList.remove("hidden");
 		}
 		await updateMemories();
 	}
-	
+
 	async function changeSortingDirection() {
 		criterias.sortDirection = this.value;
-		console.log(criterias);
 		await updateMemories();
 	}
 
@@ -440,9 +464,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 			statusContainer.classList.add('hidden');
 			statusInput.value = 1;
 		}
-		
+
 		sortCriteriaInput.value = criterias.sortCriteria;
-		if (sortCriteriaInput.value == 0){
+		if (sortCriteriaInput.value == 0) {
 			sortDirectionContainer.classList.add("hidden");
 		} else {
 			sortDirectionContainer.classList.remove("hidden");
@@ -465,15 +489,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 		criterias.sortCriteria = 0;
 		criterias.sortDirection = 0;
 
+		if (page === 'home'){
+			center = [userLatitude, userLongitude];
+	
+			zoom = 6;
+	
+			currentPage = 1;
+			storedCoordinates = false;
+	
+			stockCriterias();
+		}
 
-		center = [userLatitude, userLongitude];
-
-		zoom = 6;
-
-		currentPage = 1;
-		storedCoordinates = false;
-
-		stockCriterias();
 		updateFilters();
 		await toggleMode('grid');
 
@@ -484,7 +510,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		map.off('moveend', updateMemories);
 
 		setTimeout(function() {
-			marker.bindPopup(popupContent,{maxWidth:350}).openPopup();
+			marker.bindPopup(popupContent, { maxWidth: 350 }).openPopup();
 		}, 100);
 
 		map.once('popupclose', function() {
@@ -499,14 +525,3 @@ document.addEventListener('DOMContentLoaded', async () => {
 		userLongitude = data.longitude;
 	}
 });
-
-//if (!storedCoordinates && "geolocation" in navigator) {
-//				const position = await new Promise((resolve, reject) => {
-//					navigator.geolocation.getCurrentPosition(resolve, reject);
-//				});
-//
-//				userLatitude = position.coords.latitude;
-//				userLongitude = position.coords.longitude;
-//				center = [userLatitude, userLongitude];
-//				map.flyTo(center, zoom);
-//			}

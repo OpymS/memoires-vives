@@ -34,7 +34,7 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login",
 						"/signup", "/logout", "/error", "/error/**", "/memory/**", "memories/**", "/about", "/try", "/api/memory/**",
-						"/upload-error", "/forgot-password/**", "/legal-notices", "/privacy-policy", "/conditions",
+						"/upload-error", "/forgot-password/**", "/legal-notices", "/privacy-policy", "/conditions", "/profil",
 						"/profil/activation/**", "/sitemap.xml")
 				.permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated())
 				.formLogin(login -> login.loginPage("/login").permitAll().defaultSuccessUrl("/", true)
