@@ -52,7 +52,7 @@ public class ProfilController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User authenticatedUser = userService.getCurrentUser();
 		if (auth != null && auth.isAuthenticated() && auth.getPrincipal() instanceof CustomUserDetails userDetails) {
-			isOwner = authenticatedUser.getUserId() == userId;
+			isOwner = authenticatedUser.getUserId() == userToDisplay.getUserId();
 		}
 		model.addAttribute("isOwner", isOwner);
 		
