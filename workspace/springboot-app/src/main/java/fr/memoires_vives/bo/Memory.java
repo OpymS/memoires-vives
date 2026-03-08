@@ -2,10 +2,12 @@ package fr.memoires_vives.bo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -79,6 +82,9 @@ public class Memory {
 	@JoinTable(name = "memory_group", joinColumns = @JoinColumn(name = "memory_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
 	@JsonIgnore
 	private List<Group> groups;
+
+	@OneToMany(mappedBy = "memory", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Source> sources = new ArrayList<>();
 
 	public Memory() {
 	}
@@ -182,6 +188,13 @@ public class Memory {
 	}
 
 	/**
+	 * @return the sources
+	 */
+	public List<Source> getSources() {
+		return sources;
+	}
+
+	/**
 	 * @param memoryId the memoryId to set
 	 */
 	public void setMemoryId(long memoryId) {
@@ -277,6 +290,13 @@ public class Memory {
 	 */
 	public void setGroups(List<Group> groups) {
 		this.groups = groups;
+	}
+
+	/**
+	 * @param sources the sources to set
+	 */
+	public void setSources(List<Source> sources) {
+		this.sources = sources;
 	}
 
 	public String toStringWithCollections() {
