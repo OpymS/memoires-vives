@@ -2,10 +2,13 @@ package fr.memoires_vives.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
+import fr.memoires_vives.bo.Source;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -46,6 +49,8 @@ public class MemoryForm {
 	private Boolean locationSelected = false;
 
 	private Boolean published;
+	
+	private List<String> sources = new ArrayList<>();
 
 	/**
 	 * @return the memoryId
@@ -118,6 +123,13 @@ public class MemoryForm {
 	}
 
 	/**
+	 * @return the sources
+	 */
+	public List<String> getSources() {
+		return sources;
+	}
+
+	/**
 	 * @param memoryId the memoryId to set
 	 */
 	public void setMemoryId(Long memoryId) {
@@ -187,6 +199,13 @@ public class MemoryForm {
 		this.published = published;
 	}
 
+	/**
+	 * @param sources the sources to set
+	 */
+	public void setSources(List<String> sources) {
+		this.sources = sources;
+	}
+
 	public static MemoryForm fromMemoryEntity(Memory memory) {
 		MemoryForm form = new MemoryForm();
 		form.setMemoryId(memory.getMemoryId());
@@ -202,6 +221,10 @@ public class MemoryForm {
 			form.setLocationSelected(true);
 		}
 		form.setPublished(memory.getState() == MemoryState.PUBLISHED ? true : false);
+		
+		for (Source source :memory.getSources()) {
+			form.getSources().add(source.getUrl());
+		};
 
 		return form;
 	}

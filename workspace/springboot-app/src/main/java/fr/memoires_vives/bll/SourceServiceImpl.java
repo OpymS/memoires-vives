@@ -21,7 +21,7 @@ public class SourceServiceImpl implements SourceService {
 	@Override
 	public Source addSource(Memory memory, String url) {
 		if (sourceRepository.findByMemory_MemoryIdAndUrl(memory.getMemoryId(), url).isPresent()) {
-			throw new IllegalArgumentException("Cette source existe déjà pour cette mémoire");
+			throw new IllegalArgumentException("Cette source existe déjà pour ce souvenir");
 		}
 
 		String domain = extractDomain(url);

@@ -54,8 +54,13 @@
 				<div class="source-input">
 					<label for="source" class="form-label">Sources </label>
 					<div class="flex w-full gap-2">
-						<input id="source" type="text" class="form-input"/>
+						<input id="source-input" type="text" class="form-input" />
 						<button id="addSourceBtn" type="button" class="form-button">Ajouter</button>
+					</div>
+					<div id="sources-container" class="flex flex-wrap gap-2 mt-3">
+						<div th:each="source, stat : *{sources}">
+							<input type="text" th:field="*{sources[__${stat.index}__]}" />
+						</div>
 					</div>
 				</div>
 				<div class="image-input mt-2 flex flex-col items-start w-auto">
@@ -139,6 +144,7 @@
 	<script src="https://cdn.jsdelivr.net/npm/pica@9.0.1/dist/pica.min.js"></script>
 	<script src="/js/map-modal.js" type="module"></script>
 	<script src="/js/images.js"></script>
+	<script src="/js/sources.js"></script>
 </body>
 
 </html>
