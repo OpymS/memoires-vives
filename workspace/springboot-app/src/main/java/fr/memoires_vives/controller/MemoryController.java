@@ -120,6 +120,7 @@ public class MemoryController {
 			@RequestParam(name = "removeImage", defaultValue = "false") boolean removeImage) {
 
 		if (bindingResult.hasErrors()) {
+			System.out.println(bindingResult);
 			return "memory-form";
 		}
 

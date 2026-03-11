@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (url != null && url != "") {
 			const domain = extractDomain(url);
 			if (domain != null){
-				addSourceToList(url, domain);				
+				addSourceToList(url, domain);
 			}
 		}
 		sourceInput.value = "";
@@ -40,7 +40,7 @@ function addSourceToList(url, domain) {
 		 	<img class="w-4 h-4" src="https://www.google.com/s2/favicons?domain=${domain}&sz=32">
 			<span class="source-tag text-slate-700 font-medium">${domain}</span>
         	<button type="button" class="remove-source ml-1 text-slate-400 hover:text-red-500 transition">✕</button>
-        	<input type="hidden" name="sources[${index}]" value="${url}">
+        	<input type="hidden" name="sources[${index}].url" value="${url}">
         `;
 
 	sourceContainer.appendChild(sourceDiv);

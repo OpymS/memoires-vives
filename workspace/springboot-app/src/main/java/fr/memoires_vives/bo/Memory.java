@@ -353,7 +353,19 @@ public class Memory {
 		builder.append(state);
 		builder.append(", visibility=");
 		builder.append(visibility);
+		builder.append(", sources=");
+		builder.append(sources);
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public void addSource(Source source) {
+		sources.add(source);
+		source.setMemory(this);
+	}
+
+	public void removeSource(Source source) {
+		sources.remove(source);
+		source.setMemory(null);
 	}
 }

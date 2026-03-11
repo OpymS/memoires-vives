@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Hibernate;
@@ -22,9 +24,11 @@ import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
 import fr.memoires_vives.bo.MemoryVisibility;
+import fr.memoires_vives.bo.Source;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.dto.MemoryForm;
 import fr.memoires_vives.dto.SearchCriteria;
+import fr.memoires_vives.dto.SourceForm;
 import fr.memoires_vives.exception.DataPersistenceException;
 import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.FileStorageException;
@@ -49,14 +53,17 @@ public class MemoryServiceImpl implements MemoryService {
 	private final LocationService locationService;
 	private final UserService userService;
 	private final CategoryService categoryService;
+	private final SourceService sourceService;
 
 	public MemoryServiceImpl(MemoryRepository memoryRepository, FileService fileService,
-			LocationService locationService, UserService userService, CategoryService categoryService) {
+			LocationService locationService, UserService userService, CategoryService categoryService,
+			SourceService sourceService) {
 		this.memoryRepository = memoryRepository;
 		this.fileService = fileService;
 		this.locationService = locationService;
 		this.userService = userService;
 		this.categoryService = categoryService;
+		this.sourceService = sourceService;
 	}
 
 	@Override
@@ -173,6 +180,8 @@ public class MemoryServiceImpl implements MemoryService {
 		updateLocation(existingMemory, locationWithUpdate);
 
 		existingMemory.setSlug(SlugUtil.toSlug(existingMemory));
+
+		updateSources(existingMemory, updatedMemory);
 
 		return saveMemory(existingMemory);
 	}
@@ -472,7 +481,24 @@ public class MemoryServiceImpl implements MemoryService {
 
 		memory.setCategory(category);
 
+		addSources(memory, form);
+
 		return memory;
+	}
+
+	private void addSources(Memory memory, MemoryForm form) {
+
+		if (form.getSources() == null) {
+			return;
+		}
+
+		form.getSources().stream().map(SourceForm::getUrl).filter(url -> url != null && !url.isBlank())
+				.map(String::trim).distinct().forEach(url -> {
+					if (!sourceService.alreadyExists(memory, url)) {
+						Source source = sourceService.createSource(memory, url);
+						memory.addSource(source);
+					}
+				});
 	}
 
 	private void updateState(Memory memory, Boolean publish) {
@@ -526,6 +552,23 @@ public class MemoryServiceImpl implements MemoryService {
 		} else if (isDifferent) {
 			Location newLocation = locationService.saveLocation(locationWithUpdate);
 			memory.setLocation(newLocation);
+		}
+	}
+
+	private void updateSources(Memory existingMemory, Memory updatedData) {
+		List<Source> existingSources = existingMemory.getSources();
+		List<Source> newSources = updatedData.getSources();
+
+		Set<String> newUrls = newSources.stream().map(Source::getUrl).collect(Collectors.toSet());
+
+		existingSources.stream().filter(source -> !newUrls.contains(source.getUrl())).toList()
+				.forEach(existingMemory::removeSource);
+
+		for (Source newSource : newSources) {
+			boolean exists = existingSources.stream().anyMatch(s -> s.getUrl().equals(newSource.getUrl()));
+			if (!exists) {
+				existingMemory.addSource(newSource);
+			}
 		}
 	}
 

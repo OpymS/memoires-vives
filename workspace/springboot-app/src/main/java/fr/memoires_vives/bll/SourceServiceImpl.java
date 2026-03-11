@@ -1,6 +1,7 @@
 package fr.memoires_vives.bll;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -19,11 +20,7 @@ public class SourceServiceImpl implements SourceService {
 	}
 
 	@Override
-	public Source addSource(Memory memory, String url) {
-		if (sourceRepository.findByMemory_MemoryIdAndUrl(memory.getMemoryId(), url).isPresent()) {
-			throw new IllegalArgumentException("Cette source existe déjà pour ce souvenir");
-		}
-
+	public Source createSource(Memory memory, String url) {
 		String domain = extractDomain(url);
 
 		Source source = new Source();
@@ -36,7 +33,12 @@ public class SourceServiceImpl implements SourceService {
 		int score = computeCredibilityScore(url, domain);
 		source.setCredibilityScore(score);
 
-		return sourceRepository.save(source);
+		return source;
+	}
+
+	@Override
+	public boolean alreadyExists(Memory memory, String url) {
+		return memory.getSources().stream().anyMatch(s -> s.getUrl().equals(url));
 	}
 
 	private String extractDomain(String url) {
@@ -66,5 +68,20 @@ public class SourceServiceImpl implements SourceService {
 			score += 40;
 
 		return score;
+	}
+
+	private URI validateUrl(String url) {
+		try {
+			URI uri = new URI(url);
+			String scheme = uri.getScheme();
+
+			if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
+				throw new IllegalArgumentException("Protocole non autorisé");
+			}
+
+			return uri;
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("URL invalide");
+		}
 	}
 }

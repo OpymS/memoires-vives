@@ -161,4 +161,26 @@ public class Source {
 		this.createdAt = createdAt;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Source [sourceId=");
+		builder.append(sourceId);
+		builder.append(", memory=");
+		builder.append(memory);
+		builder.append(", url=");
+		builder.append(url);
+		builder.append(", domain=");
+		builder.append(domain);
+		builder.append(", title=");
+		builder.append(title);
+		builder.append(", credibilityScore=");
+		builder.append(credibilityScore);
+		builder.append(", status=");
+		builder.append(status);
+		builder.append(", createdAt=");
+		builder.append(createdAt);
+		builder.append("]");
+		return builder.toString();
+	}
 }
