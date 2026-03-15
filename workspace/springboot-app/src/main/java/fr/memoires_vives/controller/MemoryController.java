@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -133,7 +134,7 @@ public class MemoryController {
 				bindingResult.addError(error);
 			});
 			ve.getFieldErrors().forEach(err -> {
-				ObjectError error = new ObjectError(err.getField(), err.getMessage());
+				FieldError error = new FieldError("memoryForm", err.getField(), err.getMessage());
 				bindingResult.addError(error);
 			});
 			return "memory-form";

@@ -9,23 +9,24 @@ import org.springframework.stereotype.Service;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.Source;
 import fr.memoires_vives.bo.SourceStatus;
-import fr.memoires_vives.repositories.SourceRepository;
+import fr.memoires_vives.exception.InvalidSourceUrlException;
 
 @Service
 public class SourceServiceImpl implements SourceService {
-	private final SourceRepository sourceRepository;
 
-	public SourceServiceImpl(SourceRepository sourceRepository) {
-		this.sourceRepository = sourceRepository;
+	public SourceServiceImpl() {
 	}
 
 	@Override
 	public Source createSource(Memory memory, String url) {
-		String domain = extractDomain(url);
+		URI uri = validateUrl(url);
+
+		String normalizedUrl = uri.normalize().toString();
+		String domain = uri.getHost();
 
 		Source source = new Source();
 		source.setMemory(memory);
-		source.setUrl(url);
+		source.setUrl(normalizedUrl);
 		source.setDomain(domain);
 		source.setStatus(SourceStatus.PENDING);
 		source.setCreatedAt(LocalDateTime.now());
@@ -39,16 +40,6 @@ public class SourceServiceImpl implements SourceService {
 	@Override
 	public boolean alreadyExists(Memory memory, String url) {
 		return memory.getSources().stream().anyMatch(s -> s.getUrl().equals(url));
-	}
-
-	private String extractDomain(String url) {
-		try {
-			URI uri = new URI(url);
-			String host = uri.getHost();
-			return host.startsWith("www.") ? host.substring(4) : host;
-		} catch (Exception e) {
-			throw new IllegalArgumentException("URL invalide");
-		}
 	}
 
 	private int computeCredibilityScore(String url, String domain) {
@@ -76,12 +67,16 @@ public class SourceServiceImpl implements SourceService {
 			String scheme = uri.getScheme();
 
 			if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
-				throw new IllegalArgumentException("Protocole non autorisé");
+				throw new InvalidSourceUrlException("Seules les URLs HTTP ou HTTPS sont autorisées");
+			}
+
+			if (uri.getHost() == null) {
+				throw new InvalidSourceUrlException("URL invalide");
 			}
 
 			return uri;
 		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("URL invalide");
+			throw new InvalidSourceUrlException("URL invalide");
 		}
 	}
 }

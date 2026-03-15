@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.validator.constraints.URL;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,6 +28,7 @@ public class Source {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "memory_id", nullable = false)
+	@JsonIgnore
 	private Memory memory;
 
 	@URL

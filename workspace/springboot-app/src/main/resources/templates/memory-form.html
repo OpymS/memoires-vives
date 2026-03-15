@@ -67,6 +67,7 @@
 							<button type="button"
 								class="remove-source ml-1 text-slate-400 hover:text-red-500 transition">✕</button>
 							<input type="hidden" th:name="'sources[' + ${stat.index} + '].url'" th:value="${source.url}">
+							<div th:replace="~{fragments/errors/fragment-error :: frag-error('sources[' + ${stat.index} + '].url')}"></div>
 						</div>
 					</div>
 				</div>

@@ -32,6 +32,7 @@ import fr.memoires_vives.dto.SourceForm;
 import fr.memoires_vives.exception.DataPersistenceException;
 import fr.memoires_vives.exception.EntityNotFoundException;
 import fr.memoires_vives.exception.FileStorageException;
+import fr.memoires_vives.exception.InvalidSourceUrlException;
 import fr.memoires_vives.exception.UnauthorizedActionException;
 import fr.memoires_vives.exception.ValidationException;
 import fr.memoires_vives.repositories.MemoryRepository;
@@ -492,13 +493,29 @@ public class MemoryServiceImpl implements MemoryService {
 			return;
 		}
 
-		form.getSources().stream().map(SourceForm::getUrl).filter(url -> url != null && !url.isBlank())
-				.map(String::trim).distinct().forEach(url -> {
-					if (!sourceService.alreadyExists(memory, url)) {
-						Source source = sourceService.createSource(memory, url);
-						memory.addSource(source);
-					}
-				});
+		for (int i = 0; i < form.getSources().size(); i++) {
+			SourceForm sourceForm = form.getSources().get(i);
+			if (sourceForm == null)
+				continue;
+
+			String url = sourceForm.getUrl();
+			if (url == null || url.isBlank())
+				continue;
+
+			url = url.trim();
+			
+			try {
+				if (!sourceService.alreadyExists(memory, url)) {
+					Source source = sourceService.createSource(memory, url);
+					memory.addSource(source);
+				}
+
+			} catch (InvalidSourceUrlException e) {
+				ValidationException ve = new ValidationException();
+				ve.addFieldError("sources[" + i + "].url", e.getMessage());
+				throw ve;
+			}
+		}
 	}
 
 	private void updateState(Memory memory, Boolean publish) {
