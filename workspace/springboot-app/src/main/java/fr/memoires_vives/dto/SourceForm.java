@@ -2,6 +2,7 @@ package fr.memoires_vives.dto;
 
 import org.hibernate.validator.constraints.URL;
 
+import fr.memoires_vives.utils.UrlUtil;
 import jakarta.validation.constraints.NotBlank;
 
 public class SourceForm {
@@ -9,14 +10,12 @@ public class SourceForm {
 	@NotBlank
 	@URL(message = "L'URL n'est pas valide")
 	private String url;
-	private String domain;
 
 	public SourceForm() {
 	}
 
-	public SourceForm(String url, String domain) {
+	public SourceForm(String url) {
 		this.url = url;
-		this.domain = domain;
 	}
 
 	/**
@@ -27,13 +26,6 @@ public class SourceForm {
 	}
 
 	/**
-	 * @return the domain
-	 */
-	public String getDomain() {
-		return domain;
-	}
-
-	/**
 	 * @param url the url to set
 	 */
 	public void setUrl(String url) {
@@ -41,9 +33,13 @@ public class SourceForm {
 	}
 
 	/**
-	 * @param domain the domain to set
+	 * @return the domain
 	 */
-	public void setDomain(String domain) {
-		this.domain = domain;
+	public String getDomain() {
+		if (url == null || url.isBlank()) {
+			return null;
+		}
+
+		return UrlUtil.extractDomain(url);
 	}
 }

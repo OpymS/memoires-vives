@@ -21,7 +21,7 @@ public class SourceServiceImpl implements SourceService {
 	public Source createSource(Memory memory, String url) {
 		URI uri = validateUrl(url);
 
-		String normalizedUrl = uri.normalize().toString();
+		String normalizedUrl = normalizeUrl(uri);
 		String domain = uri.getHost();
 
 		Source source = new Source();
@@ -31,7 +31,7 @@ public class SourceServiceImpl implements SourceService {
 		source.setStatus(SourceStatus.PENDING);
 		source.setCreatedAt(LocalDateTime.now());
 
-		int score = computeCredibilityScore(url, domain);
+		int score = computeCredibilityScore(normalizedUrl, domain);
 		source.setCredibilityScore(score);
 
 		return source;
@@ -39,7 +39,9 @@ public class SourceServiceImpl implements SourceService {
 
 	@Override
 	public boolean alreadyExists(Memory memory, String url) {
-		return memory.getSources().stream().anyMatch(s -> s.getUrl().equals(url));
+		URI uri = validateUrl(url);
+		String normalizedUrl = normalizeUrl(uri);
+		return memory.getSources().stream().anyMatch(s -> normalizedUrl.equals(s.getUrl()));
 	}
 
 	private int computeCredibilityScore(String url, String domain) {
@@ -78,5 +80,16 @@ public class SourceServiceImpl implements SourceService {
 		} catch (URISyntaxException e) {
 			throw new InvalidSourceUrlException("URL invalide");
 		}
+	}
+
+	private String normalizeUrl(URI uri) {
+
+		String url = uri.normalize().toString();
+
+		if (url.endsWith("/")) {
+			url = url.substring(0, url.length() - 1);
+		}
+
+		return url;
 	}
 }

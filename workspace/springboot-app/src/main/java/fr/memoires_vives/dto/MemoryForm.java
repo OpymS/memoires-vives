@@ -50,6 +50,7 @@ public class MemoryForm {
 
 	private Boolean published;
 
+	@Size(max = 5, message = "Vous ne pouvez pas ajouter plus de 5 sources")
 	private List<SourceForm> sources = new ArrayList<>();
 
 	/**
@@ -222,7 +223,7 @@ public class MemoryForm {
 		}
 		form.setPublished(memory.getState() == MemoryState.PUBLISHED ? true : false);
 
-		form.setSources(memory.getSources().stream().map(s -> new SourceForm(s.getUrl(), s.getDomain()))
+		form.setSources(memory.getSources().stream().map(s -> new SourceForm(s.getUrl()))
 				.collect(Collectors.toList()));
 		return form;
 	}

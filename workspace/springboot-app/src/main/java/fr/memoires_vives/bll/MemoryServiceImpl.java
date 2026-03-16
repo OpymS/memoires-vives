@@ -48,6 +48,7 @@ import jakarta.persistence.criteria.Root;
 @Primary
 @Service
 public class MemoryServiceImpl implements MemoryService {
+	private static final int MAX_SOURCES = 5;
 
 	private final MemoryRepository memoryRepository;
 	private final FileService fileService;
@@ -493,6 +494,8 @@ public class MemoryServiceImpl implements MemoryService {
 			return;
 		}
 
+		int currentSources = memory.getSources().size();
+
 		for (int i = 0; i < form.getSources().size(); i++) {
 			SourceForm sourceForm = form.getSources().get(i);
 			if (sourceForm == null)
@@ -503,11 +506,20 @@ public class MemoryServiceImpl implements MemoryService {
 				continue;
 
 			url = url.trim();
-			
+
 			try {
 				if (!sourceService.alreadyExists(memory, url)) {
+					if (currentSources >= MAX_SOURCES) {
+						ValidationException ve = new ValidationException();
+						ve.addFieldError("sources[" + i + "].url",
+								"Vous ne pouvez pas ajouter plus de " + MAX_SOURCES + " sources");
+						throw ve;
+					}
+
 					Source source = sourceService.createSource(memory, url);
 					memory.addSource(source);
+
+					currentSources++;
 				}
 
 			} catch (InvalidSourceUrlException e) {
@@ -575,6 +587,12 @@ public class MemoryServiceImpl implements MemoryService {
 	private void updateSources(Memory existingMemory, Memory updatedData) {
 		List<Source> existingSources = existingMemory.getSources();
 		List<Source> newSources = updatedData.getSources();
+
+		if (newSources != null && newSources.size() > MAX_SOURCES) {
+			ValidationException ve = new ValidationException();
+			ve.addFieldError("sources", "Vous ne pouvez pas ajouter plus de " + MAX_SOURCES + " sources");
+			throw ve;
+		}
 
 		Set<String> newUrls = newSources.stream().map(Source::getUrl).collect(Collectors.toSet());
 
