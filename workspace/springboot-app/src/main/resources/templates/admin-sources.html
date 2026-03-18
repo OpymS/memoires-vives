@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/fragment-head :: head(
+	'Panneau d’administration - Sources',
+	'',
+	'noindex, nofollow',
+	'',
+	~{}
+)}">
+</head>
+
+<body class="min-h-screen flex flex-col">
+	<div th:replace="~{fragments/fragment-header :: header}"></div>
+	<div class="flex-grow flex flex-row justify-between">
+		<main class="w-full flex flex-col flex-grow sm:items-center overflow-auto">
+			<div class="flex-grow w-full flex flex-col items-center justify-start">
+				<h1 class="mt-4 mb-2 sm:mt-[80px] text-[#bddab2] text-2xl font-bold">Panneau d'administration des
+					sources</h1>
+				<table class="border border-black border-collapse w-full sm:w-9/10">
+					<thead>
+						<tr class="border border-black font-bold">
+							<th class="border border-black w-1/10 sm:w-1/12">sourceId</th>
+							<th class="border border-black w-1/10 sm:w-1/12">url</th>
+							<th class="border border-black w-2/5 sm:w-1/4">domain</th>
+							<th class="w-1/12 hidden sm:table-cell">status</th>
+							<th class="border border-black w-1/5 sm:w-1/6">score</th>
+							<th class="border border-black w-1/5 sm:w-1/12">utilisateur</th>
+							<th class="border border-black w-1/5 sm:w-1/6">souvenir lié</th>
+							<th class="border border-black w-1/5 sm:w-1/6">actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr class="border border-black h-[35px]" th:each="source:${sources}">
+							<td class="border border-black pl-2" th:text="${source.sourceId}"></td>
+							<td class="border border-black pl-2" th:text="${source.url}"></td>
+							<td class="border border-black pl-2" th:text="${source.domain}"></td>
+							<td class="border border-black pl-2" th:text="${source.status.name}"></td>
+							<td class="border border-black pl-2" th:text="${source.credibilityScore}"></td>
+							<td class="border border-black pl-2" th:text="${source.memory.rememberer.pseudo}"></td>
+							<td class="border border-black pl-2" th:text="${source.memory.title}"></td>
+							<td class="border border-black pl-2 space-x-2">
+								<form th:action="@{'/admin/sources/' + ${source.sourceId} + '/approve'}" method="post">
+									<button>✔</button>
+								</form>
+
+								<form th:action="@{'/admin/sources/' + ${source.sourceId} + '/reject'}" method="post">
+									<button>✖</button>
+								</form>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div th:replace="~{fragments/fragment-footer :: footer}"></div>
+		</main>
+		<div th:replace="~{fragments/fragment-admin-aside :: admin}"></div>
+	</div>
+</body>
+
+</html>

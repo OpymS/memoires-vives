@@ -170,7 +170,7 @@ public class Source {
 		builder.append("Source [sourceId=");
 		builder.append(sourceId);
 		builder.append(", memory=");
-		builder.append(memory);
+		builder.append(memory.getTitle());
 		builder.append(", url=");
 		builder.append(url);
 		builder.append(", domain=");

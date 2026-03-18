@@ -16,10 +16,13 @@ import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.LocationService;
 import fr.memoires_vives.bll.MemoryService;
 import fr.memoires_vives.bll.MemoryUrlService;
+import fr.memoires_vives.bll.SourceService;
 import fr.memoires_vives.bll.UserService;
 import fr.memoires_vives.bo.Category;
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
+import fr.memoires_vives.bo.Source;
+import fr.memoires_vives.bo.SourceStatus;
 import fr.memoires_vives.bo.User;
 import fr.memoires_vives.component.CaptchaCounter;
 import fr.memoires_vives.dto.MemoryView;
@@ -37,15 +40,18 @@ public class AdminController {
 	private final LocationService locationService;
 	private final CaptchaCounter counter;
 	private final MemoryViewMapper memoryViewMapper;
+	private final SourceService sourceService;
 
 	public AdminController(UserService userService, MemoryService memoryService, CategoryService categoryService,
-			LocationService locationService, CaptchaCounter counter, MemoryUrlService memoryUrlService, MemoryViewMapper memoryViewMapper) {
+			LocationService locationService, CaptchaCounter counter, MemoryUrlService memoryUrlService,
+			MemoryViewMapper memoryViewMapper, SourceService sourceService) {
 		this.userService = userService;
 		this.memoryService = memoryService;
 		this.categoryService = categoryService;
 		this.locationService = locationService;
 		this.counter = counter;
 		this.memoryViewMapper = memoryViewMapper;
+		this.sourceService = sourceService;
 	}
 
 	@GetMapping
@@ -104,4 +110,13 @@ public class AdminController {
 		model.addAttribute("category", category);
 		return "category-create";
 	}
+
+	@GetMapping("/sources")
+	public String listSources(@RequestParam(name="sources", required = false) SourceStatus status, Model model) {
+		List<Source> sources = (status == null) ? sourceService.findAll() : sourceService.findByStatus(status);
+		System.out.println("plop "+sources);
+		model.addAttribute("sources", sources);
+		return "admin-sources";
+	}
+
 }

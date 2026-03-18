@@ -3,6 +3,7 @@ package fr.memoires_vives.bll;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -10,11 +11,14 @@ import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.Source;
 import fr.memoires_vives.bo.SourceStatus;
 import fr.memoires_vives.exception.InvalidSourceUrlException;
+import fr.memoires_vives.repositories.SourceRepository;
 
 @Service
 public class SourceServiceImpl implements SourceService {
+	private final SourceRepository sourceRepository;
 
-	public SourceServiceImpl() {
+	public SourceServiceImpl(SourceRepository sourceRepository) {
+		this.sourceRepository = sourceRepository;
 	}
 
 	@Override
@@ -42,6 +46,16 @@ public class SourceServiceImpl implements SourceService {
 		URI uri = validateUrl(url);
 		String normalizedUrl = normalizeUrl(uri);
 		return memory.getSources().stream().anyMatch(s -> normalizedUrl.equals(s.getUrl()));
+	}
+	
+	@Override
+	public List<Source> findAll() {
+		return sourceRepository.findAll();
+	}
+	
+	@Override
+	public List<Source> findByStatus(SourceStatus status) {
+		return sourceRepository.findByStatus(status);
 	}
 
 	private int computeCredibilityScore(String url, String domain) {
@@ -92,4 +106,5 @@ public class SourceServiceImpl implements SourceService {
 
 		return url;
 	}
+
 }

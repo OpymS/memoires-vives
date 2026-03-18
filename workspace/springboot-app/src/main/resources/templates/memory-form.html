@@ -58,6 +58,8 @@
 						<button id="addSourceBtn" type="button" class="form-button">Ajouter</button>
 					</div>
 					<div id="sources-container" class="flex flex-wrap gap-2 mt-3">
+						<div th:replace="~{fragments/errors/fragment-error :: frag-error('sources')}">
+							</div>
 						<div th:each="source, stat : *{sources}"
 							class="source-item flex items-center gap-2 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm shadow-sm">
 							<img class="w-4 h-4"
