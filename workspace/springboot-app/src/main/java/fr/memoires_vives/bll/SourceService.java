@@ -11,4 +11,5 @@ public interface SourceService {
 	boolean alreadyExists(Memory memory, String url);
 	List<Source> findAll();
 	List<Source> findByStatus(SourceStatus status);
+	void updateStatus(Long id, SourceStatus status);
 }

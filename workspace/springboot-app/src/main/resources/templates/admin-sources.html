@@ -17,6 +17,13 @@
 			<div class="flex-grow w-full flex flex-col items-center justify-start">
 				<h1 class="mt-4 mb-2 sm:mt-[80px] text-[#bddab2] text-2xl font-bold">Panneau d'administration des
 					sources</h1>
+
+				<div class="flex flex-row justify-center gap-2">
+					<a th:href="@{/admin/sources}" class="form-button">Toutes</a>
+					<a th:each="status : ${statuses}" th:href="@{/admin/sources(status=${status.name})}"
+						th:text="${status.label}" class="form-button">
+					</a>
+				</div>
 				<table class="border border-black border-collapse w-full sm:w-9/10">
 					<thead>
 						<tr class="border border-black font-bold">

@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 import fr.memoires_vives.bo.Location;
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.MemoryState;
@@ -223,8 +221,13 @@ public class MemoryForm {
 		}
 		form.setPublished(memory.getState() == MemoryState.PUBLISHED ? true : false);
 
-		form.setSources(memory.getSources().stream().map(s -> new SourceForm(s.getUrl()))
-				.collect(Collectors.toList()));
+		form.setSources(memory.getSources().stream().map(source -> {
+			SourceForm sf = new SourceForm();
+			sf.setUrl(source.getUrl());
+			sf.setDomain(source.getDomain());
+			sf.setStatus(source.getStatus());
+			return sf;
+		}).toList());
 		return form;
 	}
 }

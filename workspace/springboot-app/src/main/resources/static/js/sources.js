@@ -40,12 +40,12 @@ function addSourceToList(url, domain) {
 	if (index >= MAX_SOURCES){
 		return;
 	}
-	const sourceDiv = document.createElement('a');
-	sourceDiv.className = "source-item flex items-center gap-2 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm shadow-sm";
+	const sourceDiv = document.createElement('div');
+	sourceDiv.className = "source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm shadow-sm bg-orange-100 text-orange-800";
 	
 	sourceDiv.innerHTML = `
 		 	<img class="w-4 h-4" src="https://www.google.com/s2/favicons?domain=${domain}&sz=32">
-			<a href="${url}" target="_blank" rel="noopener noreferrer nofollow" class="source-tag text-slate-700 font-medium">${domain}</a>
+			<a href="${url}" target="_blank" rel="noopener noreferrer nofollow" class="source-tag font-medium">${domain}</a>
         	<button type="button" class="remove-source ml-1 text-slate-400 hover:text-red-500 transition">✕</button>
         	<input type="hidden" name="sources[${index}].url" value="${url}">
         `;

@@ -186,4 +186,15 @@ public class Source {
 		builder.append("]");
 		return builder.toString();
 	}
+
+	public String getStatusClass() {
+		if (status == null)
+			return "bg-gray-100 text-gray-800";
+
+		return switch (status) {
+		case APPROVED -> "bg-green-100 text-green-800";
+		case PENDING -> "bg-orange-100 text-orange-800";
+		case REJECTED -> "bg-red-100 text-red-800";
+		};
+	}
 }

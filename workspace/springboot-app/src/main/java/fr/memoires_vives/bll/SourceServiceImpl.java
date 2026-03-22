@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.memoires_vives.bo.Memory;
 import fr.memoires_vives.bo.Source;
@@ -47,15 +48,21 @@ public class SourceServiceImpl implements SourceService {
 		String normalizedUrl = normalizeUrl(uri);
 		return memory.getSources().stream().anyMatch(s -> normalizedUrl.equals(s.getUrl()));
 	}
-	
+
 	@Override
 	public List<Source> findAll() {
 		return sourceRepository.findAll();
 	}
-	
+
 	@Override
 	public List<Source> findByStatus(SourceStatus status) {
 		return sourceRepository.findByStatus(status);
+	}
+
+	@Override
+	@Transactional
+	public void updateStatus(Long id, SourceStatus status) {
+		sourceRepository.updateStatus(id, status);
 	}
 
 	private int computeCredibilityScore(String url, String domain) {

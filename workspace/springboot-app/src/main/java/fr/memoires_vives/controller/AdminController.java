@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -112,11 +113,23 @@ public class AdminController {
 	}
 
 	@GetMapping("/sources")
-	public String listSources(@RequestParam(name="sources", required = false) SourceStatus status, Model model) {
+	public String listSources(@RequestParam(name = "status", required = false) SourceStatus status, Model model) {
 		List<Source> sources = (status == null) ? sourceService.findAll() : sourceService.findByStatus(status);
-		System.out.println("plop "+sources);
 		model.addAttribute("sources", sources);
+		model.addAttribute("statuses", SourceStatus.values());
 		return "admin-sources";
+	}
+
+	@PostMapping("/sources/{id}/approve")
+	public String approve(@PathVariable(value = "id") Long id) {
+		sourceService.updateStatus(id, SourceStatus.APPROVED);
+		return "redirect:/admin/sources";
+	}
+
+	@PostMapping("/sources/{id}/reject")
+	public String reject(@PathVariable(value = "id") Long id) {
+		sourceService.updateStatus(id, SourceStatus.REJECTED);
+		return "redirect:/admin/sources";
 	}
 
 }

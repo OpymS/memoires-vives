@@ -61,12 +61,12 @@
 						<div th:replace="~{fragments/errors/fragment-error :: frag-error('sources')}">
 							</div>
 						<div th:each="source, stat : *{sources}"
-							class="source-item flex items-center gap-2 bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm shadow-sm">
+							th:class="'source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm shadow-sm ' + ${source.statusClass}">
 							<img class="w-4 h-4"
 								th:src="'https://www.google.com/s2/favicons?sz=32&domain=' + ${source.domain}" />
 							<a th:text="${source.domain}" th:href="${source.url}" target="_blank"
 								rel="noopener noreferrer nofollow"
-								class="source-tag text-slate-700 font-medium">Source</a>
+								class="source-tag font-medium">Source</a>
 							<button type="button"
 								class="remove-source ml-1 text-slate-400 hover:text-red-500 transition">✕</button>
 							<input type="hidden" th:name="'sources[' + ${stat.index} + '].url'"
