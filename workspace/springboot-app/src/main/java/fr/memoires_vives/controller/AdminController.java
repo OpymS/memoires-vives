@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import fr.memoires_vives.bll.CategoryService;
 import fr.memoires_vives.bll.LocationService;
@@ -116,19 +117,24 @@ public class AdminController {
 	public String listSources(@RequestParam(name = "status", required = false) SourceStatus status, Model model) {
 		List<Source> sources = (status == null) ? sourceService.findAll() : sourceService.findByStatus(status);
 		model.addAttribute("sources", sources);
+		model.addAttribute("currentStatus", status);
 		model.addAttribute("statuses", SourceStatus.values());
 		return "admin-sources";
 	}
 
 	@PostMapping("/sources/{id}/approve")
-	public String approve(@PathVariable(value = "id") Long id) {
+	public String approve(@PathVariable(value = "id") Long id, @ModelAttribute("status") String status,
+			RedirectAttributes redirectAttributes) {
 		sourceService.updateStatus(id, SourceStatus.APPROVED);
+		redirectAttributes.addAttribute("status", status);
 		return "redirect:/admin/sources";
 	}
 
 	@PostMapping("/sources/{id}/reject")
-	public String reject(@PathVariable(value = "id") Long id) {
+	public String reject(@PathVariable(value = "id") Long id, @ModelAttribute("status") String status,
+			RedirectAttributes redirectAttributes) {
 		sourceService.updateStatus(id, SourceStatus.REJECTED);
+		redirectAttributes.addAttribute("status", status);
 		return "redirect:/admin/sources";
 	}
 

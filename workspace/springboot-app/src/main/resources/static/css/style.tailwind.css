@@ -25,6 +25,10 @@
 	@apply inline-flex items-center justify-center my-2 px-4 py-2 bg-[#e9e9ed] text-black;
 }
 
+@utility active {
+	@apply bg-[#7e9076] text-white;
+}
+
 @utility filter-input {
 	@apply w-full bg-white rounded-md font-light border border-gray-300 shadow-sm focus:border-[#7e9076] focus:outline-none focus:ring focus:ring-[#7e9076];
 }
