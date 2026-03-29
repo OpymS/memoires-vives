@@ -19,9 +19,11 @@
 					sources</h1>
 
 				<div class="flex flex-row justify-center gap-2">
-					<a th:href="@{/admin/sources}" class="form-button" th:classappend="${currentStatus == null} ? ' active'">Toutes</a>
+					<a th:href="@{/admin/sources}" class="form-button"
+						th:classappend="${currentStatus == null} ? ' active'">Toutes</a>
 					<a th:each="status : ${statuses}" th:href="@{/admin/sources(status=${status.name})}"
-						th:text="${status.label}" class="form-button" th:classappend="${status == currentStatus} ? ' active'">
+						th:text="${status.label}" class="form-button"
+						th:classappend="${status == currentStatus} ? ' active'">
 					</a>
 				</div>
 				<table class="border border-black border-collapse w-full sm:w-9/10">
@@ -40,7 +42,8 @@
 					<tbody>
 						<tr class="border border-black h-[35px]" th:each="source:${sources}">
 							<td class="border border-black pl-2" th:text="${source.sourceId}"></td>
-							<td class="border border-black pl-2" th:text="${source.url}"></td>
+							<td class="border border-black pl-2"><a th:href="${source.url}" target="_blank"
+									rel="noopener noreferrer nofollow" th:text="${source.url}"></a></td>
 							<td class="border border-black pl-2" th:text="${source.domain}"></td>
 							<td class="border border-black pl-2" th:text="${source.status.name}"></td>
 							<td class="border border-black pl-2" th:text="${source.credibilityScore}"></td>
@@ -49,12 +52,12 @@
 							<td class="border border-black pl-2 space-x-2">
 								<form th:action="@{'/admin/sources/' + ${source.sourceId} + '/approve'}" method="post">
 									<input type="hidden" name="status" th:value="${currentStatus}">
-									<button>✔</button>
+									<button class="cursor-pointer">✔</button>
 								</form>
 
 								<form th:action="@{'/admin/sources/' + ${source.sourceId} + '/reject'}" method="post">
 									<input type="hidden" name="status" th:value="${currentStatus}">
-									<button>✖</button>
+									<button class="cursor-pointer">✖</button>
 								</form>
 							</td>
 						</tr>

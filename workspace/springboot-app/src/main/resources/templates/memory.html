@@ -37,7 +37,7 @@
 						class="w-4/5 font-light text-justify mt-4 md:overflow-y-auto whitespace-pre-line">
 					</p>
 				</div>
-				<div id="sources-container" class="flex flex-wrap gap-2 mt-3">
+				<div id="sources-container" class="flex flex-wrap gap-2 mt-3 mb-2">
 					<a th:if="${source.status.name() == 'APPROVED'}" th:each="source, stat : ${memoryToDisplay.sources}" th:href="${source.url}" target="_blank"
 						rel="noopener noreferrer nofollow"
 						class="source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm shadow-sm bg-green-100 text-green-800">
