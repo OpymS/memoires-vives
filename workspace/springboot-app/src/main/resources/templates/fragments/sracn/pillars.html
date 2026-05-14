@@ -1,0 +1,26 @@
+<section th:fragment="pillars" class="relative z-10 -translate-y-16">
+	<div class="sracn-section">
+
+		<!-- Grid -->
+		<div class="grid gap-6 md:grid-cols-3">
+
+			<!-- Card 1 -->
+			<div th:replace="~{fragments/sracn/components/pillar-card :: pillarCard('Apprendre & progresser',
+                    'Des groupes adaptés à chaque âge pour découvrir, apprendre et gagner en confiance dans l’eau.',
+                    '🏊')}">
+			</div>
+
+			<!-- Card 2 -->
+			<div th:replace="~{fragments/sracn/components/pillar-card :: pillarCard('Se dépasser',
+                    'Des entraînements encadrés pour développer technique, endurance et esprit de compétition.',
+                    '⏱️')}">
+			</div>
+
+			<!-- Card 3 -->
+			<div th:replace="~{fragments/sracn/components/pillar-card :: pillarCard(
+                    'Vivre le club','Stages, compétitions, événements et moments partagés tout au long de l’année.',
+                    '🌊')}">
+			</div>
+		</div>
+	</div>
+</section>

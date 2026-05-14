@@ -1,0 +1,29 @@
+<div th:fragment="pillarCard(title, text, icon)"
+	class="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white
+            p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-(--color-sracn-primary-light) hover:shadow-xl">
+
+	<!-- Background decoration -->
+	<div class="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-(--color-sracn-primary-light)/20
+                blur-3xl transition-all duration-300 group-hover:scale-125">
+	</div>
+
+	<!-- Content -->
+	<div class="relative z-10">
+
+		<!-- Icon -->
+		<div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl
+                    bg-(--color-sracn-primary-light)/20 text-3xl">
+			<span th:text="${icon}"></span>
+		</div>
+
+		<!-- Title -->
+		<h3 class="mb-4 text-2xl font-bold tracking-tight text-(--color-sracn-text)">
+			<span th:text="${title}"></span>
+		</h3>
+
+		<!-- Text -->
+		<p class="leading-relaxed text-(--color-sracn-muted)">
+			<span th:text="${text}"></span>
+		</p>
+	</div>
+</div>

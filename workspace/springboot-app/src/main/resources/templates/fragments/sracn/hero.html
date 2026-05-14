@@ -1,0 +1,53 @@
+<section th:fragment="hero" class="relative min-h-screen overflow-hidden z-0">
+
+	<!-- Background image -->
+	<div class="absolute inset-0">
+		<img th:src="@{/images/public/sracn/hero.jpg}" alt="Nageur du club" class="h-full w-full object-cover">
+	</div>
+
+	<!-- Dark overlay -->
+	<div class="absolute inset-0 bg-black/55"></div>
+
+	<!-- Decorative gradient -->
+	<div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-(--color-sracn-bg)">
+	</div>
+
+	<!-- Content -->
+	<div class="relative z-10 flex min-h-screen items-center">
+		<div class="sracn-section w-full">
+			<div class="max-w-3xl">
+
+				<!-- Badge -->
+				<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-sm">
+					<span class="h-2 w-2 rounded-full bg-(--color-sracn-primary)"></span>
+					Club de natation • Loisir • Compétition
+				</div>
+
+				<!-- Title -->
+				<h1 class="mb-6 text-5xl font-black leading-tight tracking-tight text-white md:text-7xl">
+					La natation
+					<span class="text-(--color-sracn-primary-light)">
+						pour tous
+					</span>
+				</h1>
+
+				<!-- Subtitle -->
+				<p class="mb-10 max-w-2xl text-lg leading-relaxed text-white/80 md:text-xl">
+					Rejoignez un club dynamique où progression,
+					esprit d’équipe et plaisir de nager
+					vont ensemble.
+				</p>
+
+				<!-- CTA -->
+				<div class="flex flex-col gap-4 sm:flex-row">
+					<a href="#groups" class="inline-flex items-center justify-center rounded-xl bg-(--color-sracn-primary) px-8 py-4 text-lg font-semibold text-white transition hover:bg-(--color-sracn-primary-dark)">
+						Découvrir les groupes
+					</a>
+					<a href="#contact" class="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+						Faire un essai
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
