@@ -35,7 +35,7 @@ public class SecurityConfig {
 				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login",
 						"/signup", "/logout", "/error", "/error/**", "/memory/**", "memories/**", "/about", "/try", "/api/memory/**",
 						"/upload-error", "/forgot-password/**", "/legal-notices", "/privacy-policy", "/conditions", "/profil",
-						"/profil/activation/**", "/sitemap.xml")
+						"/profil/activation/**", "/sitemap.xml", "/sracn/**")
 				.permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated())
 				.formLogin(login -> login.loginPage("/login").permitAll().defaultSuccessUrl("/", true)
 						.failureHandler(failureHandler))
