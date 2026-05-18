@@ -1,24 +1,20 @@
-<section th:fragment="hero" class="relative min-h-screen overflow-hidden z-0">
+<section th:fragment="hero" class="relative md:h-[64vh] lg:h-[68vh] min-h-[560px] overflow-visible">
 
 	<!-- Background image -->
-	<div class="absolute inset-0">
-		<img th:src="@{/images/public/sracn/hero.jpg}" alt="Nageur du club" class="h-full w-full object-cover">
-	</div>
+	<img th:src="@{/images/public/sracn/hero.jpg}" alt="Nageur du club"
+		class="absolute inset-0 h-full w-full object-cover">
 
-	<!-- Dark overlay -->
-	<div class="absolute inset-0 bg-black/55"></div>
-
-	<!-- Decorative gradient -->
-	<div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-(--color-sracn-bg)">
-	</div>
+	<!-- overlay -->
+	<div class="absolute inset-0 bg-black/50"></div>
 
 	<!-- Content -->
-	<div class="relative z-10 flex min-h-screen items-center">
+	<div class="relative z-10 flex h-full items-centerpt-32 pb-40 md:pt-28 md:pb-32">
 		<div class="sracn-section w-full">
 			<div class="max-w-3xl">
 
 				<!-- Badge -->
-				<div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-sm">
+				<div
+					class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-sm">
 					<span class="h-2 w-2 rounded-full bg-(--color-sracn-primary)"></span>
 					Club de natation • Loisir • Compétition
 				</div>
@@ -40,10 +36,12 @@
 
 				<!-- CTA -->
 				<div class="flex flex-col gap-4 sm:flex-row">
-					<a href="#groups" class="inline-flex items-center justify-center rounded-xl bg-(--color-sracn-primary) px-8 py-4 text-lg font-semibold text-white transition hover:bg-(--color-sracn-primary-dark)">
+					<a href="#groups"
+						class="inline-flex items-center justify-center rounded-xl bg-(--color-sracn-primary) px-8 py-4 text-lg font-semibold text-white transition hover:bg-(--color-sracn-primary-dark)">
 						Découvrir les groupes
 					</a>
-					<a href="#contact" class="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
+					<a href="#contact"
+						class="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 px-8 py-4 text-lg font-semibold text-white backdrop-blur-sm transition hover:bg-white/20">
 						Faire un essai
 					</a>
 				</div>

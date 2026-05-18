@@ -1,0 +1,70 @@
+<section th:fragment="groups" class="py-24 px-6 bg-(--color-sracn-bg)">
+	<div class="max-w-6xl mx-auto">
+
+		<h2 class="text-3xl md:text-4xl font-bold text-(--color-sracn-text)">
+			Les groupes du club
+		</h2>
+
+		<p class="mt-2 text-(--color-sracn-muted)">
+			Du loisir à la compétition, chacun trouve son rythme dans une progression adaptée.
+		</p>
+
+		<div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+			<div th:replace="~{fragments/sracn/components/group-card :: card(
+        'Loisir adultes',
+        'Loisir',
+        'Nager pour le plaisir, entretenir sa forme et progresser en douceur.',
+        '16+',
+        'Tous niveaux',
+        'OR|Mardi|19h45-20h45;OR|Samedi|8h45-9h45',
+        'Remise en forme;Technique crawl;Endurance douce'
+      )}"></div>
+
+			<!-- LOISIR JEUNES -->
+			<div th:replace="~{fragments/sracn/components/group-card :: card(
+        'Loisir jeunes',
+        'Loisir',
+        'Découvrir la natation dans un cadre ludique et structuré.',
+        '10-15',
+        'Débutant à intermédiaire',
+        'OR|Mardi|19h45-20h45;OR|Jeudi|18h45-19h45',
+        'Flottaison;Respiration;Apprentissage des bases'
+      )}"></div>
+
+			<!-- PASS SPORT DE L'EAU -->
+			<div th:replace="~{fragments/sracn/components/group-card :: card(
+        'Pass Sport de l’eau',
+        'Formation',
+        'Acquérir l’autonomie aquatique et consolider les bases techniques.',
+        '8+',
+        'Savoir nager 25m',
+        'OR|Samedi|12h-12h45',
+        'Autonomie;Techniques de nage;Endurance de base'
+      )}"></div>
+
+			<!-- PASS COMPÉTITION -->
+			<div th:replace="~{fragments/sracn/components/group-card :: card(
+        'Pass compétition',
+        'Pré-compétition',
+        'Préparer l’entrée dans le groupe compétition.',
+        '10-12',
+        'Confirmé',
+        'AND|Jeudi|18h-18h45;AND|Samedi|12h-13h00',
+        'Technique avancée;Vitesse;Départ/virages'
+      )}"></div>
+
+			<!-- COMPÉTITION -->
+			<div th:replace="~{fragments/sracn/components/group-card :: card(
+        'Compétition',
+        'Compétition',
+        'Entraînement structuré orienté performance et compétitions officielles.',
+        'Ados + adultes',
+        'Avancé',
+        'AND|Mardi|19h45-20h45;AND|Jeudi|19h45-20h45;OR|Samedi|12h-13h15',
+        'Performance;Intensité;Compétitions FFN'
+      )}"></div>
+
+		</div>
+	</div>
+</section>

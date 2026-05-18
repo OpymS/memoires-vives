@@ -1,0 +1,38 @@
+<div th:fragment="card(title, type, description, age, level, schedule, objectives)" class="p-6 rounded-2xl bg-(--color-sracn-surface)
+            border border-gray-100 shadow-sm hover:shadow-md transition">
+
+	<!-- TYPE -->
+	<div class="text-xs font-semibold uppercase text-(--color-sracn-primary)">
+		<span th:text="${type}">Type</span>
+	</div>
+
+	<!-- TITLE -->
+	<h3 class="mt-2 text-xl font-bold text-(--color-sracn-text)" th:text="${title}">
+		Title
+	</h3>
+
+	<!-- DESCRIPTION -->
+	<p class="mt-2 text-sm text-(--color-sracn-muted)" th:text="${description}">
+		Description
+	</p>
+
+	<!-- QUICK INFOS -->
+	<div class="mt-4 text-sm text-(--color-sracn-muted) space-y-1">
+		<div><strong>Âge :</strong> <span th:text="${age}"></span></div>
+		<div><strong>Niveau :</strong> <span th:text="${level}"></span></div>
+	</div>
+
+	<!-- CTA -->
+	<button class="mt-5 text-sm font-semibold text-(--color-sracn-primary)" onclick="openGroupModal(this)" th:attr="
+        data-title=${title},
+        data-type=${type},
+        data-description=${description},
+        data-age=${age},
+        data-level=${level},
+        data-schedule=${schedule},
+        data-objectives=${objectives}
+      ">
+		Détails →
+	</button>
+
+</div>

@@ -1,0 +1,40 @@
+<div th:fragment="modal">
+	<div id="groupModal" class="fixed inset-0 hidden items-center justify-center z-50">
+
+		<!-- overlay -->
+		<div class="absolute inset-0 bg-black/60" onclick="closeGroupModal()"></div>
+
+		<!-- modal -->
+		<div class="relative w-full max-w-2xl mx-4 p-6 rounded-2xl bg-white shadow-xl">
+			<h3 id="modalTitle" class="text-2xl font-bold"></h3>
+			<p id="modalDescription" class="mt-2 text-gray-600"></p>
+			<div class="mt-6 space-y-4 text-sm">
+				<div>
+					<h4 class="font-semibold">Âge</h4>
+					<p id="modalAge"></p>
+				</div>
+
+				<div>
+					<h4 class="font-semibold">Niveau</h4>
+					<p id="modalLevel"></p>
+				</div>
+
+				<div>
+					<h4 class="font-semibold">Objectifs</h4>
+					<ul id="modalObjectives" class="list-disc pl-5 text-gray-700"></ul>
+				</div>
+
+				<div>
+					<h4 class="font-semibold">Horaires</h4>
+					<ul id="modalSchedule" class="list-disc pl-5 text-gray-700"></ul>
+				</div>
+
+			</div>
+			<div class="mt-6 flex justify-end">
+				<button onclick="closeGroupModal()" class="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200">
+					Fermer
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
