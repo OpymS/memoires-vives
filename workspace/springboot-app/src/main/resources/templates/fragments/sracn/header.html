@@ -1,17 +1,25 @@
-<header th:fragment="header" class="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
-
+<header th:fragment="header"
+	class="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-md border-b border-white/10">
 	<div class="sracn-section py-4">
 		<div class="flex items-center justify-between">
-			<div class="text-2xl font-bold text-white/90">
-				SRACN
+			<div class="flex items-center gap-3">
+				<img th:src="@{/images/public/sracn/logo.png}" alt="logo du club"
+					class="h-10 w-10 object-contain" />
+
+				<span class="text-2xl font-bold text-white/90 leading-none">
+					SRACN
+				</span>
 			</div>
 
 			<nav class="hidden md:flex items-center gap-8 text-white">
 				<a href="#" class="hover:text-(--color-sracn-primary-light) transition">
 					Le club
 				</a>
-				<a href="#" class="hover:text-(--color-sracn-primary-light) transition">
+				<a href="#groups" class="hover:text-(--color-sracn-primary-light) transition">
 					Groupes
+				</a>
+				<a href="#news" class="hover:text-(--color-sracn-primary-light) transition">
+					Actualités
 				</a>
 				<a href="#" class="hover:text-(--color-sracn-primary-light) transition">
 					Compétitions
@@ -26,5 +34,4 @@
 			</button>
 		</div>
 	</div>
-
 </header>

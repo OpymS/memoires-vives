@@ -1,0 +1,35 @@
+<section id="news" th:fragment="news" class="py-24 px-6 bg-white">
+	<div class="max-w-6xl mx-auto">
+		<div class="max-w-2xl">
+			<h2 class="text-3xl md:text-4xl font-bold text-(--color-sracn-text)">
+				Actualités du club
+			</h2>
+			<p class="mt-2 text-(--color-sracn-muted)">
+				Compétitions, événements, résultats et vie du club.
+			</p>
+		</div>
+		<div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			<div th:replace="~{fragments/sracn/components/news-card :: card(
+        'Belle performance aux championnats régionaux',
+        'Compétition',
+        'Nos nageurs reviennent avec plusieurs podiums.',
+        '12 mai 2026',
+        '/images/public/sracn/news/competition.jpg'
+      )}"></div>
+			<div th:replace="~{fragments/sracn/components/news-card :: card(
+        'Stage intensif pendant les vacances',
+        'Club',
+        'Une semaine d’entraînement renforcé pour tous les groupes.',
+        '3 mai 2026',
+        '/images/public/sracn/news/entrainement.jpg'
+      )}"></div>
+			<div th:replace="~{fragments/sracn/components/news-card :: card(
+        'Ouverture des inscriptions 2026',
+        'Inscription',
+        'Les inscriptions pour la saison prochaine sont ouvertes.',
+        '28 avril 2026',
+        '/images/public/sracn/news/inscription.jpg'
+      )}"></div>
+		</div>
+	</div>
+</section>

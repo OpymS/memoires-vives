@@ -1,4 +1,6 @@
 window.openGroupModal = function(btn) {
+	const overlay = document.getElementById("modalOverlay");
+	const content = document.getElementById("modalContent");
 	const modal = document.getElementById("groupModal");
 
 	const title = document.getElementById("modalTitle");
@@ -29,33 +31,75 @@ window.openGroupModal = function(btn) {
 	});
 
 	// HORAIRES
-	const schedules = btn.dataset.schedule.split(";");
 	scheduleList.innerHTML = "";
+
+	const schedules = btn.dataset.schedule.split(";");
+
 	schedules.forEach((s, index) => {
+
 		const [type, day, time] = s.split("|");
 
-		const li = document.createElement("li");
+		// CHIP
+		const chip = document.createElement("div");
 
-		if (type === "OR") {
-			li.innerText = `${day} ${time}` + (index < schedules.length - 1 ? "  OU" : "");
-		} else {
-			li.innerText = `${day} ${time}` + (index < schedules.length - 1 ? "  ET" : "");
+		chip.className =
+			"px-3 py-2 rounded-full text-sm font-medium " +
+			"bg-emerald-100 text-emerald-800";
+
+		chip.innerText = `${day} ${time}`;
+
+		scheduleList.appendChild(chip);
+
+		// AJOUT DU ET / OU ENTRE LES CHIPS
+		if (index < schedules.length - 1) {
+
+			const separator = document.createElement("div");
+
+			separator.className =
+				"flex items-center justify-center mx-1 " +
+				"text-xs uppercase tracking-wide font-bold " +
+				"text-(--color-sracn-muted)";
+
+			separator.innerText = type === "OR" ? "OU" : "ET";
+
+			scheduleList.appendChild(separator);
 		}
-
-		scheduleList.appendChild(li);
 	});
 
-	// SHOW MODAL
-	modal.classList.remove("hidden");
-	modal.classList.add("flex");
+	// active modal
+	modal.classList.remove("pointer-events-none");
+	modal.classList.add("opacity-100");
+
+	// animate overlay
+	overlay.classList.remove("opacity-0");
+	overlay.classList.add("opacity-100");
+
+	// animate content
+	content.classList.remove("opacity-0", "scale-95", "translate-y-4");
+	content.classList.add("opacity-100", "scale-100", "translate-y-0");
+
 	document.body.classList.add("overflow-hidden");
 };
 
 window.closeGroupModal = function() {
-	const modal = document.getElementById("groupModal");
 
-	modal.classList.add("hidden");
-	modal.classList.remove("flex");
+	const modal = document.getElementById("groupModal");
+	const overlay = document.getElementById("modalOverlay");
+	const content = document.getElementById("modalContent");
+
+	// animate overlay
+	overlay.classList.remove("opacity-100");
+	overlay.classList.add("opacity-0");
+
+	// animate content
+	content.classList.remove("opacity-100", "scale-100", "translate-y-0");
+	content.classList.add("opacity-0", "scale-95", "translate-y-4");
+
+	// hide modal after animation
+	setTimeout(() => {
+		modal.classList.remove("opacity-100");
+		modal.classList.add("pointer-events-none");
+	}, 300);
 
 	document.body.classList.remove("overflow-hidden");
 };
