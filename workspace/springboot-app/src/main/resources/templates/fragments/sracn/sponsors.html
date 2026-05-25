@@ -1,0 +1,49 @@
+<section th:fragment="sponsors" class="py-24 px-6 bg-(--color-sracn-bg)">
+
+	<div class="max-w-6xl mx-auto">
+
+		<!-- HEADER -->
+		<div class="max-w-2xl">
+
+			<h2 class="text-3xl md:text-4xl font-bold text-(--color-sracn-text)">
+				Nos partenaires
+			</h2>
+
+			<p class="mt-2 text-(--color-sracn-muted)">
+				Le club peut compter sur le soutien de partenaires engagés dans la vie sportive locale.
+			</p>
+
+		</div>
+
+		<!-- LOGOS -->
+		<div class="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+
+			<div th:replace="~{fragments/sracn/components/sponsor-logo :: logo(
+        'Sud Retz Atlantique',
+        '/images/public/sracn/sponsors/SRA.jpg',
+        'https://www.sud-retz-atlantique.fr/'
+      )}"></div>
+
+			<div th:replace="~{fragments/sracn/components/sponsor-logo :: logo(
+        'Fédération Française de Natation',
+        '/images/public/sracn/sponsors/FFN.svg',
+        'https://www.ffnatation.fr/'
+      )}"></div>
+
+			<div th:replace="~{fragments/sracn/components/sponsor-logo :: logo(
+        'Piscine l\'Océane',
+        '/images/public/sracn/sponsors/SRA.jpg',
+        'https://sudretzatlantique.horanet.com/sites/l-oceane-2/'
+      )}"></div>
+		</div>
+
+		<!-- CTA -->
+		<div class="mt-14 flex justify-center">
+			<a href="mailto:sraclubnatation@gmail.com?subject=Demande%20de%20partenariat"
+				class="inline-flex items-center justify-center px-6 py-3 mt-2 rounded-xl bg-(--color-sracn-primary)
+				text-white font-semibold hover:bg-(--color-sracn-primary-dark) transition">
+				Devenir partenaire
+			</a>
+		</div>
+	</div>
+</section>

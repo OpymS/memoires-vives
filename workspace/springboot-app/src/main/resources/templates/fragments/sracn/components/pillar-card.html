@@ -10,14 +10,8 @@
 	<!-- Content -->
 	<div class="relative z-10">
 
-		<!-- Icon -->
-		<div class="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl
-                    bg-(--color-sracn-primary-light)/20 text-3xl">
-			<span th:text="${icon}"></span>
-		</div>
-
-		<!-- Title -->
-		<h3 class="mb-4 text-2xl font-bold tracking-tight text-(--color-sracn-text)">
+		<h3 class="mb-4 flex items-center gap-3 text-2xl font-bold tracking-tight text-(--color-sracn-text)">
+			<div class="shrink-0" th:replace="${icon}"></div>
 			<span th:text="${title}"></span>
 		</h3>
 
