@@ -1,0 +1,50 @@
+<section id="practical" th:fragment="practicalInfo" class="py-24 px-6 bg-white">
+	<div class="max-w-6xl mx-auto">
+
+		<!-- HEADER -->
+		<div class="max-w-2xl">
+			<h2 class="text-3xl md:text-4xl font-bold text-(--color-sracn-text)">
+				Infos pratiques
+			</h2>
+			<p class="mt-2 text-(--color-sracn-muted)">
+				Toutes les informations utiles pour préparer votre venue au club.
+			</p>
+		</div>
+
+		<!-- GRID -->
+		<div class="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+			<div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+				<!-- LIEU -->
+				<div th:replace="~{fragments/sracn/components/info-item :: item(
+					        'Lieu des entraînements',
+					        'Les entraînements ont lieu à l’espace Océane, zone de la Rabine à Machecoul.'
+					      )}"></div>
+
+				<!-- ARRIVÉE -->
+				<div th:replace="~{fragments/sracn/components/info-item :: item(
+					        'Arrivée avant les séances',
+					        'Merci d’arriver environ 10 minutes avant le début de l’entraînement afin de vous changer et d’être prêt à l’heure.'
+					      )}"></div>
+
+				<!-- ÉQUIPEMENT -->
+				<div th:replace="~{fragments/sracn/components/info-item :: item(
+					        'Équipement conseillé',
+					        'Prévoir un maillot de bain, un bonnet, des lunettes et une serviette.'
+					      )}"></div>
+
+				<!-- INSCRIPTIONS -->
+				<div th:replace="~{fragments/sracn/components/info-item :: item(
+					        'Séance d’essai',
+					        'Une séance d’essai peut être proposée sur demande selon les places disponibles.'
+					      )}"></div>
+			</div>
+			<!-- MAP -->
+			<div class="rounded-2xl overflow-hidden border border-gray-100 shadow-sm min-h-[420px]">
+				<iframe class="w-full h-full"
+					src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1618.2730905874005!2d-1.815593219695123!3d46.989192424727904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4805a53e56b8cda5%3A0x1ae0e7e1e6afcf2c!2sPISCINE!5e0!3m2!1sfr!2sfr!4v1779912257816!5m2!1sfr!2sfr"
+					allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+				</iframe>
+			</div>
+		</div>
+	</div>
+</section>

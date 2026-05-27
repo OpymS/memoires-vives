@@ -1,4 +1,4 @@
-<section th:fragment="sponsors" class="py-24 px-6 bg-(--color-sracn-bg)">
+<section id="sponsors" th:fragment="sponsors" class="py-24 px-6 bg-gradient-to-b from-(--color-sracn-bg) to-white">
 
 	<div class="max-w-6xl mx-auto">
 
@@ -39,7 +39,7 @@
 
 		<!-- CTA -->
 		<div class="mt-14 flex justify-center">
-			<a href="mailto:sraclubnatation@gmail.com?subject=Demande%20de%20partenariat"
+			<a  th:href="@{/sracn/contact}"
 				class="inline-flex items-center justify-center px-6 py-3 mt-2 rounded-xl bg-(--color-sracn-primary)
 				text-white font-semibold hover:bg-(--color-sracn-primary-dark) transition">
 				Devenir partenaire

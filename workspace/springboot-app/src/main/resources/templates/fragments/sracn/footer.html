@@ -1,4 +1,4 @@
-<footer th:fragment="footer" class="bg-(--color-sracn-primary-dark) text-white mt-24">
+<footer th:fragment="footer" class="bg-(--color-sracn-primary-dark) text-white">
 	<div class="max-w-6xl mx-auto px-6 py-16">
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-10">
 
@@ -36,7 +36,7 @@
 
 			<!-- ACTIONS -->
 			<div class="flex flex-col gap-4">
-				<a href="#contact"
+				<a  th:href="@{/sracn/contact}"
 					class="inline-flex justify-center items-center px-5 py-3 rounded-xl bg-(--color-sracn-primary) text-white font-semibold hover:bg-(--color-sracn-primary-light) hover:text-(--color-sracn-primary-dark) transition">
 					Nous contacter
 				</a>

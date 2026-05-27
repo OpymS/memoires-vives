@@ -1,6 +1,6 @@
 <div th:fragment="logo(name, image, url)">
 	<a th:href="${url}" target="_blank" rel="noopener noreferrer"
-		class="group flex items-center justify-center rounded-2xl border border-gray-100 bg-white p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+		class="group flex items-center justify-center rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
 		<img th:src="${image}" th:alt="${name}"
 			class="h-12 w-auto object-contain opacity-70 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition duration-300">
 	</a>

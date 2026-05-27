@@ -1,10 +1,18 @@
-<section id="news" th:fragment="news" class="py-24 px-6 bg-white">
-	<div class="max-w-6xl mx-auto">
+<section id="news" th:fragment="news" class="relative py-24 px-6 overflow-hidden">
+	<!-- Background image -->
+	<img th:src="@{/images/public/sracn/pool-dark.jpg}" alt="Actualités du club"
+		class="absolute inset-0 h-full w-full object-cover">
+
+	<!-- Overlay -->
+	<div class="absolute inset-0 bg-black/50"></div>
+
+	<!-- Content-->
+	<div class="relative z-10 max-w-6xl mx-auto">
 		<div class="max-w-2xl">
-			<h2 class="text-3xl md:text-4xl font-bold text-(--color-sracn-text)">
+			<h2 class="text-3xl md:text-4xl font-bold text-white">
 				Actualités du club
 			</h2>
-			<p class="mt-2 text-(--color-sracn-muted)">
+			<p class="mt-2 text-white/70">
 				Compétitions, événements, résultats et vie du club.
 			</p>
 		</div>

@@ -19,4 +19,10 @@ public class SracnController {
 
         return "sracn/index";
     }
+	
+	@GetMapping("/contact")
+	public String getContact() {
+		return "sracn/contact";
+	}
+	
 }
