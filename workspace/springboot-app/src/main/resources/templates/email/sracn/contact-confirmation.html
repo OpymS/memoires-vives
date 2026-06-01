@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body style="font-family:Arial;background:#f6faf8;padding:24px;">
+	<div style="max-width:600px;margin:auto;background:white;padding:24px;border-radius:12px;">
+		<h2 style="color:#1F5C45;">SRACN</h2>
+		<p>Bonjour <strong th:text="${prenom}"></strong>,</p>
+		<p>
+			Nous avons bien reçu votre message concernant :
+		</p>
+		<p style="color:#32AF7D;font-weight:bold;" th:text="${subject}">
+		</p>
+		<p>
+			Notre équipe vous répondra dans les plus brefs délais.
+		</p>
+		<hr style="margin:16px 0;">
+		<p style="font-size:12px;color:#667085;">
+			Sud Retz Atlantique Club Natation
+		</p>
+	</div>
+</body>
+</html>

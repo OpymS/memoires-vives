@@ -3,8 +3,7 @@
 	<div class="sracn-section py-4">
 		<div class="flex items-center justify-between">
 			<div class="flex items-center gap-3">
-				<img th:src="@{/images/public/sracn/logo.png}" alt="logo du club"
-					class="h-10 w-10 object-contain" />
+				<img th:src="@{/images/public/sracn/logo.png}" alt="logo du club" class="h-10 w-10 object-contain" />
 
 				<span class="text-2xl font-bold text-white/90 leading-none">
 					SRACN
@@ -12,32 +11,32 @@
 			</div>
 
 			<nav class="hidden md:flex items-center gap-8 text-white">
-				<a href="#" class="hover:text-(--color-sracn-primary-light) transition">
+				<a th:href="@{/sracn}" class="hover:text-(--color-sracn-primary-light) transition">
 					Le club
 				</a>
-				<a href="#groups" class="hover:text-(--color-sracn-primary-light) transition">
+				<a th:href="@{/sracn#groups}" class="hover:text-(--color-sracn-primary-light) transition">
 					Groupes
 				</a>
-				<a href="#news" class="hover:text-(--color-sracn-primary-light) transition">
+				<a th:href="@{/sracn#news}" class="hover:text-(--color-sracn-primary-light) transition">
 					Actualités
 				</a>
-				<a href="#practical" class="hover:text-(--color-sracn-primary-light) transition">
+				<a th:href="@{/sracn#practical}" class="hover:text-(--color-sracn-primary-light) transition">
 					Infos pratiques
 				</a>
-				<a href="#sponsors" class="hover:text-(--color-sracn-primary-light) transition">
+				<a th:href="@{/sracn#sponsors}" class="hover:text-(--color-sracn-primary-light) transition">
 					Nos partenaires
 				</a>
-<!--				<a href="#" class="hover:text-(--color-sracn-primary-light) transition">-->
-<!--					Compétitions-->
-<!--				</a>-->
+				<!--				<a href="#" class="hover:text-(--color-sracn-primary-light) transition">-->
+				<!--					Compétitions-->
+				<!--				</a>-->
 			</nav>
 
-			<a th:href="@{/sracn/contact}" class="sracn-button-primary hidden md:inline-flex">
+			<a th:href="@{/sracn/contact(subject='INFORMATION')}" class="sracn-button-primary hidden md:inline-flex">
 				Contact
 			</a>
-<!--			<button class="sracn-button-primary hidden md:inline-flex cursor-pointer">-->
-<!--				Nous rejoindre-->
-<!--			</button>-->
+			<!--			<button class="sracn-button-primary hidden md:inline-flex cursor-pointer">-->
+			<!--				Nous rejoindre-->
+			<!--			</button>-->
 		</div>
 	</div>
 </header>

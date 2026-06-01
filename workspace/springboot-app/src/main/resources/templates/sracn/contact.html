@@ -1,115 +1,111 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Contact - SRACN</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="/css/sracn.build.tailwind.css">
+	<title>Contact - SRACN</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="/css/sracn.build.tailwind.css">
 </head>
 
 <body class="bg-(--color-sracn-bg)">
 
-<!-- HEADER -->
-<div th:replace="~{fragments/sracn/header :: header}"></div>
+	<!-- HEADER -->
+	<div th:replace="~{fragments/sracn/header :: header}"></div>
 
-<main class="pt-28 pb-24 px-6">
+	<main class="pt-28 pb-24 px-6">
 
-    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
 
-        <!-- LEFT: FORM -->
-        <section class="bg-white rounded-2xl shadow-xl p-8">
 
-            <h1 class="text-3xl font-bold text-(--color-sracn-text)">
-                Contactez-nous
-            </h1>
+			<!-- LEFT: FORM -->
+			<section class="bg-white rounded-2xl shadow-xl p-8">
 
-            <p class="mt-2 text-(--color-sracn-muted)">
-                Une question, une inscription ou un partenariat ? Écrivez-nous.
-            </p>
+				<h1 class="text-3xl font-bold text-(--color-sracn-text)">
+					Contactez-nous
+				</h1>
 
-            <form class="mt-8 space-y-5">
+				<p class="mt-2 text-(--color-sracn-muted)">
+					Une question, une inscription ou un partenariat ? Écrivez-nous.
+				</p>
 
-                <!-- NOM / PRENOM -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+				<div th:if="${param.success}" class="mb-4 p-4 rounded-xl bg-green-100 text-green-800">
+					Message envoyé avec succès. Un email de confirmation vous a été envoyé.
+				</div>
+				
+				<form th:action="@{/sracn/contact}" th:object="${contactForm}" method="POST" class="mt-8 space-y-5">
 
-                    <input type="text"
-                           placeholder="Nom"
-                           class="sracn-input focus:outline-none focus:ring-2 focus:ring-(--color-sracn-primary-light) focus:border-(--color-sracn-primary)">
+					<!-- NOM / PRENOM -->
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                    <input type="text"
-                           placeholder="Prénom"
-                           class="sracn-input focus:outline-none focus:ring-2 focus:ring-(--color-sracn-primary-light) focus:border-(--color-sracn-primary)">
+						<input type="text" th:field="*{nom}" placeholder="Nom" class="sracn-input">
 
-                </div>
+						<input type="text" th:field="*{prenom}" placeholder="Prénom" class="sracn-input">
 
-                <!-- EMAIL / TELEPHONE -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+					</div>
 
-                    <input type="email"
-                           placeholder="Email"
-                           class="sracn-input focus:outline-none focus:ring-2 focus:ring-(--color-sracn-primary-light) focus:border-(--color-sracn-primary)">
+					<!-- EMAIL / TELEPHONE -->
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                    <input type="tel"
-                           placeholder="Téléphone"
-                           class="sracn-input focus:outline-none focus:ring-2 focus:ring-(--color-sracn-primary-light) focus:border-(--color-sracn-primary)">
+						<input type="email" th:field="*{email}" placeholder="Email" class="sracn-input">
 
-                </div>
+						<input type="tel" th:field="*{telephone}" placeholder="Téléphone" class="sracn-input">
 
-                <!-- SUJET -->
-                <select class="sracn-input focus:outline-none focus:ring-2 focus:ring-(--color-sracn-primary-light) focus:border-(--color-sracn-primary)">
-                    <option>Choisir un sujet</option>
-                    <option>Inscription</option>
-                    <option>Information</option>
-                    <option>Compétition</option>
-                    <option>Partenariat</option>
-                </select>
+					</div>
 
-                <!-- MESSAGE -->
-                <textarea rows="6"
-                          placeholder="Votre message"
-                          class="sracn-input focus:outline-none focus:ring-2 focus:ring-(--color-sracn-primary-light) focus:border-(--color-sracn-primary)"></textarea>
+					<!-- SUJET -->
+					<select th:field="*{subject}" class="sracn-input">
+						<option value="">Choisir un sujet</option>
+						<option th:each="subject : ${subjects}" th:value="${subject.name()}" th:text="${subject.label}"
+							th:selected="${subject == selectedSubject}"></option>
+					</select>
 
-                <!-- BUTTON -->
-                <button type="submit"
-                        class="w-full py-3 rounded-xl bg-(--color-sracn-primary) text-white font-semibold hover:bg-(--color-sracn-primary-dark) transition">
+					<!-- MESSAGE -->
+					<textarea th:field="*{message}" rows="6" placeholder="Votre message" class="sracn-input">
+				</textarea>
 
-                    Envoyer
+					<!-- BUTTON -->
+					<button type="submit"
+						class="w-full py-3 rounded-xl bg-(--color-sracn-primary) text-white font-semibold hover:bg-(--color-sracn-primary-dark) transition">
 
-                </button>
-            </form>
-        </section>
+						Envoyer
 
-        <!-- RIGHT: INFO CLUB -->
-        <aside class="space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm p-6">
-                <h3 class="font-semibold text-(--color-sracn-text)">
-                    Club SRACN
-                </h3>
-                <p class="mt-2 text-sm text-(--color-sracn-muted)">
-                    Sud Retz Atlantique Club Natation
-                </p>
-            </div>
-            <div class="bg-white rounded-2xl shadow-sm p-6">
-                <h3 class="font-semibold text-(--color-sracn-text)">
-                    Email
-                </h3>
-                <p class="mt-2 text-sm">
-                    sraclubnatation@gmail.com
-                </p>
-            </div>
-            <div class="bg-white rounded-2xl shadow-sm p-6">
-                <h3 class="font-semibold text-(--color-sracn-text)">
-                    Réponse
-                </h3>
-                <p class="mt-2 text-sm text-(--color-sracn-muted)">
-                    Nous répondons généralement en 1 semaine.
-                </p>
-            </div>
-        </aside>
-    </div>
-</main>
+					</button>
+				</form>
+			</section>
 
-<!-- FOOTER -->
-<div th:replace="~{fragments/sracn/footer :: footer}"></div>
+			<!-- RIGHT: INFO CLUB -->
+			<aside class="space-y-6">
+				<div class="bg-white rounded-2xl shadow-sm p-6">
+					<h3 class="font-semibold text-(--color-sracn-text)">
+						Club SRACN
+					</h3>
+					<p class="mt-2 text-sm text-(--color-sracn-muted)">
+						Sud Retz Atlantique Club Natation
+					</p>
+				</div>
+				<div class="bg-white rounded-2xl shadow-sm p-6">
+					<h3 class="font-semibold text-(--color-sracn-text)">
+						Email
+					</h3>
+					<p class="mt-2 text-sm">
+						sraclubnatation@gmail.com
+					</p>
+				</div>
+				<div class="bg-white rounded-2xl shadow-sm p-6">
+					<h3 class="font-semibold text-(--color-sracn-text)">
+						Réponse
+					</h3>
+					<p class="mt-2 text-sm text-(--color-sracn-muted)">
+						Nous répondons généralement en 1 semaine.
+					</p>
+				</div>
+			</aside>
+		</div>
+	</main>
+
+	<!-- FOOTER -->
+	<div th:replace="~{fragments/sracn/footer :: footer}"></div>
 
 </body>
+
 </html>

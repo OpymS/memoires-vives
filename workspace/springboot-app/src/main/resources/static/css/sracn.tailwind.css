@@ -32,11 +32,7 @@
 }
 
 @utility sracn-input {
-	width: 100%;
-	padding: 0.75rem 1rem;
-	border-radius: 0.75rem;
-	border: 1px solid #e5e7eb;
-	background: white;
+	@apply w-full px-4 py-3 rounded-xl border border-gray-300 bg-white transition focus: outline-none focus:ring-2 focus:ring-(--color-sracn-primary-light) focus:border-(--color-sracn-primary);
+
 	color: var(--color-sracn-text);
-	transition: all 0.2s ease;
 }
