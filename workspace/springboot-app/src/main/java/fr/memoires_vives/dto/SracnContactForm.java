@@ -6,14 +6,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class SracnContactForm {
-	@NotBlank
+	@NotBlank(message="Veuillez saisir votre nom.")
 	private String nom;
 
-	@NotBlank
+	@NotBlank(message="Veuillez saisir votre prénom.")
 	private String prenom;
 
-	@NotBlank
-	@Email
+	@NotBlank(message="Veuillez saisir votre adresse email.")
+	@Email(message="Veuillez saisir une adresse email valide.")
 	private String email;
 
 	private String telephone;
@@ -21,7 +21,7 @@ public class SracnContactForm {
 	@NotNull
 	private SracnContactSubject subject;
 
-	@NotBlank
+	@NotBlank(message="Veuillez saisir un message.")
 	private String message;
 
 	/**

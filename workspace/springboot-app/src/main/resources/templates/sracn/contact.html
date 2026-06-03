@@ -4,6 +4,8 @@
 <head>
 	<title>Contact - SRACN</title>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="/images/public/sracn/favicon.png"/>
 	<link rel="stylesheet" href="/css/sracn.build.tailwind.css">
 </head>
 
@@ -14,12 +16,11 @@
 
 	<main class="pt-28 pb-24 px-6">
 
-		<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
+		<div class="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-12">
 
 
 			<!-- LEFT: FORM -->
 			<section class="bg-white rounded-2xl shadow-xl p-8">
-
 				<h1 class="text-3xl font-bold text-(--color-sracn-text)">
 					Contactez-nous
 				</h1>
@@ -31,24 +32,51 @@
 				<div th:if="${param.success}" class="mb-4 p-4 rounded-xl bg-green-100 text-green-800">
 					Message envoyé avec succès. Un email de confirmation vous a été envoyé.
 				</div>
-				
+
+
 				<form th:action="@{/sracn/contact}" th:object="${contactForm}" method="POST" class="mt-8 space-y-5">
+					<div class="mb-6 h-[72px]">
+						<div th:if="${#fields.hasAnyErrors()}"
+							class="rounded-xl border border-red-200 bg-red-50 p-4 text-red-700">
+							<div class="font-semibold">
+								Le formulaire contient des erreurs.
+							</div>
+							<div class="text-sm mt-1">
+								Merci de corriger les champs signalés puis de réessayer.
+							</div>
+						</div>
+					</div>
+
 
 					<!-- NOM / PRENOM -->
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<input type="text" th:field="*{nom}" placeholder="Nom" class="sracn-input">
+							<p class="mt-1 h-5 text-sm text-red-600">
+								<span th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}"></span>
+							</p>
+						</div>
 
-						<input type="text" th:field="*{nom}" placeholder="Nom" class="sracn-input">
+						<div>
+							<input type="text" th:field="*{prenom}" placeholder="Prénom" class="sracn-input">
+							<p class="mt-1 h-5 text-sm text-red-600">
+								<span th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}"></span>
+							</p>
 
-						<input type="text" th:field="*{prenom}" placeholder="Prénom" class="sracn-input">
-
+						</div>
 					</div>
 
 					<!-- EMAIL / TELEPHONE -->
 					<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-						<input type="email" th:field="*{email}" placeholder="Email" class="sracn-input">
-
-						<input type="tel" th:field="*{telephone}" placeholder="Téléphone" class="sracn-input">
+						<div>
+							<input type="email" th:field="*{email}" placeholder="Email" class="sracn-input">
+							<p class="mt-1 h-5 text-sm text-red-600">
+								<span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+							</p>
+						</div>
+						<div>
+							<input type="tel" th:field="*{telephone}" placeholder="Téléphone" class="sracn-input">
+						</div>
 
 					</div>
 
@@ -62,6 +90,9 @@
 					<!-- MESSAGE -->
 					<textarea th:field="*{message}" rows="6" placeholder="Votre message" class="sracn-input">
 				</textarea>
+					<p class="mt-1 h-5 text-sm text-red-600">
+						<span th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></span>
+					</p>
 
 					<!-- BUTTON -->
 					<button type="submit"
