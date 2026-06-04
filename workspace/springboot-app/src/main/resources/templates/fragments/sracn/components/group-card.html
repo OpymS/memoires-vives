@@ -1,4 +1,4 @@
-<div th:fragment="card(title, type, description, age, level, schedule, objectives)" class="p-6 rounded-2xl bg-(--color-sracn-surface)
+<div th:fragment="card(title, type, description, age, level, schedule, objectives, price)" class="p-6 rounded-2xl bg-(--color-sracn-surface)
             border border-gray-100 shadow-lg hover:shadow-xl transition">
 
 	<!-- TYPE -->
@@ -30,7 +30,8 @@
         data-age=${age},
         data-level=${level},
         data-schedule=${schedule},
-        data-objectives=${objectives}
+        data-objectives=${objectives},
+        data-price=${price}
       ">
 		Détails →
 	</button>

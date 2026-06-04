@@ -7,6 +7,7 @@ window.openGroupModal = function(btn) {
 	const description = document.getElementById("modalDescription");
 	const age = document.getElementById("modalAge");
 	const level = document.getElementById("modalLevel");
+	const price = document.getElementById("modalPrice");
 
 	const objectivesList = document.getElementById("modalObjectives");
 	const scheduleList = document.getElementById("modalSchedule");
@@ -21,6 +22,7 @@ window.openGroupModal = function(btn) {
 	description.innerText = btn.dataset.description;
 	age.innerText = btn.dataset.age;
 	level.innerText = btn.dataset.level;
+	price.innerText = `${btn.dataset.price} € pour l'année.`;
 
 	// OBJECTIFS
 	objectivesList.innerHTML = "";
