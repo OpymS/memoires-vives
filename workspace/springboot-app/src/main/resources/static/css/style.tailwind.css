@@ -1,50 +1,73 @@
 @import "tailwindcss";
 
+
+@theme {
+	--color-olive:#7e9076;
+	/* vert soutenu — nav, footer, accents forts */
+	--color-sage:#bddab2;
+	/* vert clair — accent, focus, éléments actifs */
+	--color-sage-soft:#e3efdd;
+	/* vert très pâle — fonds de survol, focus ring */
+	--color-paper:#efead9;
+	/* fond crème général du site */
+	--color-paper-deep:#e6dfc9;
+	/* fond crème plus soutenu — états désactivés */
+	--color-ink:#2b3324;
+	/* texte principal, remplace le noir pur */
+	--color-ink-soft:#5a6350;
+	/* texte secondaire / meta */
+	--color-line:#c9c2a8;
+	/* bordures, séparateurs */
+
+	--font-serif: Georgia, "Times New Roman", serif;
+	--font-sans: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+
 @utility form-label {
-	@apply mb-1 font-semibold;
+	@apply mb-1 font-semibold text-ink;
 }
 
 @utility form-input {
-	@apply w-full bg-white rounded-md font-light border border-gray-300 shadow-sm p-2 focus:border-[#bddab2] focus:outline-none focus:ring focus:ring-[#bddab2];
+	@apply w-full bg-white rounded-md font-light border border-line shadow-sm p-2 text-ink focus:border-olive focus:outline-none focus:ring focus:ring-sage-soft;
 }
 
 @utility form-button {
-	@apply inline-flex items-center justify-center my-2 px-4 py-2 bg-[#bddab2]
-	text-black rounded hover:bg-[#7e9076] focus:border-[#7e9076] focus:outline-none focus:ring focus:ring-[#7e9076];
+	@apply inline-flex items-center justify-center my-2 px-4 py-2 font-semibold rounded bg-olive text-paper border-2 border-ink hover:bg-ink focus:outline-none focus:ring focus:ring-sage;
 }
 
 @utility disabled-button {
-	@apply inline-flex items-center justify-center my-2 px-4 py-2 bg-gray-400 text-black rounded;
+	@apply inline-flex items-center justify-center my-2 px-4 py-2 rounded bg-paper-deep text-ink-soft cursor-not-allowed;
 }
 
 @utility form-checkbox {
-  @apply h-5 w-5 text-[#bddab2] border-gray-300 rounded focus:ring-[#bddab2];
-}
-
-@utility disabled-button {
-	@apply inline-flex items-center justify-center my-2 px-4 py-2 bg-[#e9e9ed] text-black;
+	@apply h-5 w-5 rounded text-olive border-line focus:ring-sage;
 }
 
 @utility active {
-	@apply bg-[#7e9076] text-white;
+	@apply bg-olive text-paper;
 }
 
 @utility filter-input {
-	@apply w-full bg-white rounded-md font-light border border-gray-300 shadow-sm focus:border-[#7e9076] focus:outline-none focus:ring focus:ring-[#7e9076];
+	@apply w-full bg-white rounded-md font-light border border-line shadow-sm focus:border-olive focus:outline-none focus:ring focus:ring-sage-soft;
 }
 
 @utility filter-option {
-	@apply hover:bg-[#bddab2];
+	@apply hover:bg-sage-soft;
+}
+
+@utility head-button {
+	@apply block px-4 py-3 rounded transition-colors hover:bg-sage hover:text-ink focus-visible:bg-sage focus-visible:text-ink focus-visible:outline-none;
 }
 
 @utility h1-title {
-	@apply mt-[80px] text-[#7e9076] text-3xl font-bold mb-2;
+	@apply mt-[80px] font-serif text-olive text-3xl md:text-4xl font-bold mb-2;
 }
 
 @utility h2-title {
-	@apply text-2xl text-[#bddab2] w-9/10 font-semibold mb-3
+	@apply font-serif text-olive text-2xl md:text-[26px] font-semibold mb-3 pb-2 w-full md:w-9/10 border-b-2 border-line;
 }
 
 @utility h3-title {
-	@apply text-xl mx-2 font-bold text-center
+	@apply font-sans text-lg md:text-xl mx-2 font-bold text-center text-ink;
 }
