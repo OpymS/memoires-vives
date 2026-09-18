@@ -12,6 +12,8 @@
 	/* fond crème général du site */
 	--color-paper-deep:#e6dfc9;
 	/* fond crème plus soutenu — états désactivés */
+	--color-paper-light: #fbf9f0;
+	/* fond des cartes/encadrés, plus clair que le fond de page */
 	--color-ink:#2b3324;
 	/* texte principal, remplace le noir pur */
 	--color-ink-soft:#5a6350;
@@ -57,7 +59,19 @@
 }
 
 @utility head-button {
-	@apply block px-4 py-3 rounded transition-colors hover:bg-sage hover:text-ink focus-visible:bg-sage focus-visible:text-ink focus-visible:outline-none;
+	@apply block px-4 py-3 rounded-sm font-bold transition-colors border-b-[3px] border-transparent hover:border-sage focus-visible:border-sage focus-visible:outline-none;
+}
+
+@utility head-button-primary {
+	@apply block px-4 py-3 rounded-sm font-bold transition-colors bg-sage text-ink border-b-[3px] border-ink hover:bg-paper focus-visible:bg-paper focus-visible:outline-none;
+}
+
+@utility tag {
+	@apply inline-block self-start text-xs font-bold px-2.5 py-0.5 rounded-full bg-sage text-ink;
+}
+
+@utility memory-card {
+	@apply bg-paper-light border border-line border-t-4 border-t-olive rounded-sm flex flex-col overflow-hidden transition-transform duration-200 hover:-translate-y-1 hover:border-t-sage focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage;
 }
 
 @utility h1-title {

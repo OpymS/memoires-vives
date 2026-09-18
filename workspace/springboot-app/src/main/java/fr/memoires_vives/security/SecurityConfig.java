@@ -32,6 +32,7 @@ public class SecurityConfig {
 			CustomUserDetailsService userDetailsService, CustomAuthenticationFailureHandler failureHandler)
 			throws Exception {
 		http.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/memory/new").authenticated()
 				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login",
 						"/signup", "/logout", "/error", "/error/**", "/memory/**", "memories/**", "/about", "/try", "/api/memory/**",
 						"/upload-error", "/forgot-password/**", "/legal-notices", "/privacy-policy", "/conditions", "/profil",

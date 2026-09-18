@@ -11,37 +11,48 @@
 </head>
 
 <body id="body" th:data-authenticated="${#authentication.principal != 'anonymousUser'}" data-page="home"
-	class="min-h-screen flex flex-col">
+	class="min-h-screen flex flex-col bg-paper">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
 	<main class="w-full flex-grow flex flex-col items-center">
 		<h1 class="h1-title">Bienvenue sur mémoires vives</h1>
 		<div th:replace="~{fragments/fragment-filters-container :: filters-container(true)}"></div>
 		<div id="map-container" class="w-full md:w-4/5 h-[55vh] min-h-[300px] my-6 hidden">
-			<div id="map" class="h-full w-full border border-[#7e9076] rounded-lg flex justify-center items-center">
+			<div id="map" class="h-full w-full border-2 border-olive rounded-lg flex justify-center items-center">
 			</div>
 		</div>
 		<div id="grid-container" class="w-full md:w-4/5">
-			<div id="cards-container" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-3 my-6 w-full">
+			<div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 my-6 w-full">
 
 				<!--				Cette partie est faite pour rendre un truc, même en l'absence de JS. Bon pour le SEO-->
-				<a th:each="view : ${views.content}" th:href="@{${view.canonicalUrl}}" class="border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw]
-          overflow-hidden duration-200 hover:scale-101" th:object="${view.memory}">
+				<a th:each="view : ${views.content}" th:href="@{${view.canonicalUrl}}" class="memory-card"
+					th:object="${view.memory}">
 
-					<div class="relative w-full pb-[100%] border-b">
-						<img class="absolute rounded-t-lg w-full h-full object-cover" th:src="${view.memory.mediaUUID != null
+					<div class="w-full h-44 bg-sage-soft flex items-center justify-center overflow-hidden">
+						<img class="max-w-full max-h-full object-contain" th:src="${view.memory.mediaUUID != null
                       ? '/uploads/' + view.memory.mediaUUID
                       : '/images/public/memory-placeholder.png'}" th:alt="${view.memory.mediaUUID != null
                       ? 'illustration de ' + view.memory.title
                       : 'souvenir sans illustration'}" loading="lazy" />
 					</div>
 
-					<h3 class="h3-title mb-2" th:text="*{title}">
-						Titre du souvenir
-					</h3>
-
-					<p class="w-full px-1 text-justify" th:text="*{#strings.abbreviate(description, 160)}">
-						Description du souvenir
-					</p>
+					<div class="flex flex-col gap-1 p-4">
+						<span class="tag" th:if="*{category != null}" th:text="*{category.name}">Catégorie</span>
+						
+						<h3 class="font-serif text-lg font-bold text-ink" th:text="*{title}">
+							Titre du souvenir
+						</h3>
+						
+						<p class="text-xs text-ink-soft italic"
+							th:if="${view.memory.location?.city != null or view.memory.memoryDate != null}">
+							<span th:if="${view.memory.location?.city != null}" th:text="${view.memory.location.city}">Lieu</span>
+							<span th:if="${view.memory.location?.city != null and view.memory.memoryDate != null}"> · </span>
+							<span th:if="${view.memory.memoryDate != null}" th:text="${view.memory.memoryDate.year}">Année</span>
+						</p>
+						
+						<p class="text-[15px] text-ink-soft line-clamp-3" th:text="*{#strings.abbreviate(description, 160)}">
+							Description du souvenir
+						</p>
+					</div>
 
 				</a>
 				<!--				Jusqu'ici-->

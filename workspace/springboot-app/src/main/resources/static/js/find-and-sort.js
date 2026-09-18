@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	let markers;
 	let mapInited = false;
 	let storedCoordinates = false;
-	
+
 	await init();
 
 	async function init() {
@@ -121,12 +121,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 		if (clicked !== selectedMode) {
 			mapContainer.classList.toggle("hidden");
 			gridContainer.classList.toggle("hidden");
-			mapButton.classList.toggle("bg-white/50");
-			mapButton.classList.toggle("border-y-2");
-			mapButton.classList.toggle("border-r-2");
-			gridButton.classList.toggle("bg-white/50");
-			gridButton.classList.toggle("border-y-2");
-			gridButton.classList.toggle("border-l-2");
+			mapButton.classList.toggle("active");
+			mapButton.setAttribute("aria-pressed", mapButton.classList.contains("active"));
+			gridButton.classList.toggle("active");
+			gridButton.setAttribute("aria-pressed", gridButton.classList.contains("active"));
 			sortContainer.classList.toggle("hidden");
 			selectedMode = selectedMode === 'grid' ? 'map' : 'grid';
 			if (clicked === 'map' && !mapInited) {
@@ -141,7 +139,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	async function updateMemories() {
 		if (selectedMode === 'grid') {
-			if (page === 'home'){
+			if (page === 'home') {
 				stockCriterias();
 			}
 			currentPage = 1;
@@ -217,28 +215,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
 	}
 
+	function abbreviate(text, maxLength) {
+		if (!text) return '';
+		if (text.length <= maxLength) return text;
+		return text.slice(0, maxLength).trim() + '…';
+	}
+
 	function updateGrid(views) {
 		cardsContainer.innerHTML = '';
 		views.forEach((view) => {
 			const memory = view.memory;
 			const memoryDiv = document.createElement('a');
 			memoryDiv.href = view.canonicalUrl;
-			memoryDiv.className = 'border border-black rounded-lg flex flex-col items-center w-full h-[150vw] md:h-[30vw] lg:h-[20vw] overflow-hidden duration-200 hover:scale-101';
-			if (memory.mediaUUID) {
-				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
-							<img class="absolute rounded-t-lg w-full h-full object-cover" src="/uploads/${memory.mediaUUID}" alt="illustration de ${memory.title}" loading="lazy"/>
+			memoryDiv.className = 'memory-card';
+
+			const imageSrc = memory.mediaUUID ? `/uploads/${memory.mediaUUID}` : '/images/public/memory-placeholder.png';
+			const imageAlt = memory.mediaUUID ? `illustration de ${memory.title}` : 'souvenir sans illustration';
+
+			const tagHtml = memory.category
+				? `<span class="tag">${memory.category.name}</span>`
+				: '';
+
+			const cityPart = memory.location && memory.location.city ? memory.location.city : null;
+			const yearPart = memory.memoryDate ? new Date(memory.memoryDate).getFullYear() : null;
+			const metaText = [cityPart, yearPart].filter(Boolean).join(' · ');
+			const metaHtml = metaText ? `<p class="text-xs text-ink-soft italic">${metaText}</p>` : '';
+
+			memoryDiv.innerHTML = `<div class="w-full h-44 bg-sage-soft flex items-center justify-center overflow-hidden border-b-2 border-line">
+							<img class="max-w-full max-h-full object-contain" src="${imageSrc}" alt="${imageAlt}" loading="lazy"/>
 						</div>
-						<h3 class="h3-title mb-2">${memory.title}</h3>
-						<p class="w-full px-1 text-justify">${memory.description}</p>
+						<div class="flex flex-col gap-1 p-4">
+							${tagHtml}
+							<h3 class="font-serif text-lg font-bold text-ink">${memory.title}</h3>
+							${metaHtml}
+							<p class="text-[15px] text-ink-soft line-clamp-3">${abbreviate(memory.description, 160)}</p>
+						</div>
 				`;
-			} else {
-				memoryDiv.innerHTML = `<div class="relative w-full pb-[100%] border-b">
-						<img class="absolute rounded-t-lg w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="souvenir sans illustration" loading="lazy"/>
-					</div>
-					<h3 class="h3-title mb-2">${memory.title}</h3>
-					<p class="w-full px-1 font-light text-justify">${memory.description}</p>
-			`;
-			}
 			cardsContainer.appendChild(memoryDiv);
 		});
 	}
@@ -246,18 +258,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 	function updatePaginationControl(lastPageNumber) {
 		pageControl.innerHTML = '';
 		for (let page = 1; page <= lastPageNumber; page++) {
-			const pageLink = document.createElement('span');
+			const pageLink = document.createElement('button');
+			pageLink.type = 'button';
 			pageLink.textContent = page;
 			if (page === currentPage) {
-				pageLink.className = 'font-bold text[#7e9076] cursor-default';
+				pageLink.className = 'font-bold text-olive cursor-default px-2';
+				pageLink.setAttribute('aria-current', 'page');
+				pageLink.disabled = true;
 			} else {
-				pageLink.className = 'font-light text-[#bddab2] cursor-pointer hover:text-white hover:bg-[#bddab2] hover:font-bold';
+				pageLink.className = 'font-light text-ink-soft cursor-pointer px-2 rounded hover:bg-olive hover:text-paper focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage';
 				pageLink.addEventListener('click', () => {
 					goToPage(page);
 				});
 			}
 			pageControl.appendChild(pageLink);
-
 		}
 	}
 
@@ -295,7 +309,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const lastPageNumber = serverResponse.totalPages;
 		updateGrid(views);
 		updatePaginationControl(lastPageNumber);
-		if (page === 'home'){
+		if (page === 'home') {
 			stockCriterias();
 		}
 	}
@@ -489,14 +503,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 		criterias.sortCriteria = 0;
 		criterias.sortDirection = 0;
 
-		if (page === 'home'){
+		if (page === 'home') {
 			center = [userLatitude, userLongitude];
-	
+
 			zoom = 6;
-	
+
 			currentPage = 1;
 			storedCoordinates = false;
-	
+
 			stockCriterias();
 		}
 
