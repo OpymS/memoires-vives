@@ -10,34 +10,45 @@
 )}">
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-paper">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
-	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
+	<main class="w-full flex-grow flex flex-col items-center">
 		<h1 class="h1-title">Se connecter</h1>
-		<div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
-		<form th:action="@{/login}" method="post" class="w-full max-w-lg flex flex-col">
-			<label for="username" class="form-label">Nom d'utilisateur:</label>
-			<input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input"
-				th:value="${loginUser}" required />
+		<div th:if="${message}" th:text="${message}"
+			class="w-full max-w-lg mt-2 px-4 py-3 rounded-md bg-sage-soft border-2 border-olive text-ink"></div>
+		<form th:action="@{/login}" method="post" class="w-full max-w-lg flex flex-col gap-4 mt-4">
+			<div>
+				<label for="username" class="form-label">Nom d'utilisateur:</label>
+				<input type="text" id="username" name="username" placeholder="Nom d'utilisateur" class="form-input"
+					th:value="${loginUser}" required />
+			</div>
 
-			<label th:unless="${resendActivation}" for="password" class="form-label">Mot de passe:</label>
-			<div th:unless="${resendActivation}" class="relative w-full">
-				<input id="password" name="password" type="password" placeholder="Mot de passe" class="form-input"
-					required>
-				<button type="button"
-					class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
-			</div>
 			<div th:unless="${resendActivation}">
+				<label for="password" class="form-label">Mot de passe:</label>
+				<div class="relative w-full">
+					<input id="password" name="password" type="password" placeholder="Mot de passe" class="form-input"
+						required>
+					<button type="button"
+						class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-ink-soft hover:text-ink 
+						focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive rounded">&#9215;</button>
+				</div>
+			</div>
+
+			<div th:unless="${resendActivation}" class="flex items-center gap-2">
+				<input type="checkbox" name="remember-me" id="remember-me" class="accent-olive">
 				<label for="remember-me" class="font-light text-sm">Se souvenir de moi</label>
-				<input type="checkbox" name="remember-me" id="remember-me" class="accent-[#7e9076]">
 			</div>
+			
 			<button th:unless="${resendActivation}" type="submit" class="form-button">Se connecter</button>
-			<div th:unless="${resendActivation}" class="forgot-password-container w-full mt-4">
-				<a href="/forgot-password" class="py-2 rounded hover:bg-[#bddab2]"> Mot de passe oublié</a>
+			
+			<div th:unless="${resendActivation}" class="forgot-password-container w-full">
+				<a href="/forgot-password" class="inline-block px-2 py-2 rounded text-olive font-semibold hover:bg-sage-soft
+					focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage"> Mot de passe oublié</a>
 			</div>
-			<div th:if="${error}" th:text="${error}" class="text-red-500 font-light"></div>
+			
+			<div th:if="${error}" th:text="${error}" role="alert" class="px-4 py-3 rounded-md bg-red-50 border-2 border-red-400 text-red-700 font-semibold"></div>
 			<div th:if="${resendActivation}">
-				<a th:href="@{/profil/activation/resend(username=${loginUser})}" class="form-button w-full">Renvoyer
+				<a th:href="@{/profil/activation/resend(username=${loginUser})}" class="form-button w-full text-center">Renvoyer
 					l'email d'activation</a>
 			</div>
 		</form>

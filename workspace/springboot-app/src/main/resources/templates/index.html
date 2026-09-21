@@ -20,46 +20,7 @@
 			<div id="map" class="h-full w-full border-2 border-olive rounded-lg flex justify-center items-center">
 			</div>
 		</div>
-		<div id="grid-container" class="w-full md:w-4/5">
-			<div id="cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 my-6 w-full">
-
-				<!--				Cette partie est faite pour rendre un truc, même en l'absence de JS. Bon pour le SEO-->
-				<a th:each="view : ${views.content}" th:href="@{${view.canonicalUrl}}" class="memory-card"
-					th:object="${view.memory}">
-
-					<div class="w-full h-44 bg-sage-soft flex items-center justify-center overflow-hidden">
-						<img class="max-w-full max-h-full object-contain" th:src="${view.memory.mediaUUID != null
-                      ? '/uploads/' + view.memory.mediaUUID
-                      : '/images/public/memory-placeholder.png'}" th:alt="${view.memory.mediaUUID != null
-                      ? 'illustration de ' + view.memory.title
-                      : 'souvenir sans illustration'}" loading="lazy" />
-					</div>
-
-					<div class="flex flex-col gap-1 p-4">
-						<span class="tag" th:if="*{category != null}" th:text="*{category.name}">Catégorie</span>
-						
-						<h3 class="font-serif text-lg font-bold text-ink" th:text="*{title}">
-							Titre du souvenir
-						</h3>
-						
-						<p class="text-xs text-ink-soft italic"
-							th:if="${view.memory.location?.city != null or view.memory.memoryDate != null}">
-							<span th:if="${view.memory.location?.city != null}" th:text="${view.memory.location.city}">Lieu</span>
-							<span th:if="${view.memory.location?.city != null and view.memory.memoryDate != null}"> · </span>
-							<span th:if="${view.memory.memoryDate != null}" th:text="${view.memory.memoryDate.year}">Année</span>
-						</p>
-						
-						<p class="text-[15px] text-ink-soft line-clamp-3" th:text="*{#strings.abbreviate(description, 160)}">
-							Description du souvenir
-						</p>
-					</div>
-
-				</a>
-				<!--				Jusqu'ici-->
-			</div>
-			<div id="pagination-control" class="flex flex-row flex-start flex-wrap gap-1">
-			</div>
-		</div>
+		<div th:replace="~{fragments/fragment-memory-grid :: memory-grid}"></div>
 	</main>
 	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

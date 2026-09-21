@@ -1,8 +1,7 @@
 <ul xmlns:th="http://www.thymeleaf.org" th:fragment="frag-custom-field-error(objectName,fieldName)"
-	class="error-message">
+	class="text-red-700 text-sm font-semibold mt-1">
 	<th:block th:with="br=${#vars['org.springframework.validation.BindingResult.' + objectName]}">
-		<li th:each="err : ${br.fieldErrors}" th:if="${err.field == fieldName}" th:text="${err.defaultMessage}"
-			class="text-red-500 font-light">
+		<li th:each="err : ${br.fieldErrors}" th:if="${err.field == fieldName}" th:text="${err.defaultMessage}">
 		</li>
 	</th:block>
 </ul>

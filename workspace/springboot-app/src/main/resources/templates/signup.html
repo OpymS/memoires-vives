@@ -10,16 +10,17 @@
 )}">
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-paper">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
 
-	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
+	<main class="w-full flex-grow flex flex-col items-center">
 		<h1 class="h1-title">S'inscrire</h1>
 		<form th:action="@{/signup}" method="POST" th:object="${user}"
-			class="user-create-form w-full max-w-lg flex flex-col" enctype="multipart/form-data" id="formWithImage">
+			class="user-create-form w-full max-w-lg flex flex-col gap-6 mt-4" enctype="multipart/form-data"
+			id="formWithImage">
 			<div th:replace="~{fragments/errors/fragment-errors-global::frag-errors}"></div>
 
-			<div class="inputs-container">
+			<div class="inputs-container flex flex-col gap-5">
 				<div class="pseudo-input">
 					<label for="inputPseudo" class="form-label">pseudo</label>
 					<!--					<input id="inputPseudo" th:field="*{pseudo}" type="text" pattern="^\w+$" maxlength="30" required>-->
@@ -36,8 +37,8 @@
 					<label for="inputPassword" class="form-label">mot de passe</label>
 					<div class="relative w-full block">
 						<input id="inputPassword" th:field="*{password}" type="password" class="form-input">
-						<button type="button"
-							class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
+						<button type="button" class="password-toggle absolute inset-y-0 right-0 flex items-center px-3 text-ink-soft hover:text-ink
+							focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive rounded">&#9215;</button>
 					</div>
 				</div>
 				<div class="confirm-password-input">
@@ -45,8 +46,8 @@
 					<div class="relative w-full block">
 						<input id="inputPasswordConfirm" th:field="*{passwordConfirm}" type="password"
 							class="form-input">
-						<button type="button"
-							class="password-toggle absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700">&#9215;</button>
+						<button type="button" class="password-toggle absolute inset-y-0 right-0 flex items-center px-3 text-ink-soft hover:text-ink
+							focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive rounded">&#9215;</button>
 					</div>
 					<div th:replace="~{fragments/errors/fragment-error :: frag-error(password)}"></div>
 				</div>
@@ -59,41 +60,45 @@
 				<!--					</label>-->
 				<!--					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden">-->
 				<!--				</div>-->
-				<div class="image-input mt-2 flex flex-col items-start w-auto">
+				<div class="image-input flex flex-col items-start w-auto gap-2">
 					<span class="form-label">Photo de profil</span>
-					<div class="flex items-center gap-2">
-						<label for="imageInput"
-							class="cursor-pointer min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] shrink-0 inline-block relative aspect-square">
-							<img id="image" class="rounded-[50%] w-full h-full object-cover"
+					<div class="flex items-center gap-3">
+						<label for="imageInput" class="cursor-pointer min-w-[80px] min-h-[80px] w-1/6 h-1/6 max-w-3xs max-h-[256px] shrink-0 inline-block relative aspect-square
+							focus-within:ring-3 focus-within:ring-offset-2 focus-within:ring-offset-paper focus-within:ring-ink rounded-full">
+							<img id="image" class="rounded-full w-full h-full object-cover border-2 border-olive"
 								data-placeholder="/images/public/user-placeholder.png"
 								src="/images/public/user-placeholder.png" alt="Votre photo…" />
+							<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="sr-only" />
 						</label>
-						<button type="button" id="removeImageBtn" class="p-2 rounded-full hidden cursor-pointer"
+						<button type="button" id="removeImageBtn"
+							class="p-2 rounded-full hidden cursor-pointer hover:bg-sage-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive"
 							title="Supprimer l'image">
 							<img src="/images/public/trash.png" class="w-5 h-5 opacity-70 hover:opacity-100"
 								alt="supprimer l'image" />
 						</button>
 
 					</div>
-					<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg" class="hidden" />
 				</div>
 				<div th:replace="~{fragments/fragment-captcha :: fragment-captcha}"></div>
-				<div>
+				<div class="flex items-center gap-2">
+					<input type="checkbox" name="accept-conditions" id="accept-conditions" class="accent-olive">
 					<label for="accept-conditions" class="font-light text-sm">J'ai pris connaissance des <a
-							th:href="@{/conditions}" class="text-[#7e9076] hover:underline">conditions générales
-							d'utilisations</a></label>
-					<input type="checkbox" name="accept-conditions" id="accept-conditions" class="accent-[#7e9076]">
+							th:href="@{/conditions}"
+							class="text-olive font-semibold hover:underline focus-visible:outline-none focus-visible:underline">conditions
+							générales d'utilisations</a></label>
 				</div>
 			</div>
 
-			<div class="buttons-container">
+			<div class="buttons-container flex flex-col sm:flex-row gap-3 justify-center">
 				<button type="submit" class="form-button button create">Créer</button>
-				<a th:href="@{/}" class="form-button button cancel">Annuler</a>
+				<a th:href="@{/}"
+					class="button cancel inline-flex items-center justify-center my-2 px-4 py-2 font-semibold rounded border-2 border-olive
+					text-olive hover:bg-sage-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sage">Annuler</a>
 			</div>
 		</form>
 
-		<div id="upload-status" class="hidden mt-4 p-3 bg-[#7e9076] text-white rounded flex items-center space-x-2">
-			<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+		<div id="upload-status" class="hidden mt-4 p-3 bg-olive text-paper rounded flex items-center space-x-2">
+			<div class="w-4 h-4 border-2 border-paper border-t-transparent rounded-full animate-spin"></div>
 			<span>Redimensionnement de l'image en cours...</span>
 		</div>
 	</main>

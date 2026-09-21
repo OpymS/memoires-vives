@@ -1,5 +1,5 @@
 <!-- Affichage de la liste des messages d'erreur liée au champ courant -->
-<ul xmlns:th="http://www.thymeleaf.org" th:fragment="frag-error(fieldName)" class="error-message"
+<ul xmlns:th="http://www.thymeleaf.org" th:fragment="frag-error(fieldName)" class="text-red-700 text-sm font-semibold mt-1"
 	th:if="${#fields.hasErrors(fieldName)}">
-	<p th:each="err : ${#fields.errors(fieldName)}" th:text="${err}" class="text-red-500 font-light"></p>
+	<li th:each="err : ${#fields.errors(fieldName)}" th:text="${err}"></li>
 </ul>

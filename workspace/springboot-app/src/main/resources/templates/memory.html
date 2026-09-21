@@ -10,92 +10,102 @@
 )}">
 </head>
 
-<body class="md:h-screen flex flex-col md:overflow-hidden">
+<body class="min-h-screen flex flex-col bg-paper">
 	<div data-th-replace="~{fragments/fragment-header :: header}"></div>
 
-	<main class="w-full flex justify-center flex-grow md:overflow-hidden">
-		<div
-			class="mt-6 w-full lg:w-4/5 flex flex-col justify-start items-center md:flex-row md:justify-center md:items-start md:items-stretch">
-			<div id="memoryPresentation"
-				class="border border-[#7e9076] w-full md:w-1/2 flex flex-col justify-between items-center gap-3 md:overflow-hidden">
-				<div class="w-full flex flex-col items-center justify-start gap-2 md:overflow-hidden">
-					<h1 class="h1-title mt-2 text-center" th:text="${memoryToDisplay.title}"></h1>
-					<img class="min-w-[150px] min-h-[150px] max-w-4/5 max-h-2/3"
-						th:if="${memoryToDisplay.mediaUUID}!=null"
-						th:src="@{/uploads/{filename}(filename=${memoryToDisplay.mediaUUID})}"
-						th:alt="'image illustrant ' + ${memoryToDisplay.title}" fetchpriority="high" />
-					<img class="min-w-[150px] min-h-[150px] max-w-4/5 max-h-2/3"
-						th:if="${memoryToDisplay.mediaUUID}==null" src="/images/public/memory-placeholder.png"
-						alt="ce souvenir n'a pas d'image" />
-					<div class="w-3/5 text-center text-sm">
-						Souvenir de <a th:href="@{/profil(userId=${memoryToDisplay.rememberer.userId})}"
-							th:text="${memoryToDisplay.rememberer.pseudo}"
-							class="text-[#7e9076] hover:text-white hover:bg-[#bddab2]"></a> du <span
-							th:text="${#temporals.format(memoryToDisplay.memoryDate, 'dd MMMM yyyy')}"></span>
-					</div>
-					<p th:text="${memoryToDisplay.description}"
-						class="w-4/5 font-light text-justify mt-4 md:overflow-y-auto whitespace-pre-line">
-					</p>
-				</div>
-				<div id="sources-container" class="flex flex-wrap gap-2 mt-3 mb-2">
-					<a th:if="${source.status.name() == 'APPROVED'}" th:each="source, stat : ${memoryToDisplay.sources}" th:href="${source.url}" target="_blank"
-						rel="noopener noreferrer nofollow"
-						class="source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm shadow-sm bg-green-100 text-green-800">
-						<img class="w-4 h-4"
-							th:src="'https://www.google.com/s2/favicons?sz=32&domain=' + ${source.domain}" />
-						<span th:text="${source.domain}" class="source-tag text-slate-700 font-medium">Source</span>
-						<input type="hidden" th:name="'sources[' + ${stat.index} + '].url'" th:value="${source.url}">
-					</a>
-				</div>
-				<div
-					th:if="${#authentication.authorities.?[#this.authority == 'ROLE_ANONYMOUS'].isEmpty() and memoryToDisplay.rememberer.userId == #authentication?.principal?.user?.userId}">
-					<a th:href="@{/memory/modify(memoryId=${memoryToDisplay.memoryId})}"
-						class="form-button">Modifier</a>
-				</div>
+	<main class="w-full flex-grow flex justify-center">
+		<article class="w-full lg:w-4/5 max-w-3xl my-6 px-4 flex flex-col gap-6">
+			<nav class="w-full flex justify-start" aria-label="fil d'Ariane">
+				<ol class="flex flex-wrap items-center text-sm text-ink-soft">
+					<li class="flex items-center">
+						<a th:href="@{/}"
+							class="text-olive font-semibold hover:underline focus-visible:underline focus-visible:outline-none">Accueil</a>
+					</li>
+					<li class="flex items-center" th:unless="${memoryToDisplay.location.country == null}">
+						<span class="mx-2 text-line">/</span>
+						<a th:href="@{/memories/{countrySlug} (countrySlug=${memoryToDisplay.location.countrySlug})}"
+							th:text="${memoryToDisplay.location.country}"
+							class="text-olive font-semibold hover:underline focus-visible:underline focus-visible:outline-none"></a>
+					</li>
+					<li class="flex items-center" th:unless="${memoryToDisplay.location.city == null}">
+						<span class="mx-2 text-line">/</span>
+						<a th:href="@{/memories/{countrySlug}/{citySlug} (countrySlug=${memoryToDisplay.location.countrySlug}, citySlug=${memoryToDisplay.location.citySlug})}"
+							th:text="${memoryToDisplay.location.city}"
+							class="text-olive font-semibold hover:underline focus-visible:underline focus-visible:outline-none"></a>
+					</li>
+					<li class="flex items-center">
+						<span class="mx-2 text-line">/</span>
+						<span th:text="${memoryToDisplay.title}" class="text-ink"></span>
+					</li>
+				</ol>
+			</nav>
 
+			<h1 class="h1-title text-center mt-0" th:text="${memoryToDisplay.title}"></h1>
+
+			<div class="flex flex-col items-center gap-2 text-center">
+				<span class="tag" th:if="${memoryToDisplay.category != null}"
+					th:text="${memoryToDisplay.category.name}">Catégorie</span>
+				<p class="text-sm text-ink-soft">
+					Souvenir de
+					<a th:href="@{/profil(userId=${memoryToDisplay.rememberer.userId})}"
+						th:text="${memoryToDisplay.rememberer.pseudo}"
+						class="text-olive font-semibold hover:underline focus-visible:underline focus-visible:outline-none"></a>,
+					le <span th:text="${#temporals.format(memoryToDisplay.memoryDate, 'dd MMMM yyyy')}"></span>
+					<span th:if="${memoryToDisplay.location.city != null}"
+						th:text="' · ' + ${memoryToDisplay.location.city}"></span>
+				</p>
 			</div>
-			<div id="map-container"
-				class="border border-[#7e9076] w-full h-[50vh] md:h-full md:w-1/2 flex flex-col justify-between items-center gap-2 py-2">
-				<div class="w-full flex flex-col items-center gap-1">
+
+			<div th:if="${#authentication.authorities.?[#this.authority == 'ROLE_ANONYMOUS'].isEmpty() and memoryToDisplay.rememberer.userId == #authentication?.principal?.user?.userId}"
+				class="flex justify-center">
+				<a th:href="@{/memory/modify(memoryId=${memoryToDisplay.memoryId})}" class="form-button">Modifier ce
+					souvenir</a>
+			</div>
+
+			<div
+				class="w-full h-[45vh] min-h-[220px] bg-sage-soft border-2 border-olive rounded-lg flex items-center justify-center overflow-hidden">
+				<img class="max-w-full max-h-full object-contain" th:if="${memoryToDisplay.mediaUUID}!=null"
+					th:src="@{/uploads/{filename}(filename=${memoryToDisplay.mediaUUID})}"
+					th:alt="'image illustrant ' + ${memoryToDisplay.title}" fetchpriority="high" />
+				<img class="max-w-full max-h-full object-contain" th:if="${memoryToDisplay.mediaUUID}==null"
+					src="/images/public/memory-placeholder.png" alt="ce souvenir n'a pas d'image" />
+			</div>
+
+			<p th:text="${memoryToDisplay.description}"
+				class="w-full text-ink text-justify whitespace-pre-line leading-relaxed">
+			</p>
+			
+			<div id="sources-container" class="flex flex-wrap gap-2" th:if="${not #lists.isEmpty(memoryToDisplay.sources)}">
+				<a th:if="${source.status.name() == 'APPROVED'}" th:each="source, stat : ${memoryToDisplay.sources}"
+					th:href="${source.url}" target="_blank" rel="noopener noreferrer nofollow"
+					class="source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm bg-sage-soft text-ink border border-olive hover:bg-sage">
+					<img class="w-4 h-4" th:src="'https://www.google.com/s2/favicons?sz=32&domain=' + ${source.domain}" />
+					<span th:text="${source.domain}" class="source-tag font-medium">Source</span>
+					<input type="hidden" th:name="'sources[' + ${stat.index} + '].url'" th:value="${source.url}">
+				</a>
+			</div>
+			
+			<div id="map-container" class="w-full border-2 border-olive rounded-lg flex flex-col gap-2 p-3 bg-paper-light">
+				<div class="w-full flex flex-col items-center gap-1 text-sm">
 					<div id="locationName" th:data-location_name="${memoryToDisplay.location.name}"></div>
 					<div id="locationCity" th:data-location_city="${memoryToDisplay.location.city}"></div>
 					<div id="locationCountry" th:data-location_country="${memoryToDisplay.location.country}"></div>
-					<div th:text="${memoryToDisplay.location.name}" class="font-semibold"></div>
-					<div th:if="${memoryToDisplay.location.country}!=null">
+					<div th:text="${memoryToDisplay.location.name}" class="font-serif font-semibold text-ink text-base"></div>
+					<div th:if="${memoryToDisplay.location.country}!=null" class="text-ink-soft">
 						<span th:text="${memoryToDisplay.location.country}"></span>
 						<span th:if="${memoryToDisplay.location.city}!=null"
 							th:text="' - ' + ${memoryToDisplay.location.city}"></span>
 					</div>
-					<div>Latitude : <span id="latitude" th:data-latitude="${memoryToDisplay.location.latitude}"></span>
-						-
-						Longitude :
+					<div class="text-xs text-ink-soft">
+						Latitude : <span id="latitude" th:data-latitude="${memoryToDisplay.location.latitude}"></span>
+						 · Longitude :
 						<span id="longitude" th:data-longitude="${memoryToDisplay.location.longitude}"></span>
 					</div>
 				</div>
-				<div id="map" class="h-8/10 w-9/10"></div>
-				<nav class="w-full flex justify-start px-2" aria-label="breadcrumb">
-					<ol class="flex flex-wrap items-center text-sm text-gray-600">
-						<li class="flex items-center">
-							<a th:href="@{/}" class="hover:underline">Accueil</a>
-						</li>
-						<li class="flex items-center" th:unless="${memoryToDisplay.location.country == null}">
-							<span class="mx-2 text-gray-400">/</span>
-							<a th:href="@{/memories/{countrySlug} (countrySlug=${memoryToDisplay.location.countrySlug})}"
-								th:text="${memoryToDisplay.location.country}" class="hover:underline"></a>
-						</li>
-						<li class="flex items-center" th:unless="${memoryToDisplay.location.city == null}">
-							<span class="mx-2 text-gray-400">/</span>
-							<a th:href="@{/memories/{countrySlug}/{citySlug} (countrySlug=${memoryToDisplay.location.countrySlug}, citySlug=${memoryToDisplay.location.citySlug})}"
-								th:text="${memoryToDisplay.location.city}" class="hover:underline"></a>
-						</li>
-						<li class="flex items-center">
-							<span class="mx-2 text-gray-400">/</span>
-							<span th:text="${memoryToDisplay.title}"></span>
-						</li>
-					</ol>
-				</nav>
+				<div id="map" class="w-full h-[50vh] min-h-[350px] rounded"></div>
 			</div>
-		</div>
+			
+		</article>
 	</main>
 	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 	<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

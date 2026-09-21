@@ -34,7 +34,7 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/memory/new").authenticated()
 				.requestMatchers("/", "/home", "/css/**", "/js/**", "/images/public/**", "/uploads/**", "/login",
-						"/signup", "/logout", "/error", "/error/**", "/memory/**", "memories/**", "/about", "/try", "/api/memory/**",
+						"/signup", "/logout", "/error", "/error/**", "/memory/**", "/memories/**", "/about", "/try", "/api/memory/**",
 						"/upload-error", "/forgot-password/**", "/legal-notices", "/privacy-policy", "/conditions", "/profil",
 						"/profil/activation/**", "/sitemap.xml", "/sracn/**")
 				.permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated())

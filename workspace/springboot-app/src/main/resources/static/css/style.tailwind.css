@@ -31,11 +31,11 @@
 }
 
 @utility form-input {
-	@apply w-full bg-white rounded-md font-light border border-line shadow-sm p-2 text-ink focus:border-olive focus:outline-none focus:ring focus:ring-sage-soft;
+	@apply w-full bg-white rounded-md font-light border border-line shadow-sm p-2 text-ink focus:border-olive focus:outline-none focus:ring focus:ring-olive;
 }
 
 @utility form-button {
-	@apply inline-flex items-center justify-center my-2 px-4 py-2 font-semibold rounded bg-olive text-paper border-2 border-ink hover:bg-ink focus:outline-none focus:ring focus:ring-sage;
+	@apply inline-flex items-center justify-center my-2 px-4 py-2 font-semibold rounded bg-olive text-paper border-2 border-ink hover:bg-ink focus-visible:outline-none focus-visible:ring focus:ring-ink;
 }
 
 @utility disabled-button {
