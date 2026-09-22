@@ -10,12 +10,12 @@
 )}">
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-paper">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
 	<div class="flex flex-grow flex-row">
-		<main class="flex flex-col flex-grow">
+		<main class="w-full flex-grow flex flex-col items-center">
 			<div class="flex-grow w-full flex flex-col items-center justify-start font-bold p-4">
-				<h1 class="mt-[80px] text-[#bddab2] text-2xl">Panneau d'administration</h1>
+				<h1 class="h1-title">Panneau d'administration</h1>
 				<p>Nombre de bots détectés : <span th:text="${counter}">0</span></p>				
 			</div>
 			<div th:replace="~{fragments/fragment-footer :: footer}"></div>

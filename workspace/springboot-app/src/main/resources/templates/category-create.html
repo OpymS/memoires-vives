@@ -10,25 +10,29 @@
 )}">
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-paper">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
 
-	<main class="mt-[80px] w-full flex-grow flex flex-col items-center">
-		<h1 th:if="${category.categoryId == 0}" class="text-[#bddab2] text-2xl font-bold">Créer une nouvelle catégorie
+	<main class="w-full flex-grow flex flex-col items-center">
+		<h1 th:if="${category.categoryId == 0}" class="h1-title">Créer une nouvelle catégorie
 		</h1>
-		<h1 th:if="${category.categoryId != 0}" class="text-[#bddab2] text-2xl font-bold">Modifier une catégorie</h1>
-		<form th:action="@{/admin/category/new}" method="POST" th:object="${category}" enctype="multipart/form-data">
-			<div class="inputs-container">
+		<h1 th:if="${category.categoryId != 0}" class="h1-title">Modifier une catégorie</h1>
+		<form th:action="@{/admin/category/new}" method="POST" th:object="${category}" enctype="multipart/form-data"
+			class="w-full max-w-lg flex flex-col gap-6 mt-4">
+			<div class="inputs-container flex flex-col gap-5">
 				<div class="name-input">
 					<label for="name" class="form-label">Nom </label>
 					<input id="name" th:field="*{name}" type="text" placeholder="Nom de la catégorie"
 						class="form-input">
 				</div>
 			</div>
-			<div class="buttons-container">
+			<div class="buttons-container flex flex-col sm:flex-row gap-3 justify-center">
 				<button type="submit" class="button create form-button"
 					th:text="${category.categoryId == 0 ? 'Créer' : 'Modifier'}"></button>
-				<a th:href="@{/admin/categories}" class="button cancel form-button">Annuler</a>
+				<a th:href="@{/admin/categories}"
+					class="button cancel inline-flex items-center justify-center my-2 px-4 py-2 font-semibold rounded
+					border-2 border-olive text-olive hover:bg-sage-soft
+					focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-offset-2 focus-visible:ring-offset-paper focus-visible:ring-ink">Annuler</a>
 			</div>
 		</form>
 	</main>

@@ -10,12 +10,12 @@
 )}">
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col bg-paper">
 	<div th:replace="~{fragments/fragment-header :: header}"></div>
 	<main class="w-full flex-grow flex flex-col items-center">
-		<h1 class="h1-title text-center">Erreur 400</a>
-			<h2 class="h2-title text-center">Mauvaise requête</h2>
-			<a href="/" class="form-button">Retour à l'accueil</a>
+		<h1 class="h1-title">Erreur 400</h1>
+		<h2 class="h2-title text-center">Mauvaise requête</h2>
+		<a href="/" class="form-button">Retour à l'accueil</a>
 	</main>
 	<div th:replace="~{fragments/fragment-footer :: footer}"></div>
 </body>
