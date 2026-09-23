@@ -1,0 +1,13 @@
+<svg width="380" height="220" viewBox="0 0 380 220" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Placeholder avec repère de lieu</title>
+<desc>Cadre avec coins d'album et un repère de localisation au centre, palette olive/sauge/papier du site.</desc>
+<rect x="0" y="0" width="380" height="220" fill="#efead9"/>
+<rect x="70" y="30" width="240" height="160" fill="#fbf9f0" stroke="#c9c2a8" stroke-width="1" stroke-dasharray="5 4"/>
+<polygon points="70,30 90,30 70,50" fill="#7e9076"/>
+<polygon points="310,30 290,30 310,50" fill="#7e9076"/>
+<polygon points="70,190 90,190 70,170" fill="#7e9076"/>
+<polygon points="310,190 290,190 310,170" fill="#7e9076"/>
+<circle cx="190" cy="98" r="26" fill="#bddab2"/>
+<path d="M190 78 C 172 78 160 92 160 108 C 160 128 190 155 190 155 C 190 155 220 128 220 108 C 220 92 208 78 190 78 Z" fill="#7e9076"/>
+<circle cx="190" cy="106" r="9" fill="#fbf9f0"/>
+</svg>

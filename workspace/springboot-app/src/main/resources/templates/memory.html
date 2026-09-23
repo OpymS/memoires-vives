@@ -68,29 +68,69 @@
 					th:src="@{/uploads/{filename}(filename=${memoryToDisplay.mediaUUID})}"
 					th:alt="'image illustrant ' + ${memoryToDisplay.title}" fetchpriority="high" />
 				<img class="max-w-full max-h-full object-contain" th:if="${memoryToDisplay.mediaUUID}==null"
-					src="/images/public/memory-placeholder.png" alt="ce souvenir n'a pas d'image" />
+					src="/images/public/memory-placeholder.svg" alt="ce souvenir n'a pas d'image" />
 			</div>
 
 			<p th:text="${memoryToDisplay.description}"
 				class="w-full text-ink text-justify whitespace-pre-line leading-relaxed">
 			</p>
-			
-			<div id="sources-container" class="flex flex-wrap gap-2" th:if="${not #lists.isEmpty(memoryToDisplay.sources)}">
-				<a th:if="${source.status.name() == 'APPROVED'}" th:each="source, stat : ${memoryToDisplay.sources}"
-					th:href="${source.url}" target="_blank" rel="noopener noreferrer nofollow"
-					class="source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm bg-sage-soft text-ink border border-olive hover:bg-sage">
-					<img class="w-4 h-4" th:src="'https://www.google.com/s2/favicons?sz=32&domain=' + ${source.domain}" />
-					<span th:text="${source.domain}" class="source-tag font-medium">Source</span>
-					<input type="hidden" th:name="'sources[' + ${stat.index} + '].url'" th:value="${source.url}">
-				</a>
+
+			<div th:if="${not #lists.isEmpty(memoryToDisplay.sources)}"
+				th:with="isOwnerOrAdmin=${(#authentication.authorities.?[#this.authority == 'ROLE_ANONYMOUS'].isEmpty() and memoryToDisplay.rememberer.userId == #authentication?.principal?.user?.userId) or !#authentication.authorities.?[#this.authority == 'ROLE_ADMIN'].isEmpty()}">
+
+				<div id="sources-container" class="flex flex-wrap gap-2">
+					<a th:each="source, stat : ${memoryToDisplay.sources}" th:if="${source.status.name() == 'APPROVED'}"
+						th:href="${source.url}" target="_blank" rel="noopener noreferrer nofollow"
+						class="source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm bg-sage-soft text-ink border border-olive hover:bg-sage">
+						<img class="w-4 h-4"
+							th:src="'https://www.google.com/s2/favicons?sz=32&domain=' + ${source.domain}" />
+						<span th:text="${source.domain}" class="source-tag font-medium">Source</span>
+					</a>
+				</div>
+
+				<details th:if="${memoryToDisplay.sources.?[status.name() == 'PENDING'].size() > 0}" class="mt-2">
+					<summary class="text-sm text-ink-soft cursor-pointer hover:text-ink w-fit rounded
+						focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink"
+						th:text="${memoryToDisplay.sources.?[status.name() == 'PENDING'].size()} + ' source(s) en attente de vérification'">
+						1 source en attente de vérification
+					</summary>
+					<div class="flex flex-wrap gap-2 mt-2">
+						<a th:each="source, stat : ${memoryToDisplay.sources}"
+							th:if="${source.status.name() == 'PENDING'}" th:href="${source.url}" target="_blank"
+							rel="noopener noreferrer nofollow"
+							class="source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-200">
+							<img class="w-4 h-4"
+								th:src="'https://www.google.com/s2/favicons?sz=32&domain=' + ${source.domain}" />
+							<span th:text="${source.domain}" class="source-tag font-medium">Source</span>
+						</a>
+					</div>
+				</details>
+
+				<div th:if="${isOwnerOrAdmin and memoryToDisplay.sources.?[status.name() == 'REJECTED'].size() > 0}"
+					class="mt-2">
+					<p class="text-xs text-ink-soft mb-1">Sources rejetées (visibles par vous uniquement) :</p>
+					<div class="flex flex-wrap gap-2">
+						<span th:each="source, stat : ${memoryToDisplay.sources}"
+							th:if="${source.status.name() == 'REJECTED'}"
+							class="source-item flex items-center gap-2 px-3 py-1 rounded-full text-sm bg-red-100 text-red-700 border border-red-300 line-through opacity-80"
+							title="Cette source a été rejetée">
+							<img class="w-4 h-4 grayscale"
+								th:src="'https://www.google.com/s2/favicons?sz=32&domain=' + ${source.domain}" />
+							<span th:text="${source.domain}" class="source-tag font-medium">Source</span>
+						</span>
+					</div>
+				</div>
+
 			</div>
-			
-			<div id="map-container" class="w-full border-2 border-olive rounded-lg flex flex-col gap-2 p-3 bg-paper-light">
+
+			<div id="map-container"
+				class="w-full border-2 border-olive rounded-lg flex flex-col gap-2 p-3 bg-paper-light">
 				<div class="w-full flex flex-col items-center gap-1 text-sm">
 					<div id="locationName" th:data-location_name="${memoryToDisplay.location.name}"></div>
 					<div id="locationCity" th:data-location_city="${memoryToDisplay.location.city}"></div>
 					<div id="locationCountry" th:data-location_country="${memoryToDisplay.location.country}"></div>
-					<div th:text="${memoryToDisplay.location.name}" class="font-serif font-semibold text-ink text-base"></div>
+					<div th:text="${memoryToDisplay.location.name}" class="font-serif font-semibold text-ink text-base">
+					</div>
 					<div th:if="${memoryToDisplay.location.country}!=null" class="text-ink-soft">
 						<span th:text="${memoryToDisplay.location.country}"></span>
 						<span th:if="${memoryToDisplay.location.city}!=null"
@@ -98,13 +138,13 @@
 					</div>
 					<div class="text-xs text-ink-soft">
 						Latitude : <span id="latitude" th:data-latitude="${memoryToDisplay.location.latitude}"></span>
-						 · Longitude :
+						· Longitude :
 						<span id="longitude" th:data-longitude="${memoryToDisplay.location.longitude}"></span>
 					</div>
 				</div>
 				<div id="map" class="w-full h-[50vh] min-h-[350px] rounded"></div>
 			</div>
-			
+
 		</article>
 	</main>
 	<div th:replace="~{fragments/fragment-footer :: footer}"></div>

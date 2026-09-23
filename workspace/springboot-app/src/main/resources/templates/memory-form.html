@@ -84,7 +84,7 @@
 							focus-within:ring-3 focus-within:ring-offset-2 focus-within:ring-offset-paper focus-within:ring-ink rounded-full">
 							<img id="image" class="rounded-full w-full h-full object-cover border-2 border-olive"
 								data-placeholder="/images/public/memory-placeholder.png"
-								th:src="${#strings.isEmpty(memoryForm.mediaUUID)} ? @{/images/public/memory-placeholder.png} : @{/uploads/{filename}(filename=${memoryForm.mediaUUID})}"
+								th:src="${#strings.isEmpty(memoryForm.mediaUUID)} ? @{/images/public/memory-placeholder.svg} : @{/uploads/{filename}(filename=${memoryForm.mediaUUID})}"
 								th:alt="${#strings.isEmpty(memoryForm.mediaUUID)} ? 'souvenir sans image' : 'image associée au souvenir ' + ${memoryForm.title}" />
 							<input id="imageInput" name="image" type="file" accept="image/png, image/jpeg"
 								class="sr-only" />

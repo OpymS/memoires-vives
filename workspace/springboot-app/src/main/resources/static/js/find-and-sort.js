@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 			memoryDiv.href = view.canonicalUrl;
 			memoryDiv.className = 'memory-card';
 
-			const imageSrc = memory.mediaUUID ? `/uploads/${memory.mediaUUID}` : '/images/public/memory-placeholder.png';
+			const imageSrc = memory.mediaUUID ? `/uploads/${memory.mediaUUID}` : '/images/public/memory-placeholder.svg';
 			const imageAlt = memory.mediaUUID ? `illustration de ${memory.title}` : 'souvenir sans illustration';
 
 			const tagHtml = memory.category
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 						</div>`;
 			} else {
 				memoryDiv.innerHTML = `<div class="w-[100px] h-[100px] rounded-[50%] overflow-hidden flex-shrink-0">
-							<img class="w-full h-full object-cover" src="/images/public/memory-placeholder.png" alt="souvenir sans illustration" loading="lazy"/>
+							<img class="w-full h-full object-cover" src="/images/public/memory-placeholder.svg" alt="souvenir sans illustration" loading="lazy"/>
 						</div>`;
 			}
 			memoryDiv.innerHTML += `<div class="h-full flex-1 min-w-0 flex flex-col text-black justify-start items-start">
